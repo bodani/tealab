@@ -1,0 +1,20 @@
+- name: 硬盘IO 优化
+  shell: |
+    pgrep etcd && ionice -c2 -n0 -p `pgrep etcd` || echo 0
+  ignore_errors: true
+  tags: etcd_tunning
+
+- name: CPU 优化
+  block:
+  - name: check tunning cpu file
+    raw: test -e /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor && echo true || echo false
+    register: file_status
+
+  # - debug: var="file_status"
+
+  - name: CPU 调优
+    shell: | 
+      echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+    ignore_errors: true
+    when: file_status.stdout == True
+  tags: etcd_tunning

@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "general-alerting",
+    "url": "/dashboards/f/1aPbl-Unz/general-alerting",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2022-04-13T16:58:25+08:00",
+    "updated": "2022-04-13T16:58:25+08:00",
+    "updatedBy": "Anonymous",
+    "createdBy": "Anonymous",
+    "version": 1,
+    "hasAcl": false,
+    "isFolder": true,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "id": 16,
+    "title": "General Alerting",
+    "uid": "1aPbl-Unz",
+    "version": 1
+  }
+}

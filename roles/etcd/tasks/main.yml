@@ -1,0 +1,15 @@
+--- 
+
+# 首次创建集群
+- import_tasks: create_etcd.yml
+  when: playbook_action == "create"
+
+# 加入新节点
+- import_tasks: add_etcd.yml
+  when: playbook_action == "add_etcd"
+
+# 数据恢复
+- import_tasks: restore_etcd.yml
+  when: playbook_action == "restore_etcd"
+
+- import_tasks: tuning_etcd.yml

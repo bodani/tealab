@@ -1,0 +1,4 @@
+[prometheus]
+baseurl = https://packagecloud.io/prometheus-rpm/release/el/$releasever/$basearch 
+gpgcheck = 0
+name = Prometheus and exporters 

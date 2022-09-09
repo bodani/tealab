@@ -1,0 +1,6 @@
+---
+- hosts: repo
+  # vars:
+  #   repo = create
+  roles: 
+   - { role: repo ,repo: create }

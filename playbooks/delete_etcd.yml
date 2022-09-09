@@ -1,0 +1,33 @@
+- hosts: "etcd"
+  vars:
+    # TMP_URL: "{% for h in groups['etcd'] %}https://{{ h }}:{{ ETCD_CLIENT_PORT }},{% endfor %}"
+    # ETCD_URL: "{{ TMP_URL.rstrip(',') }}"
+    # CLUSTER_STATE: existing
+
+  tasks:
+    - name: delete etcd member
+      shell: "export ETCDCTL_API=2 &&  etcdctl --ca-file={{ ECTD_CERT_DIR }}/ca.pem member remove $(etcdctl --ca-file={{ ECTD_CERT_DIR }}/ca.pem member list | grep {{ inventory_hostname }}  | cut -d : -f1 )"
+      ignore_errors: false
+    
+    - name: 清除证书文件
+      file:
+        path: "{ECTD_CERT_DIR}/{{ item }}"
+        state: absent
+      with_items:
+        - ca.pem
+        - etcd.pem
+        - etcd-key.pem 
+
+    - name: 卸载软件
+      yum: 
+          name: "etcd"
+          state: absent
+      tags: uninstall 
+
+    - name: 清除数据文件
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ETCD_DATA_DIR }}"
+        - "{{  ETCD_WAL_DIR  }}"

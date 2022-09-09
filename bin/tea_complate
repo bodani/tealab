@@ -1,0 +1,37 @@
+_tea_complate()
+{    COMPREPLY=()
+   local cur=${COMP_WORDS[COMP_CWORD]}
+   local cmd=${COMP_WORDS[COMP_CWORD-1]} 
+   case $cmd in
+    'tea_ctl')
+    COMPREPLY=( $(compgen -W 'tealab etcd minio' -- $cur ) )
+   ;;
+    
+    'tealab')
+    COMPREPLY=( $(compgen -W 'create_user addrepo' -- $cur ) )
+   ;;
+    
+    'etcd')
+    COMPREPLY=( $(compgen -W 'create add delete migrate' -- $cur ) )
+   ;;
+    
+    'minio')
+    COMPREPLY=( $(compgen -W 'create add delete' -- $cur ) )
+   ;;
+   esac
+    return 0
+}
+complete -F _tea_complate tea_ctl
+
+####
+# tea_ctl --help
+#       tealab 
+#             create_user addrepo 
+#       etcd 
+#             create add delete recreate  migrate
+#       minio
+#             create add delete
+#
+#
+#
+####

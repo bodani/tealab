@@ -1,0 +1,10 @@
+---
+- name: use or create repo 
+  debug:
+    msg: "{{ repo }}"
+
+- import_tasks: use_repo.yml
+  when: repo == "use"
+
+- include_tasks: create_repo.yml
+  when: repo == "create"

@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "linux",
+    "url": "/dashboards/f/4qVB1LB7z/linux",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2022-02-23T15:57:39+08:00",
+    "updated": "2022-02-23T15:57:39+08:00",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 1,
+    "hasAcl": false,
+    "isFolder": true,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "id": 15,
+    "schemaVersion": 17,
+    "title": "Linux",
+    "uid": "4qVB1LB7z",
+    "version": 1
+  }
+}

@@ -1,0 +1,95 @@
+- name: 创建数据源存储目录
+  file: 
+    path: "{{ repo_path }}/repo/base/Packages/"
+    recurse: true
+    state: directory 
+    mode: '0755'
+
+- name: 备份并替换源机器repo
+  block:
+    - name: 创建repo备份目录
+      file: 
+        path: /etc/yum.repos.d/backup
+        state: directory
+    - name: touch 1.repo
+      file: 
+        path: /etc/yum.repos.d/1.repo
+        state: touch
+    - name: 移动repo到备份目录 TODO 目前不能保证幂等性
+      shell: mv -f /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup/;
+
+# - name: 添加新upstream 源
+#   yum_repository: "{{ item }}"
+#   with_items: "{{ repo_upstreams }}"
+- name: 添加repo
+  copy:
+    src: "{{ item }}"
+    dest: /etc/yum.repos.d/{{ item }}
+  with_items: 
+    - pgdg-redhat-all.repo
+    - base.repo
+    - epel.repo
+    - extras.repo
+    - updates.repo
+    - CentOS-SCLo-scl-rh.repo
+    - prometheus.repo
+    - grafana.repo
+
+- name: 安装搭建私有源程序
+  yum:
+    name: "{{ repo_self_needed }}"
+    state: latest
+  with_items: "{{ repo_self_needed }}"
+
+# - name: 下载软件包到私有库
+
+#   yum: 
+#     name: "{{ item }}"
+#     download_only: yes
+#     download_dir: "{{ repo_path }}"
+#   with_items: "{{ repo_packages }}"
+       
+    # download packages from upstream yum repo
+
+# - name: 下载 url packages
+#   yum: 
+#     name: "{{ repo_url_packages }}"
+#     state: present
+#   with_items: "{{ repo_url_packages }}"
+
+- name: 下载 packages
+  command:
+      warn: false
+      cmd: yum install --downloadonly --downloaddir={{ repo_path }}/repo/base/Packages/ {{ item }}
+      chdir: "{{ repo_path }}/repo/base/Packages/"
+  with_items: "{{ repo_packages }}"     
+
+# 
+- name: 下载 packages 依赖
+  command:
+    cmd: repotrack {{ item }}
+    chdir: "{{ repo_path }}/repo/base/Packages/"
+  with_items: "{{ repo_packages }}"
+
+- name: 更新repo xml
+  command:
+    cmd: createrepo  "{{ repo_path }}/repo/base/Packages/"
+
+- name: 利用nginx搭建服务
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644
+  with_items:
+    # - {src: nginx.conf.j2,    dest: /etc/nginx/nginx.conf}
+    - {src: default.conf.j2,  dest: /etc/nginx/conf.d/repo.conf}
+
+  # nginx sometimes may not work if selinux is enabled
+- name: Disable selinux for repo server 
+  selinux: state=disabled
+
+- name: NTP server  
+  systemd: name=chronyd state=enabled state=started
+
+- name: 启动 nginx 服务
+  systemd: name=nginx state=restarted enabled=yes daemon_reload=yes
+
+- name: 等待 nginx 服务启动成功
+  wait_for: host=127.0.0.1 port={{ repo_port }} state=started 

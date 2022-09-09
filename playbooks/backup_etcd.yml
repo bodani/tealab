@@ -1,0 +1,44 @@
+
+- hosts: "etcd"
+  gather_facts: no
+  tasks:
+    - name: etcd cluster leader 
+      shell: curl -sL 'http://localhost:2379/metrics' | grep ^'etcd_server_is_leader' | cut -d ' ' -f2
+      ignore_errors: true
+      register: etcd_server_is_leader
+  
+
+    - debug: var="etcd_server_is_leader.stdout"
+
+    - name: 备份数据
+      block:
+        - name: create backup data dir
+          file:
+            path: "{{ ETCD_TMP_BACKUP_DIR }}"
+            state: directory
+
+        - name: backup etcd database
+          shell: "cd {{ ETCD_TMP_BACKUP_DIR  }} && export ETCDCTL_API=3 &&  etcdctl snapshot save  etcd_snapshot.db "
+
+        - name: create local etcd data dir
+          file:
+            path: "{{ LOCAL_ETCD_BACKUP_DIR }}"
+            state: directory
+            mode: 0777
+          connection: local
+          
+
+        - name: 拷贝数据到中控机
+          # become: true
+          fetch:
+            src: "{{ ETCD_TMP_BACKUP_DIR }}/etcd_snapshot.db"
+            dest: "{{ LOCAL_ETCD_BACKUP_DIR }}/"
+            flat: true
+
+        - name: clean tmp data
+          file:
+            path: "{{ ETCD_TMP_BACKUP_DIR }}"
+            state: absent
+
+      when: 
+         etcd_server_is_leader.stdout == "1"

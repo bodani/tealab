@@ -1,0 +1,78 @@
+
+# - name: test 
+#   debug:
+#     msg: "{{ use_repo }}"
+
+- name: ntp 同步网络时间
+  block:
+    - name: ntp install
+      yum: name=ntp state=latest enablerepo=tea
+    
+    - name: start ntpd server 
+      systemd: name=ntpd state=restarted enabled=yes daemon_reload=yes
+
+  when: net_time_sync == 'ntp'
+
+- name: chrony 同步网络时间
+  block:
+    - name: chrony install
+      yum: name=chrony state=latest
+
+    - name: start chrony server
+      systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
+  
+  when: net_time_sync == 'chrony'
+
+
+# 安全相关
+
+- name: 临时关闭 selinux
+  shell: "setenforce 0"
+  failed_when: false
+
+- name: 永久关闭 selinux
+  lineinfile:
+    dest: /etc/selinux/config
+    regexp: "^SELINUX="
+    line: "SELINUX=disabled"
+
+- name: 关闭firewalld
+  service: name=firewalld state=stopped enabled=false
+
+# ulimit -n 限制设置
+
+- name: update /etc/security/limits.conf 永久有效
+  tags: ulimit
+  blockinfile:
+    dest: /etc/security/limits.conf
+    insertbefore: '# End of file'
+    block: |
+      * - nofile 655360
+      * soft nproc 655360
+      * hard nproc 655360
+      * soft nofile 655360
+      * hard nofile 655360
+
+#- name: 临时生效
+#  tags: ulimit
+#  shell: ulimit -n 655361
+
+- name: sysctl 配置
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict: '{{ sysctl_config }}'
+
+- name: 安装常用工具
+  yum:
+    name: "{{ comment_tools }}"
+    state: latest
+    enablerepo: tea
+  with_items: "{{ comment_tools }}"
+
+
+

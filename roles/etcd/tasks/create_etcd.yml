@@ -1,0 +1,30 @@
+--- 
+
+# 安装etcd
+- import_tasks: install_etcd.yml
+
+# 制作证书      
+- import_tasks: create_cert.yml
+
+- name: 分发etcd证书
+  copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
+  with_items:
+  - ca.pem
+  - etcd.pem
+  - etcd-key.pem
+  tags: etcd_csr
+
+# etcd 启动服务及配置文件
+- name: 创建etcd的systemd unit文件
+  template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
+  tags: upgrade_etcd, restart_etcd
+
+- name: 创建etcd的 conf 文件
+  template: src=etcd.conf.j2 dest=/etc/etcd/etcd.conf
+  tags: upgrade_etcd, restart_etcd
+
+- name: 启动 etcd 服务
+  systemd: name=etcd state=restarted enabled=yes daemon_reload=yes
+
+- name: 等待 etcd 服务启动成功
+  wait_for: host=127.0.0.1 port={{ ETCD_CLIENT_PORT }} state=started 

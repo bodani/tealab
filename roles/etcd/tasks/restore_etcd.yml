@@ -1,0 +1,53 @@
+- name: stop etcd service
+  systemd: name=etcd state=stopped
+
+- name: clean  member &&  wal  dir
+  file:
+    path: "{{ item  }}"
+    state: absent
+  with_items:
+    - "{{ ETCD_DATA_DIR }}"
+    - "{{ ETCD_WAL_DIR }}"
+
+- name: copy snapshot data to server nodes
+  copy:
+    src: "{{ LOCAL_ETCD_BACKUP_DIR }}/etcd_snapshot.db"
+    dest: "{{ ETCD_TMP_BACKUP_DIR }}"
+    owner: etcd
+    group: etcd
+
+- name: snapshot restore
+  shell: |
+    cd {{ETCD_TMP_BACKUP_DIR}} && \
+    export ETCDCTL_API=3 && \ 
+    etcdctl snapshot restore etcd_snapshot.db \
+    --name etcd-{{ inventory_hostname }}  \
+    --initial-cluster {{ ETCD_NODES }} \
+    --initial-cluster-token etcd-cluster-0 \
+    --data-dir {{ ETCD_DATA_DIR }} \
+    --wal-dir {{ ETCD_WAL_DIR }} \
+    --initial-advertise-peer-urls https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }} \
+    --cacert {{ ECTD_CERT_DIR }}/ca.pem \
+    --cert {{ ECTD_CERT_DIR }}/etcd.pem \
+    --key {{ ECTD_CERT_DIR }}/etcd-key.pem 
+
+  # become: yes
+  # become_user: "etcd"
+
+- name: create etcd data &&  wal  dir
+  file:
+    path: "{{ item  }}"
+    state: directory
+    owner: etcd
+    group: etcd
+    recurse: true
+    # mode: 0600
+  with_items:
+    - "{{ ETCD_DATA_DIR }}"
+    - "{{ ETCD_WAL_DIR }}"
+
+- name: 启动 etcd 服务
+  systemd: name=etcd state=restarted enabled=yes daemon_reload=yes
+
+- name: 等待 etcd 服务启动成功
+  wait_for: host=127.0.0.1 port={{ ETCD_CLIENT_PORT }} state=started 

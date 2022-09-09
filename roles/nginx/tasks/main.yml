@@ -1,0 +1,11 @@
+- name: 安装nginx
+  yum:
+    name: "nginx"
+    state: latest
+    enablerepo: "tea"
+
+- name: 启动 nginx 服务
+  systemd: name=nginx state=restarted enabled=yes daemon_reload=yes
+
+- name: 等待 nginx 服务启动成功
+  wait_for: host=127.0.0.1 port=80 state=started 

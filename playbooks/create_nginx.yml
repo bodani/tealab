@@ -1,0 +1,5 @@
+---
+- hosts: nginx
+  roles: 
+  - { role: os_base, server: nginx }
+  - nginx

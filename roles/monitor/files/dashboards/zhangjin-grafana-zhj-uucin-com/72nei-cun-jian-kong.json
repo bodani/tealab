@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "72nei-cun-jian-kong",
+    "url": "/d/0HR2lHB7k/72nei-cun-jian-kong",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2022-02-18T17:21:25+08:00",
+    "updated": "2022-04-13T16:43:15+08:00",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 6,
+    "hasAcl": false,
+    "isFolder": false,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 14,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "alert": {
+          "alertRuleTags": {},
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [
+                  14
+                ],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": [
+                  "A",
+                  "5m",
+                  "now"
+                ]
+              },
+              "reducer": {
+                "params": [],
+                "type": "avg"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "alerting",
+          "for": "5m",
+          "frequency": "1m",
+          "handler": 1,
+          "message": "test",
+          "name": "内存监控 alert",
+          "noDataState": "alerting",
+          "notifications": [
+            {
+              "uid": "hzfrYRJGk"
+            }
+          ]
+        },
+        "datasource": null,
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "left",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": ""
+                }
+              ]
+            },
+            "unit": "bytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 20,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "right"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "node_memory_MemTotal_bytes{instance=~\"hx72\"}",
+            "interval": "",
+            "legendFormat": "总内存",
+            "refId": "A"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_MemTotal_bytes{instance=~\"hx72\"} - node_memory_MemAvailable_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "已用",
+            "refId": "B"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_MemFree_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "Free",
+            "refId": "C"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_Buffers_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "buffers",
+            "refId": "D"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_Cached_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "cached",
+            "refId": "E"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_SwapCached_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "swap_cached",
+            "refId": "F"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_SwapFree_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "swap_free",
+            "refId": "G"
+          },
+          {
+            "exemplar": true,
+            "expr": "node_memory_SwapTotal_bytes{instance=~\"hx72\"}",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "swap_total",
+            "refId": "H"
+          },
+          {
+            "exemplar": true,
+            "expr": "",
+            "hide": false,
+            "interval": "",
+            "legendFormat": "",
+            "refId": "I"
+          }
+        ],
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "op": "gt",
+            "value": 14,
+            "visible": true
+          }
+        ],
+        "title": "内存监控",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 31,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "72内存监控",
+    "uid": "0HR2lHB7k",
+    "version": 6
+  }
+}

@@ -1,0 +1,17 @@
+- hosts: nodes
+  gather_facts: false
+#  become: yes
+#  become_method: su
+  remote_user: root
+  tasks:
+  - name: "change file"
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin no'
+      state: present
+    notify: restart sshd
+
+  handlers:
+    - name: restart sshd
+      service: name=sshd state=restarted

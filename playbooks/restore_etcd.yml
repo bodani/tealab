@@ -1,0 +1,4 @@
+
+- hosts: "etcd"
+  roles:
+    - { role: etcd , playbook_action: "restore_etcd"}

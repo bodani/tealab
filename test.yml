@@ -1,0 +1,12 @@
+---
+#!/usr/bin/env ansible-playbook -i hosts test.yml -u vagrant -b --private-key /home/zhangeamon/.vagrant.d/insecure_private_key
+- hosts: postgres
+  become: yes
+  tasks: 
+    - name: debug
+      debug: 
+       msg: message
+  
+  roles:
+    # - os_base
+    - postgres

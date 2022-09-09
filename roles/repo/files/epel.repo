@@ -1,0 +1,7 @@
+[epel]
+baseurl = https://mirrors.tuna.tsinghua.edu.cn/epel/$releasever/$basearch
+	http://mirrors.aliyun.com/epel/$releasever/$basearch
+	http://download.fedoraproject.org/pub/epel/$releasever/$basearch
+gpgcheck = 0
+name = CentOS $releasever - epel
+

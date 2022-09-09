@@ -1,0 +1,14 @@
+- name: 使用私有repo仓库 
+  block:  
+    - name: 添加tea.repo
+      template: src=tea.repo.j2 dest=/etc/yum.repos.d/tea.repo mode=0644
+
+  #改写本地 hosts
+    - name: 加入私有源repo dns记录
+      shell: |
+        if grep -q '{{ repo_address }}' /etc/hosts; then
+            printf "\033[0;33m[WARN] 私有源DN已配置, skip  \033[0m\n" >&2
+          else 
+            echo '{{ repo_ip }} {{ repo_address }}' >> /etc/hosts
+        fi
+      when: repo_ip is defined

@@ -1,0 +1,9 @@
+[updates]
+baseurl = https://mirrors.tuna.tsinghua.edu.cn/centos/$releasever/updates/$basearch/
+	http://mirrors.aliyun.com/centos/$releasever/updates/$basearch/
+	http://mirrors.aliyuncs.com/centos/$releasever/updates/$basearch/
+	http://mirrors.cloud.aliyuncs.com/centos/$releasever/updates/$basearch/
+	http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck = 0
+name = CentOS-$releasever - Updates
+

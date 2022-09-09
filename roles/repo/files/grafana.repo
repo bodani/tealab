@@ -1,0 +1,5 @@
+[grafana]
+baseurl =  https://mirrors.tuna.tsinghua.edu.cn/grafana/yum/rpm   
+           https://packages.grafana.com/oss/rpm                   
+gpgcheck = 0
+name = grafana

@@ -1,0 +1,6 @@
+---
+- hosts: repo
+  # user: vagrant
+  # become: true
+  roles: 
+  - repo

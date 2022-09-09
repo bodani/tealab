@@ -1,0 +1,27 @@
+# - name: test 
+#   debug:
+#     msg: "{{ data_path }}"
+
+- name: 安装 prometheus
+  yum: name=prometheus2 state=latest enablerepo="tea"
+
+- name: 创建数据存储路径
+  file:
+    path: "{{ data_path }}"
+    state: directory
+    recurse: true
+    owner: prometheus
+    group: prometheus
+
+- name: 配置 prometheus
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644
+  with_items: 
+    - { src: prometheus.env.j2 , dest: /etc/default/prometheus}
+    - { src: prometheus.yml.j2 , dest: /etc/prometheus/prometheus.yml}
+  notify: restart prometheus
+
+- name: 启动 prometheus
+  service: name=prometheus state=started enabled=yes daemon_reload=yes
+
+- name: 等待 prometheus 服务启动成功
+  wait_for: host=127.0.0.1 port=9090 state=started 

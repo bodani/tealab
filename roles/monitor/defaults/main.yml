@@ -1,0 +1,6 @@
+
+# 数据存储位置
+data_path: /data/prometheus/
+
+hello : 123
+# store_data_path

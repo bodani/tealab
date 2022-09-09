@@ -1,0 +1,1097 @@
+{
+  "meta": {
+    "type": "db",
+    "canSave": false,
+    "canEdit": false,
+    "canAdmin": false,
+    "canStar": true,
+    "canDelete": false,
+    "slug": "xi-tong-bao-jing-xin-xi",
+    "url": "/d/aYaw9iJMz/xi-tong-bao-jing-xin-xi",
+    "expires": "0001-01-01T00:00:00Z",
+    "created": "2020-12-08T10:57:52+08:00",
+    "updated": "2022-04-22T10:16:26+08:00",
+    "updatedBy": "admin",
+    "createdBy": "admin",
+    "version": 41,
+    "hasAcl": false,
+    "isFolder": false,
+    "folderId": 0,
+    "folderUid": "",
+    "folderTitle": "General",
+    "folderUrl": "",
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "annotationsPermissions": {
+      "dashboard": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      },
+      "organization": {
+        "canAdd": false,
+        "canEdit": false,
+        "canDelete": false
+      }
+    }
+  },
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 6,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 20,
+        "panels": [],
+        "title": "Blackbox",
+        "type": "row"
+      },
+      {
+        "datasource": null,
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 22,
+        "options": {
+          "legend": {
+            "calcs": [
+              "last"
+            ],
+            "displayMode": "table",
+            "placement": "right"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
+        },
+        "targets": [
+          {
+            "exemplar": true,
+            "expr": "Blackbox:Probe",
+            "interval": "",
+            "legendFormat": "",
+            "refId": "A"
+          }
+        ],
+        "title": "BlackboxProbe",
+        "type": "timeseries"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 9
+        },
+        "id": 6,
+        "panels": [
+          {
+            "cacheTimeout": null,
+            "columns": [],
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {}
+              },
+              "overrides": []
+            },
+            "fontSize": "100%",
+            "gridPos": {
+              "h": 5,
+              "w": 20,
+              "x": 0,
+              "y": 8
+            },
+            "id": 4,
+            "links": [],
+            "pageSize": null,
+            "pluginVersion": "6.4.2",
+            "showHeader": true,
+            "sort": {
+              "col": 5,
+              "desc": true
+            },
+            "styles": [
+              {
+                "alias": "Time",
+                "align": "auto",
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "pattern": "Time",
+                "type": "hidden"
+              },
+              {
+                "alias": "机房",
+                "align": "auto",
+                "colorMode": null,
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(50, 172, 45, 0.97)"
+                ],
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "decimals": 2,
+                "mappingType": 1,
+                "pattern": "idc",
+                "thresholds": [],
+                "type": "string",
+                "unit": "short"
+              },
+              {
+                "alias": "实体机",
+                "align": "auto",
+                "colorMode": null,
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(50, 172, 45, 0.97)"
+                ],
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "decimals": 2,
+                "mappingType": 1,
+                "pattern": "instance",
+                "thresholds": [],
+                "type": "string",
+                "unit": "short"
+              },
+              {
+                "alias": "在线状态",
+                "align": "auto",
+                "colorMode": "cell",
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "#73BF69",
+                  "#FADE2A"
+                ],
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "decimals": 2,
+                "link": false,
+                "mappingType": 1,
+                "pattern": "Value",
+                "thresholds": [
+                  "0.1"
+                ],
+                "type": "string",
+                "unit": "short",
+                "valueMaps": [
+                  {
+                    "text": "离线",
+                    "value": "0"
+                  },
+                  {
+                    "text": "在线",
+                    "value": "1"
+                  }
+                ]
+              },
+              {
+                "alias": "",
+                "align": "auto",
+                "colorMode": null,
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(50, 172, 45, 0.97)"
+                ],
+                "decimals": 2,
+                "pattern": "/.*/",
+                "thresholds": [],
+                "type": "hidden",
+                "unit": "short"
+              }
+            ],
+            "targets": [
+              {
+                "expr": "up{job=\"system\"}",
+                "format": "table",
+                "hide": false,
+                "instant": true,
+                "intervalFactor": 1,
+                "legendFormat": "{{idc}}_{{instance}}",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "实例存活状态",
+            "transform": "table",
+            "type": "table-old"
+          },
+          {
+            "aliasColors": {},
+            "breakPoint": "25%",
+            "cacheTimeout": null,
+            "combine": {
+              "label": "Others",
+              "threshold": ""
+            },
+            "datasource": "Prometheus",
+            "decimals": null,
+            "fieldConfig": {
+              "defaults": {
+                "custom": {}
+              },
+              "overrides": []
+            },
+            "fontSize": "80%",
+            "format": "short",
+            "gridPos": {
+              "h": 5,
+              "w": 4,
+              "x": 20,
+              "y": 8
+            },
+            "id": 18,
+            "interval": null,
+            "legend": {
+              "header": "实例个数",
+              "percentage": false,
+              "show": true,
+              "values": true
+            },
+            "legendType": "Right side",
+            "links": [],
+            "maxDataPoints": 3,
+            "nullPointMode": "connected",
+            "pieType": "pie",
+            "strokeWidth": "5",
+            "targets": [
+              {
+                "expr": "count_values('value',up{job=\"system\"})",
+                "format": "time_series",
+                "instant": true,
+                "legendFormat": "{{value}}",
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "实例整体状态",
+            "transparent": true,
+            "type": "grafana-piechart-panel",
+            "valueName": "current"
+          },
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      50
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "A",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "alerting",
+              "for": "5m",
+              "frequency": "1m",
+              "handler": 1,
+              "message": "服务器：CUP使用率30%",
+              "name": "CUP使用率 alert",
+              "noDataState": "no_data",
+              "notifications": [
+                {
+                  "uid": "hzfrYRJGk"
+                }
+              ]
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "links": []
+              },
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 5,
+              "w": 24,
+              "x": 0,
+              "y": 13
+            },
+            "hiddenSeries": false,
+            "id": 2,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "hideEmpty": false,
+              "hideZero": false,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "current",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.3.5",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "repeat": null,
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "expr": "100 - (avg by (instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[1m]) )) * 100",
+                "hide": false,
+                "legendFormat": "{{instance}}",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "gt",
+                "value": 50
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "CUP使用率",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      75
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "A",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "alerting",
+              "for": "5m",
+              "frequency": "1m",
+              "handler": 1,
+              "name": "内存使用率 alert",
+              "noDataState": "no_data",
+              "notifications": []
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": null,
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "links": []
+              },
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 6,
+              "w": 24,
+              "x": 0,
+              "y": 18
+            },
+            "hiddenSeries": false,
+            "id": 10,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.3.5",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "expr": "(node_memory_MemTotal_bytes - (node_memory_MemFree_bytes+node_memory_Buffers_bytes+node_memory_Cached_bytes )) / node_memory_MemTotal_bytes * 100",
+                "legendFormat": "{{idc}}_{{instance}}",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "gt",
+                "value": 75
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "内存使用率",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      20
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "A",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "alerting",
+              "for": "5m",
+              "frequency": "1m",
+              "handler": 1,
+              "name": "IO  wait alert",
+              "noDataState": "no_data",
+              "notifications": [
+                {
+                  "uid": "ZrPoeiJGk"
+                }
+              ]
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "links": []
+              },
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 6,
+              "w": 24,
+              "x": 0,
+              "y": 24
+            },
+            "hiddenSeries": false,
+            "id": 16,
+            "interval": "",
+            "legend": {
+              "alignAsTable": true,
+              "avg": true,
+              "current": true,
+              "max": true,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "max",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.3.5",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "expr": "avg by (idc,instance)(irate(node_cpu_seconds_total{mode=\"iowait\"}[1m])) * 100",
+                "hide": false,
+                "legendFormat": "{{idc}}_{{instance}}",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "gt",
+                "value": 20
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "IO  wait",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          },
+          {
+            "alert": {
+              "alertRuleTags": {},
+              "conditions": [
+                {
+                  "evaluator": {
+                    "params": [
+                      80
+                    ],
+                    "type": "gt"
+                  },
+                  "operator": {
+                    "type": "and"
+                  },
+                  "query": {
+                    "params": [
+                      "A",
+                      "5m",
+                      "now"
+                    ]
+                  },
+                  "reducer": {
+                    "params": [],
+                    "type": "avg"
+                  },
+                  "type": "query"
+                }
+              ],
+              "executionErrorState": "alerting",
+              "for": "5m",
+              "frequency": "1m",
+              "handler": 1,
+              "message": "磁盘容量超过80%",
+              "name": "磁盘容量 alert",
+              "noDataState": "no_data",
+              "notifications": [
+                {
+                  "uid": "hzfrYRJGk"
+                }
+              ]
+            },
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {},
+                "links": []
+              },
+              "overrides": []
+            },
+            "fill": 1,
+            "fillGradient": 0,
+            "gridPos": {
+              "h": 5,
+              "w": 24,
+              "x": 0,
+              "y": 30
+            },
+            "hiddenSeries": false,
+            "id": 8,
+            "legend": {
+              "alignAsTable": true,
+              "avg": false,
+              "current": true,
+              "max": false,
+              "min": false,
+              "rightSide": true,
+              "show": true,
+              "sort": "current",
+              "sortDesc": true,
+              "total": false,
+              "values": true
+            },
+            "lines": true,
+            "linewidth": 1,
+            "nullPointMode": "null",
+            "options": {
+              "alertThreshold": true
+            },
+            "percentage": false,
+            "pluginVersion": "7.3.5",
+            "pointradius": 2,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "expr": "(node_filesystem_size_bytes - node_filesystem_avail_bytes) / node_filesystem_size_bytes * 100",
+                "hide": false,
+                "legendFormat": "{{idc}}_{{instance}}",
+                "refId": "A"
+              }
+            ],
+            "thresholds": [
+              {
+                "colorMode": "critical",
+                "fill": true,
+                "line": true,
+                "op": "gt",
+                "value": 80
+              }
+            ],
+            "timeFrom": null,
+            "timeRegions": [],
+            "timeShift": null,
+            "title": "磁盘容量",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ],
+            "yaxis": {
+              "align": false,
+              "alignLevel": null
+            }
+          }
+        ],
+        "title": "实例基本信息",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "datasource": null,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 10
+        },
+        "id": 12,
+        "panels": [
+          {
+            "columns": [],
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {}
+              },
+              "overrides": []
+            },
+            "fontSize": "100%",
+            "gridPos": {
+              "h": 6,
+              "w": 24,
+              "x": 0,
+              "y": 2
+            },
+            "id": 14,
+            "pageSize": null,
+            "showHeader": true,
+            "sort": {
+              "col": 3,
+              "desc": true
+            },
+            "styles": [
+              {
+                "alias": "Time",
+                "align": "auto",
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "pattern": "Time",
+                "type": "hidden"
+              },
+              {
+                "alias": "域名",
+                "align": "auto",
+                "colorMode": null,
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(50, 172, 45, 0.97)"
+                ],
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "decimals": 2,
+                "mappingType": 1,
+                "pattern": "instance",
+                "thresholds": [],
+                "type": "string",
+                "unit": "short"
+              },
+              {
+                "alias": "剩余天数",
+                "align": "auto",
+                "colorMode": "cell",
+                "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+                ],
+                "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                "decimals": 0,
+                "mappingType": 1,
+                "pattern": "Value",
+                "thresholds": [
+                  "0，7"
+                ],
+                "type": "number",
+                "unit": "short"
+              },
+              {
+                "alias": "",
+                "align": "auto",
+                "colorMode": null,
+                "colors": [
+                  "rgba(245, 54, 54, 0.9)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(50, 172, 45, 0.97)"
+                ],
+                "decimals": 2,
+                "pattern": "/.*/",
+                "thresholds": [],
+                "type": "hidden",
+                "unit": "short"
+              }
+            ],
+            "targets": [
+              {
+                "expr": "(probe_ssl_earliest_cert_expiry{job=\"blackbox_http_2xx\"} - time())/84000",
+                "format": "table",
+                "hide": false,
+                "instant": true,
+                "interval": "10s",
+                "intervalFactor": 1,
+                "refId": "A"
+              }
+            ],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "证书剩余时间",
+            "transform": "table",
+            "transparent": true,
+            "type": "table-old"
+          }
+        ],
+        "title": "证书",
+        "type": "row"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 31,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-30m",
+      "to": "now"
+    },
+    "timepicker": {
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "timezone": "",
+    "title": "系统报警信息",
+    "uid": "aYaw9iJMz",
+    "version": 41
+  }
+}

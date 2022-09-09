@@ -1,0 +1,11 @@
+comment_tools: 
+  - epel-release
+  - wget
+  - net-tools
+  - git
+  - sysstat 
+  - bind-utils
+  - telnet 
+  - iotop
+  - jq
+  - cpulimit

@@ -1,0 +1,5 @@
+---
+  - hosts: etcd
+    roles:
+    - { role: os_base, server: etcd }
+    - { role: etcd, playbook_action: "create" }

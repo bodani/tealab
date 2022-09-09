@@ -1,0 +1,36 @@
+##### 开始制作自签名证书  #####
+- name: 创建etcd ca证书请求
+  block:
+    - name: create local_cert_dir
+      file:
+        path: "{{ CERT_LOCAL_DIR }}"
+        state: directory
+
+    - name: prepare ca csr
+      template: src=ca-csr.json.j2 dest={{ CERT_LOCAL_DIR }}/ca-csr.json
+
+    - name: create ca
+      shell: "cd {{ CERT_LOCAL_DIR }} && cfssl gencert -initca ca-csr.json | cfssljson -bare ca - "
+
+    - name: prepare ca config
+      template: src=ca-config.json.j2 dest={{ CERT_LOCAL_DIR }}/ca-config.json
+    
+    - name: prepare ca config
+      template: src=etcd-csr.json.j2 dest={{ CERT_LOCAL_DIR }}/etcd-csr.json
+
+    - name: 创建 etcd证书和私钥
+      shell: "cd {{ CERT_LOCAL_DIR }} && cfssl gencert \
+            -ca=ca.pem \
+            -ca-key=ca-key.pem \
+            -config=ca-config.json \
+            -profile=etcd etcd-csr.json | cfssljson -bare etcd"
+
+    # - name: clean temp file 
+    #   command: find {{ CERT_LOCAL_DIR }} -type f -iname '*.json' -exec  rm  -f {} \;
+
+    - name : change chmod readonly
+      command: find {{ CERT_LOCAL_DIR }} -type f ! -perm 0644  -exec  chmod 0644 {} \; 
+
+  run_once: true
+  connection: local 
+  tags: etcd_csr

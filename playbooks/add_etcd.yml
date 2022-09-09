@@ -1,0 +1,10 @@
+- hosts: "etcd"
+  vars:
+    TMP_URL: "{% for h in groups['etcd'] %}https://{{ h }}:{{ ETCD_CLIENT_PORT }},{% endfor %}"
+    ETCD_URL: "{{ TMP_URL.rstrip(',') }}"
+    CLUSTER_STATE: existing
+  roles:
+    - { role: os_base, server: etcd }
+    - { role: etcd , playbook_action: "add_etcd"}
+ 
+    
