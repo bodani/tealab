@@ -1,0 +1,5 @@
+---
+  - hosts: minio
+    roles:
+    - { role: os_base, server: minio }
+    - { role: minio, playbook_action: "create"} 

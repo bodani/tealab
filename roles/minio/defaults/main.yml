@@ -1,0 +1,1 @@
+MINIO_DOMAIN:  echo "{{ MINIO_SERVER_URL }}" |  cut -d ":" -f2 | cut -d  '/' -f3
