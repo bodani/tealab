@@ -1,0 +1,24 @@
+- hosts: "minio"
+  tasks:
+    - name: 分区
+      command: | 
+        echo "n
+
+
+
+
+
+          w
+        " | fdisk /dev/sda
+      tags: first_disk
+
+    - name: 重启
+      command: |
+         reboot
+      tags: first_disk
+
+    - name: 格式化
+      shell: | 
+        mkfs.xfs -f /dev/sda2
+        mount /dev/sda2 /mnt
+      tags: second_disk

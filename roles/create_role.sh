@@ -1,1 +1,1 @@
-mkdir  roles/<xxx>/{defaults,vars,tasks,handlers,files,templates} -pv
+mkdir  $1/{defaults,vars,tasks,handlers,files,templates} -pv

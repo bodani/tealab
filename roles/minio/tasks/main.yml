@@ -13,14 +13,6 @@
 #     enablerepo: "tea"
 #   tags: install
 
-
-# - name: clean data dir --test 
-#   file:
-#     path: "/data/"
-#     state: absent
-#   with_items: 
-#     - "{{ NODE_DIR }}"
-
 - name: Create private group for minio user
   group: name=minio system=yes state=present
 
@@ -41,8 +33,8 @@
     - name: creat load balance
       lineinfile:
         path: /etc/hosts
-        line: "{{ inventory_hostname }} {{ MINIO_DOMAIN }}"
-        regexp: "^{{ inventory_hostname }} {{ MINIO_DOMAIN }}"
+        line: "{{ inventory_hostname }} minio.server.local"
+        regexp: "^{{ inventory_hostname }} minio.server.local"
         insertafter: EOF
   tags: minio_dns
 
@@ -68,8 +60,46 @@
   systemd: name=minio state=restarted enabled=yes daemon_reload=yes
 
 - name: 等待 minio 服务启动成功
-  wait_for: host=127.0.0.1 port={{ MINIO_PORT }} state=started 
+  wait_for: host=127.0.0.1 port={{ MINIO_CONL_PORT }} state=started 
 
 # - name: config minio mc
 #   shell: | 
 #     "mc alias set local http://{{MINIO_DOMAIN}}:9000 {{ MINIO_ROOT_USER }} {{ MINIO_ROOT_PASSWORD }}"
+
+- name: mc client
+  copy:
+    src: "{{local_bin}}/mc"
+    dest: /usr/local/bin/
+    owner: minio
+    group: minio 
+    mode: '0777'
+  tags: client
+
+- name: set mc alias
+  shell: |
+    /usr/local/bin/mc alias set {{ MINIO_MC_ALIAS }} http://localhost:{{ MINIO_SER_PORT }} {{ MINIO_ROOT_USER }} {{ MINIO_ROOT_PASSWORD }}
+
+- name: show minio cluster health
+  shell: |
+    /usr/local/bin/mc admin info {{ MINIO_MC_ALIAS }}
+
+- name: install sidekick
+  copy: 
+    src: "{{ local_bin }}/sidekick"
+    dest: /usr/local/bin/
+    owner: minio
+    group: minio 
+    mode: '0777'
+  tags: sidekick
+
+- name: 创建sidekick 的systemd unit文件
+  template: src=sidekick.service.j2 dest=/etc/systemd/system/sidekick.service
+  tags: sidekick
+
+- name: start load balance 
+  systemd: name=sidekick state=restarted enabled=yes daemon_reload=yes 
+  tags: sidekick
+
+- name: 等待 sidekick 服务启动成功
+  wait_for: host=127.0.0.1 port={{ MINIO_LB_SER_PORT }} state=started 
+  tags: sidekick

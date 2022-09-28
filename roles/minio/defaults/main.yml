@@ -1,1 +1,2 @@
-MINIO_DOMAIN:  echo "{{ MINIO_SERVER_URL }}" |  cut -d ":" -f2 | cut -d  '/' -f3
+  # MINIO_PORT:   "{{ MINIO_SERVER_URL.split(':').2 }}"
+  # MINIO_DOMAIN: "{{ MINIO_SERVER_URL.split(':').1 | regex_replace('^(.+)([//]+)(.+)$', '\\3') }}"

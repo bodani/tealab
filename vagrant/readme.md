@@ -52,3 +52,32 @@ vagrant destroy
 ```
 vagrant reload
 ```
+
+
+### 添加磁盘容量
+
+```
+1. vim Vagrant
+config.disksize.size = '100GB'
+2. 安装插件
+vagrant plugin install vagrant-disksize
+3. 分区
+ echo "n
+
+
+
+
+
+w
+" | fdisk /dev/sda
+
+4. 重启生效
+     reboot
+5. 格式化
+ mkfs.xfs -f /dev/sda2
+
+6. 挂载磁盘
+mount /dev/sda2 /mnt
+
+
+```

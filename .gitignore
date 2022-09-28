@@ -1,3 +1,3 @@
-conf/*.conf
+conf/
 hosts.ini
 roles/*_role

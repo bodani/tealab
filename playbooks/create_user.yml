@@ -2,6 +2,7 @@
 
 - hosts: nodes
   gather_facts: false
+  remote_user: "{{ remote_user }}"
   tasks:
     - name: create user
       user: name={{ username }} shell=/bin/bash createhome=yes
@@ -19,3 +20,4 @@
         line: '{{ username }} ALL=(ALL) NOPASSWD: ALL'
         regexp: '^{{ username }} .*'
         state: present
+        validate: /usr/sbin/visudo -cf %s

@@ -1,20 +1,17 @@
 [Unit]
-Description=MinIO
+Description=Sidekick
 Documentation=https://docs.min.io
 Wants=network-online.target
 After=network-online.target
-AssertFileIsExecutable=/usr/local/bin/minio
+AssertFileIsExecutable=/usr/local/bin/sidekick
 
 [Service]
 WorkingDirectory=/usr/local
 
 User=minio
 Group=minio
-ProtectProc=invisible
 
-EnvironmentFile=-/etc/default/minio
-ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in /etc/default/minio\"; exit 1; fi"
-ExecStart=/usr/local/bin/minio server $MINIO_OPTS $MINIO_VOLUMES
+ExecStart=/usr/local/bin/sidekick --log --health-path "/minio/health/cluster" --address ":{{ MINIO_LB_SER_PORT }}" {{ SIDEKICK_BACKEND }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=mixed
 KillSignal=SIGINT
@@ -34,5 +31,3 @@ SendSIGKILL=no
 
 [Install]
 WantedBy=multi-user.target
-
-# Built for ${project.name}-${project.version} (${project.name})

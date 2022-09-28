@@ -4,13 +4,13 @@ _tea_complate()
    local cmd=${COMP_WORDS[COMP_CWORD-1]} 
    case $cmd in
     'tea_ctl')
-    COMPREPLY=( $(compgen -W 'tealab etcd minio' -- $cur ) )
+    COMPREPLY=( $(compgen -W 'init etcd minio' -- $cur ) )
+   ;; 
+
+    'init')
+    COMPREPLY=( $(compgen -W 'create_user use_repo check_user_ssh' -- $cur ) )
    ;;
-    
-    'tealab')
-    COMPREPLY=( $(compgen -W 'create_user addrepo' -- $cur ) )
-   ;;
-    
+
     'etcd')
     COMPREPLY=( $(compgen -W 'create add delete migrate' -- $cur ) )
    ;;
@@ -25,8 +25,9 @@ complete -F _tea_complate tea_ctl
 
 ####
 # tea_ctl --help
-#       tealab 
-#             create_user addrepo 
+# tea is an easy automation tool   
+#       init
+#      
 #       etcd 
 #             create add delete recreate  migrate
 #       minio

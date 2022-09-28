@@ -1,0 +1,28 @@
+---
+
+- hosts: minio
+  tasks:
+    - name: stop minio
+      systemd: name=minio state=stopped enabled=no
+    
+    - name: clean data dir
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items: 
+        - "{{ NODE_DIR }}"
+    
+    - name: clean conf 
+      file: 
+        path: "{{ item  }}"
+        state: absent
+      with_items:
+        - "/etc/default/minio"  
+        - "/etc/systemd/system/minio.service"
+        - "/usr/local/bin/mc"
+    
+    - name: clean load balance dns
+      lineinfile:
+        path: /etc/hosts
+        regexp: "^{{ inventory_hostname }} minio.server.local"
+        state: absent

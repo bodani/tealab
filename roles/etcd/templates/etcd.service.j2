@@ -14,10 +14,11 @@ ExecStart=/usr/bin/etcd \
   --name=etcd-{{ inventory_hostname }} \
   --cert-file={{ ECTD_CERT_DIR }}/etcd.pem \
   --key-file={{ ECTD_CERT_DIR }}/etcd-key.pem \
+  --trusted-ca-file={{ ECTD_CERT_DIR }}/ca.pem \
   --peer-cert-file={{ ECTD_CERT_DIR }}/etcd.pem \
   --peer-key-file={{ ECTD_CERT_DIR }}/etcd-key.pem \
-  --trusted-ca-file={{ ECTD_CERT_DIR }}/ca.pem \
   --peer-trusted-ca-file={{ ECTD_CERT_DIR }}/ca.pem \
+  --peer-client-cert-auth \
   --initial-advertise-peer-urls=https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }} \
   --listen-peer-urls=https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }} \
   --listen-client-urls=https://{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }},http://127.0.0.1:{{ ETCD_CLIENT_PORT }} \

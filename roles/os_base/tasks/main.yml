@@ -16,7 +16,7 @@
 - name: chrony 同步网络时间
   block:
     - name: chrony install
-      yum: name=chrony state=latest
+      yum: name=chrony state=latest disablerepo=tea
 
     - name: start chrony server
       systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes

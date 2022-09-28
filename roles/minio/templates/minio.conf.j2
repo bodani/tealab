@@ -7,7 +7,7 @@
 # The command includes the port that each MinIO server listens on
 # (default 9000)
 
-MINIO_VOLUMES="{{ MINIO_VOLUMES }}"
+MINIO_VOLUMES="{% for valume in MINIO_VOLUMES %}{{ valume }} {% endfor %} "
 
 # Set all MinIO server options
 #
@@ -36,4 +36,4 @@ MINIO_ROOT_PASSWORD={{ MINIO_ROOT_PASSWORD }}
 # This value *must* match across all MinIO servers. If you do
 # not have a load balancer, set this value to to any *one* of the
 # MinIO hosts in the deployment as a temporary measure.
-MINIO_SERVER_URL="{{ MINIO_SERVER_URL }}"
+MINIO_SERVER_URL="http://minio.server.local:{{ MINIO_SER_PORT }}"
