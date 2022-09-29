@@ -4,6 +4,9 @@
   tasks:
     - name: stop minio
       systemd: name=minio state=stopped enabled=no
+
+    - name: stop sidekick
+      systemd: name=sidekick state=stopped enabled=no
     
     - name: clean data dir
       file:
@@ -20,9 +23,11 @@
         - "/etc/default/minio"  
         - "/etc/systemd/system/minio.service"
         - "/usr/local/bin/mc"
+        - "/usr/local/bin/minio"
+        - "/usr/local/bin/sidekick"
     
-    - name: clean load balance dns
+    - name: clean hosts dns
       lineinfile:
         path: /etc/hosts
-        regexp: "^{{ inventory_hostname }} minio.server.local"
-        state: absent
+        regexp: "minio(.*)"
+        state: absent 

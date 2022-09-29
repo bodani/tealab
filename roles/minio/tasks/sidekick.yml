@@ -1,0 +1,20 @@
+- name: install sidekick
+  copy: 
+    src: "{{ local_bin }}/sidekick"
+    dest: /usr/local/bin/
+    owner: minio
+    group: minio 
+    mode: '0777'
+  tags: sidekick
+
+- name: 创建sidekick 的systemd unit文件
+  template: src=sidekick.service.j2 dest=/etc/systemd/system/sidekick.service
+  tags: sidekick
+
+- name: start load balance 
+  systemd: name=sidekick state=restarted enabled=yes daemon_reload=yes 
+  tags: sidekick
+
+- name: 等待 sidekick 服务启动成功
+  wait_for: host=127.0.0.1 port={{ MINIO_LB_SER_PORT }} state=started 
+  tags: sidekick

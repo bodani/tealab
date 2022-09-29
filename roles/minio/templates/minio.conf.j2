@@ -37,3 +37,6 @@ MINIO_ROOT_PASSWORD={{ MINIO_ROOT_PASSWORD }}
 # not have a load balancer, set this value to to any *one* of the
 # MinIO hosts in the deployment as a temporary measure.
 MINIO_SERVER_URL="http://minio.server.local:{{ MINIO_SER_PORT }}"
+
+MINIO_STORAGE_CLASS_STANDARD={{ MINIO_STORAGE_CLASS_STANDARD }}
+MINIO_STORAGE_CLASS_RRS={{ MINIO_STORAGE_CLASS_STANDARD }}

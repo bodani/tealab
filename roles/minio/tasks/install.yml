@@ -1,0 +1,81 @@
+# - name: install minio
+#   yum:
+#     name: minio
+#     state: latest
+#     enablerepo: "tea"
+#   tags: install
+
+- name: copy minio service
+  copy:
+    src: "{{local_bin}}/{{ item }}"
+    dest: /usr/local/bin/
+    owner: minio
+    group: minio 
+    mode: '0777'
+  with_items: 
+    - minio
+    - mc
+  tags: install 
+
+- name: Create private group for minio user
+  group: name=minio system=yes state=present
+
+- name: Create minio user
+  user: name=minio shell="/bin/nologin" createhome=yes group=minio
+
+- name: Create mino DNS
+  block:
+    - name: check dns is existed in /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ item }}"
+        regexp: "^{{ item }}"
+        state: present
+      with_items: 
+        - "{{ NODE_HOSTS }}"
+    
+    - name: creat load balance
+      lineinfile:
+        path: /etc/hosts
+        line: "{{ inventory_hostname }} minio.server.local"
+        regexp: "^{{ inventory_hostname }} minio.server.local"
+        insertafter: EOF
+  tags: minio_dns
+
+- name: create data dir 
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: minio
+    group: minio
+    mode: '0755'
+  with_items: 
+    - "{{ NODE_DIR }}"
+
+- name: 创建minio 的systemd unit文件
+  template: src=minio.service.j2 dest=/etc/systemd/system/minio.service
+  tags: upgrade_minio, restart_minio
+
+- name: 创建minio的 conf 文件
+  template: src=minio.conf.j2 dest=/etc/default/minio
+  tags: upgrade_minio, restart_minio
+
+- name: 启动 minio 服务
+  systemd: name=minio state=restarted enabled=yes daemon_reload=yes
+
+- name: 等待 minio 服务启动成功
+  wait_for: host=127.0.0.1 port={{ MINIO_CONL_PORT }} state=started 
+
+# - name: config minio mc
+#   shell: | 
+#     "mc alias set local http://{{MINIO_DOMAIN}}:9000 {{ MINIO_ROOT_USER }} {{ MINIO_ROOT_PASSWORD }}"
+
+
+- name: set mc alias
+  shell: |
+    /usr/local/bin/mc alias set {{ MINIO_MC_ALIAS }} http://localhost:{{ MINIO_SER_PORT }} {{ MINIO_ROOT_USER }} {{ MINIO_ROOT_PASSWORD }}
+
+- name: show minio cluster health
+  shell: |
+    /usr/local/bin/mc admin info {{ MINIO_MC_ALIAS }}
+
