@@ -1,2 +1,8 @@
 - name: restart prometheus
-  service: name=prometheus state=reload enabled=yes daemon_reload=yes
+  service: name=prometheus state=started enabled=yes daemon_reload=yes
+
+- name: event_restart_grafana
+  service:
+    name: grafana-server
+    enabled: true
+    state: started

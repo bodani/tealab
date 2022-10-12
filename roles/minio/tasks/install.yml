@@ -77,5 +77,8 @@
 
 - name: show minio cluster health
   shell: |
-    /usr/local/bin/mc admin info {{ MINIO_MC_ALIAS }}
+    /usr/local/bin/mc ready {{ MINIO_MC_ALIAS }}
+  register: shell_result
 
+- debug:
+    var: shell_result.stdout_lines

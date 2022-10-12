@@ -1,6 +1,26 @@
-- include_tasks: install_prometheus.yml
-- include_tasks: install_grafana.yml
-- include_tasks: load_dashboards.yml
+---
+- name: set org tea
+  shell: |
+    curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X PUT  http://127.0.0.1:3000/api/org/1  -d '{"name": "tea"}'
+
+- name: add datasource prometheus 
+  shell: | 
+    curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X POST  http://127.0.0.1:3000/api/datasources -d  '{ 
+    "name": "Prometheus",
+    "type": "prometheus",
+    "typeName": "Prometheus",
+    "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+    "access": "proxy",
+    "url": "http://127.0.0.1:9090",
+    "user": "",
+    "database": "",
+    "basicAuth": false,
+    "isDefault": true,
+    "jsonData": {
+      "httpMethod": "POST"
+    },
+    "readOnly": false
+    }'
 
 #--------------------------------------------------------------#
 # Copy base dashboards (home dashboard & core application)
@@ -8,7 +28,7 @@
 - name: Sync grafana home and core dashboards
   tags: [ always ]
   copy:
-    src: dashboards/{{ item }}
+    src: dashboards/
     dest: /var/lib/grafana/dashboards/
     owner: grafana
     group: grafana
@@ -39,5 +59,6 @@
     export GRAFANA_PASSWORD={{ grafana_admin_password }}
 
     # run provisinoing logic
-    python /var/lib/grafana/dashboards/grafana.py load /var/lib/grafana/dashboards
+    /var/lib/grafana/dashboards/grafana.py init /var/lib/grafana/dashboards
+    # mv /var/lib/grafana/dashboards/*.json /var/lib/grafana/dashboards/*.json.1
 ...

@@ -3,3 +3,40 @@
     roles:
     - { role: os_base, server: minio }
     - { role: minio, playbook_action: "create"} 
+
+  - hosts: monitor
+    gather_facts: false
+    tasks:
+
+      - name: config prometheus file
+        shell: | 
+          result=$(cat /etc/prometheus/prometheus.yml | grep minio-job)
+          if [[ "$result" == "" ]]
+          then
+            echo " # add minio job "  >> /etc/prometheus/prometheus.yml 
+            cat /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml >> /etc/prometheus/prometheus.yml 
+          fi
+         
+        tags: monitor
+        #  rm /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml
+      # - name: check prometheus config is ok
+      #   shell: 
+      #     promtool check config prometheus.yml
+      #   tags: monitor
+
+      - name: restart prometheus
+        systemd: name=prometheus state=restarted enabled=yes daemon_reload=yes
+        tags: monitor
+      
+      - name: "Check if prometheus is accessible."
+        uri:
+          url: http://127.0.0.1:9090
+          method: GET
+          status_code: 200
+        tags: monitor
+    
+  - hosts: monitor
+    vars: 
+      dashboard_json_files: [test/minio-dashboard.json]
+    roles:
+    - { role: monitor, server: minio }

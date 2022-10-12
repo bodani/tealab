@@ -1,0 +1,56 @@
+- name: generate tmp api key
+  command: |
+    curl -X POST -H "Content-Type: application/json" -d '{"name":" apikeyname8", "role": "Admin"}' http://{{grafana_admin_username}}:{{grafana_admin_password}}@127.0.0.1:3000/api/auth/keys
+  register: grafana_api_key
+
+- set_fact:
+    response_dict: "{{ grafana_api_key.stdout }}"
+
+- debug:
+    var: response_dict.key
+
+- name: copy import_dashboard.sh
+  copy: 
+    dest: /var/lib/grafana/
+    src: dashboards/import_dashboard.sh
+    owner: grafana
+    group: grafana
+    mode: '0755'
+  tags: load_grafana_dashboard
+
+- name: make dashboard tmp dir
+  file:
+    path: /var/lib/grafana/tmp_dashboards/
+    state: directory
+    owner: grafana
+    group: grafana
+
+- name: copy dashboard template json
+  copy: 
+    dest: /var/lib/grafana/tmp_dashboards/
+    src: dashboards/zhangjin-grafana-zhj-uucin-com/{{ item }}
+    owner: grafana
+    group: grafana
+  with_items: 
+    - linux.json
+    - node-exporter-full.json
+    - minio-dashboard.json
+
+- name: load grafana dashboard
+  shell: | 
+    /var/lib/grafana/import_dashboard.sh -p /var/lib/grafana/tmp_dashboards/ -t "http://127.0.0.1:3000" -k {{ response_dict.key }}
+  register: load_grafana_dashboard_result
+
+# - name: show shell_result
+#   debug:
+#     var: "{{ load_grafana_dashboard_result }}"
+
+# - name: delete tmp dashboard dir 
+#   file:
+#     path: /var/lib/grafana/tmp_dashboards/
+#     state: absent
+
+- name: delete tmp api key
+  command: |
+    curl -X DELETE -H "Content-Type: application/json" http://{{grafana_admin_username}}:{{grafana_admin_password}}@127.0.0.1:3000/api/auth/keys/{{ response_dict.id }}
+  register: grafana_api_key

@@ -2,8 +2,34 @@
 #   debug:
 #     msg: "{{ data_path }}"
 
-- name: 安装 prometheus
-  yum: name=prometheus2 state=latest enablerepo="tea"
+- name: create user prometheus
+  user: name=prometheus shell=/sbin/nologin createhome=no
+
+- name: mkdir 
+  file: 
+    path: "{{ item }}"
+    state: directory
+    owner: prometheus
+    group: prometheus
+  with_items: 
+    - "{{ data_path }}"
+    - "/etc/prometheus/"
+    - "/etc/prometheus/rules/"
+    - "/etc/prometheus/nodes/"
+
+- name: init prometheus service config
+  template: src=prometheus.service.j2 dest=/usr/lib/systemd/system/prometheus.service
+
+- name: copy prometheus servce bin 
+  copy:
+    src: "{{local_bin}}/{{ item }}"
+    dest: /usr/local/bin/
+    owner: prometheus
+    group: prometheus
+    mode: '0755'
+  with_items: 
+    - prometheus
+    - promtool
 
 - name: 创建数据存储路径
   file:
@@ -14,11 +40,15 @@
     group: prometheus
 
 - name: 配置 prometheus
-  template: src={{ item.src }} dest={{ item.dest }} mode=0644
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644 owner=prometheus group=prometheus
   with_items: 
     - { src: prometheus.env.j2 , dest: /etc/default/prometheus}
     - { src: prometheus.yml.j2 , dest: /etc/prometheus/prometheus.yml}
   notify: restart prometheus
+
+- name: check config
+  shell: | 
+    /usr/local/bin/promtool check config /etc/prometheus/prometheus.yml
 
 - name: 启动 prometheus
   service: name=prometheus state=started enabled=yes daemon_reload=yes

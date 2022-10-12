@@ -133,7 +133,7 @@ log_title "------------------------------ FINISHED -----------------------------
 
 
 ######################## create api key 
-##  curl -X POST -H "Content-Type: application/json" -d '{"name":"apikeycurl", "role": "Admin", ""}' http://admin:admin@10.10.2.13:3000/api/auth/keys
+##  curl -X POST -H "Content-Type: application/json" -d '{"name":"apikeycurl", "role": "Admin"}' http://admin:admin@10.10.2.13:3000/api/auth/keys
 ##  
 ######################## delete api key 
 ##  curl -X DELETE -H "Content-Type: application/json" http://admin:admin@10.10.2.13:3000/api/auth/keys/:id

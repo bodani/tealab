@@ -1,20 +1,37 @@
-# - name: test 
-#   debug:
-#     msg: "{{ data_path }}"
+- name: copy grafana servce bin 
+  copy:
+    src: "{{local_bin}}/{{ item }}"
+    dest: /tmp/
+    mode: '0755'
+  with_items: 
+    - grafana-9.1.7-1.x86_64.rpm
 
-- name: 安装 grafana
-  yum: name=grafana state=latest enablerepo="tea"
+- name: install grafana service
+  package:
+    name: /tmp/grafana-9.1.7-1.x86_64.rpm
+    state: present
 
+- name: create dir 
+  file: 
+    path: "/var/lib/grafana/dashboards"
+    state: directory
+    owner: grafana
+    group: grafana
 
-# - name: 配置 granfana
-#   template: src={{ item.src }} dest={{ item.dest }} mode=0644
-#   with_items: 
-#     - { src: prometheus.env.j2 , dest: /etc/default/prometheus}
-#     - { src: prometheus.yml.j2 , dest: /etc/prometheus/prometheus.yml}
-#   notify: restart prometheus
+- name: "Grafana configuration file copy"
+  template:
+    src: "grafana.conf.j2"
+    dest: /etc/grafana/grafana.ini
+  notify: event_restart_grafana
 
-- name: 启动 grafana
-  service: name=grafana-server state=started enabled=yes daemon_reload=yes
+- name: "Grafana server started"
+  service:
+    name: grafana-server
+    enabled: true
+    state: started
 
-- name: 等待 grafana 服务启动成功
-  wait_for: host=127.0.0.1 port=3000 state=started 
+- name: "Check if Grafana is accessible."
+  uri:
+    url: http://127.0.0.1:3000
+    method: GET
+    status_code: 200

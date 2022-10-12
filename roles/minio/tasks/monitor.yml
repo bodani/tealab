@@ -1,0 +1,31 @@
+- name: monitor minio
+  block:
+    - name: prometheus generate
+      shell: |
+        /usr/local/bin/mc admin prometheus generate {{ MINIO_MC_ALIAS }}
+      register: shell_minio_monitor_result
+
+    - name: print shell_minio_monitor_result
+      debug:
+        msg: "{{ shell_minio_monitor_result.stdout }}"
+
+    # - name: test 
+    #   shell: |
+    #     echo "{{ shell_minio_monitor_result.stdout }}" > /tmp/1
+    #   delegate_to: "10.10.2.10"
+
+    - name: generate minio yml
+      shell: |
+          echo "{{ shell_minio_monitor_result.stdout }} "  > /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml
+
+          sed -i '1d' /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml 
+          sed -i '$d'  /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml 
+          sed -i "s/^/  /" /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml
+
+          echo "    - targets: " >> /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml ;
+          echo -e {% for h in groups['minio'] %}'      - {{ h }}:{{ MINIO_SER_PORT }}'\\n{% endfor %} >> /tmp/minio_job_{{ groups['minio'][0] }}_{{ groups['minio'][-1] }}.yml
+      # delegate_to: "10.10.2.10"
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['monitor'] }}"
+  run_once: true
+  tags: monitor
