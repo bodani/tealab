@@ -7,9 +7,10 @@ USERNAME = os.environ.get("GRAFANA_USERNAME", 'admin')
 PASSWORD = os.environ.get("GRAFANA_PASSWORD", 'admin')
 
 # replace all DS_PROMETHEUS
+ # s = s.replace('"${DS_PROMETHEUS}"', '{"type": "prometheus","uid": "%s"}' % uid )
 def ds_replace(s):
     uid = ds_query_uid_by_name("Prometheus")
-    s = s.replace('"${DS_PROMETHEUS}"', '{"type": "prometheus","uid": "%s"}' % uid )
+    s = s.replace('000000001', str(uid) )
     return s
 
 ##########################################
@@ -217,39 +218,14 @@ def dump_dashboard(d, home):
 
 def init_all(dashboard_dir):
     """init grafana with dashboards dir content
-        similar to load_all, but will replace domain name placeholder
     """
-    update_orgname(1, 'Pigsty')  # update default org name
-    # add_folder("pgsql", "PGSQL")  # create dashboard folders
-    # add_folder("pgcat", "PGCAT")
-    # add_folder("pglog", "PGLOG")
+    update_orgname(1, 'tea')  # update default org name
 
-    # load home dashboards
-    folders = []
-    for f in os.listdir(dashboard_dir):
-        abs_path = os.path.join(dashboard_dir, f)
-        if os.path.isfile(abs_path) and f.endswith('.json'):
-            print("init dashboard : %s" % f)
-            add_dashboard(load_dashboard(abs_path))
-        if os.path.isdir(abs_path):
-            folders.append((f, abs_path))  # folder name, abs path
-
-    home_uid = "home"
-    star_dashboard_by_uid(home_uid)  # home dashboards will be loaded above if exists
-    update_org_preference(home_uid, "light")
-    update_user_preference(home_uid, "light")
-
-    # load other second-layer dashboards
-    for folder_name, folder_path in folders:
-        print("init folder %s" % folder_name)
-        add_folder(folder_name, folder_name.upper())
-
-        for f in os.listdir(folder_path):
-            abs_path = os.path.join(dashboard_dir, folder_name, f)
-            if os.path.isfile(abs_path) and f.endswith('.json'):
-                print("init dashboard: %s / %s" % (folder_name, f))
-                add_dashboard(load_dashboard(abs_path), folder_name)
-
+    # home_uid = "home"
+    # star_dashboard_by_uid(home_uid)  # home dashboards will be loaded above if exists
+    # update_org_preference(home_uid, "light")
+    # update_user_preference(home_uid, "light")
+    # load_all(dashboard_dir)
 
 def load_all(dashboard_dir):
     """load dashboards and folders"""
@@ -271,6 +247,7 @@ def load_all(dashboard_dir):
             if os.path.isfile(abs_path) and f.endswith('.json'):
                 print("load dashboard: %s / %s" % (folder_name, f))
                 add_dashboard(load_dashboard(abs_path), folder_name)
+
 
 
 def dump_all(dashboard_dir):

@@ -1,7 +1,7 @@
 ---
-- name: set org tea
-  shell: |
-    curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X PUT  http://127.0.0.1:3000/api/org/1  -d '{"name": "tea"}'
+# - name: set org tea
+#   shell: |
+#     curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X PUT  http://127.0.0.1:3000/api/org/1  -d '{"name": "tea"}'
 
 - name: add datasource prometheus 
   shell: | 
@@ -23,26 +23,17 @@
     }'
 
 #--------------------------------------------------------------#
-# Copy base dashboards (home dashboard & core application)
+# Copy grafana.py
 #--------------------------------------------------------------#
-- name: Sync grafana home and core dashboards
+- name: Sync grafana.py
   tags: [ always ]
   copy:
-    src: dashboards/
+    src: dashboards/{{item}}
     dest: /var/lib/grafana/dashboards/
     owner: grafana
     group: grafana
   with_items: 
     - grafana.py
-
-- name:  Sync grafana dashboard against service
-  tags: [ monitor ]
-  copy:
-    dest: /var/lib/grafana/dashboards/
-    src: dashboards/{{ item }}
-    owner: grafana
-    group: grafana
-  with_items: "{{ dashboard_json_files }}"
 
 #--------------------------------------------------------------#
 # Provisioning
@@ -59,6 +50,5 @@
     export GRAFANA_PASSWORD={{ grafana_admin_password }}
 
     # run provisinoing logic
-    /var/lib/grafana/dashboards/grafana.py init /var/lib/grafana/dashboards
-    # mv /var/lib/grafana/dashboards/*.json /var/lib/grafana/dashboards/*.json.1
+    python /var/lib/grafana/dashboards/grafana.py init /var/lib/grafana/dashboards
 ...

@@ -1,4 +1,4 @@
-- name: monitor minio
+- name: prepare monitor minio
   block:
     - name: prometheus generate
       shell: |
@@ -27,5 +27,15 @@
       # delegate_to: "10.10.2.10"
       delegate_to: "{{ item }}"
       with_items: "{{ groups['monitor'] }}"
+
+    - name: copy minio dashboard json
+      copy:
+        dest: /var/lib/grafana/dashboards/
+        src: dashboards/minio
+        owner: grafana
+        group: grafana
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['monitor'] }}"
+      
   run_once: true
   tags: monitor
