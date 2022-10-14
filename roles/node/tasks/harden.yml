@@ -2,28 +2,6 @@
 # - name: test 
 #   debug:
 #     msg: "{{ use_repo }}"
-
-- name: ntp 同步网络时间
-  block:
-    - name: ntp install
-      yum: name=ntp state=latest enablerepo=tea
-    
-    - name: start ntpd server 
-      systemd: name=ntpd state=restarted enabled=yes daemon_reload=yes
-
-  when: net_time_sync == 'ntp'
-
-- name: chrony 同步网络时间
-  block:
-    - name: chrony install
-      yum: name=chrony state=latest disablerepo=tea
-
-    - name: start chrony server
-      systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
-  
-  when: net_time_sync == 'chrony'
-
-
 # 安全相关
 
 - name: 临时关闭 selinux
@@ -71,8 +49,38 @@
   yum:
     name: "{{ comment_tools }}"
     state: latest
-    enablerepo: tea
+    # enablerepo: tea
   with_items: "{{ comment_tools }}"
 
+- name: ntp 同步网络时间
+  block:
+    - name: ntp install
+      yum: name=ntp state=latest 
+    
+    - name: start ntpd server 
+      systemd: name=ntpd state=restarted enabled=yes daemon_reload=yes
+  when: net_time_sync == 'ntp'
 
+- name: chrony 同步网络时间
+  block:
+    - name: chrony install
+      yum: name=chrony state=latest 
 
+    - name: start chrony server
+      systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
+  when: net_time_sync == 'chrony'
+
+- name: set hostname and /etc/hosts
+  block: 
+    - name: set hostname 
+      hostname: 
+        name: "{{ hostname }}"
+    - name: set /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "127.0.0.1 {{ hostname }}"
+        regexp: "^{{ hostname }}"
+        firstmatch: yes
+        state: present
+  when: hostname is defined
+  tags: hostname

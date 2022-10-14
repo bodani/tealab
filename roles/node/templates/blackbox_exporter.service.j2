@@ -1,0 +1,13 @@
+[Unit]
+Description=Blackbox Exporter
+Documentation=https:///introduction/overview/
+After=network-online.target
+ConditionFileNotEmpty=/etc/blackbox/blackbox.yml
+
+[Service]
+User=root
+Restart=on-failure
+ExecStart=/usr/local/bin/blackbox_exporter \
+  --config.file=/etc/blackbox/blackbox.yml
+[Install]
+WantedBy=multi-user.target

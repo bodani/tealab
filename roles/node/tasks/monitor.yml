@@ -1,0 +1,77 @@
+#---------------------------------------------
+# 安装node_exporter
+#---------------------------------------------
+- name: prepare package
+  copy: 
+    dest: /usr/local/bin/
+    src: "{{local_bin}}/node_exporter/node_exporter"
+    mode: 0755
+
+- name: prepare node exporter service config
+  template:
+    src: node_exporter.service.j2
+    dest: /usr/lib/systemd/system/node_exporter.service
+
+- name: start node exporter service 
+  service: 
+    name: node_exporter
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: wait for node exporter service start up
+  wait_for: host=127.0.0.1 port=9100 state=started   
+
+#---------------------------------------------
+# 加载 node_exporter dashboard
+#---------------------------------------------
+###    1 prometheus 
+- name: create prometheus filediscover yml
+  template: src=node.yml.j2 dest=/etc/prometheus/nodes/{{inventory_hostname}}.yml mode=0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+#---------------------------------------------
+# 安装blackbox_exporter
+#---------------------------------------------
+- name: prepare blackbox exporter package 
+  copy: 
+    dest: /usr/local/bin/
+    src: "{{local_bin}}/blackbox_exporter/blackbox_exporter"
+    mode: 0755
+
+- name: create blackbox config dir
+  file:
+    path: /etc/blackbox/
+    state: directory
+
+- name: prepare blackbox exporter service config
+  template: src={{ item.src }} dest={{ item.dest }} mode=0644
+  with_items:
+    - { src: blackbox_exporter.service.j2, dest: /usr/lib/systemd/system/blackbox_exporter.service }
+    - { src: blackbox.yml.j2, dest: /etc/blackbox/blackbox.yml }
+    
+- name: start blackbox exporter service 
+  service: 
+    name: blackbox_exporter
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: wait for blackbox exporter service start up
+  wait_for: host=127.0.0.1 port=9115 state=started   
+
+#---------------------------------------------
+# 加载 blackbox_exporter dashborad
+#---------------------------------------------
+###    2 grafana
+
+- name: copy linux dashboard json
+  copy:
+    dest: /var/lib/grafana/dashboards/
+    src: dashboards/linux
+    owner: grafana
+    group: grafana
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"  
+  run_once: true

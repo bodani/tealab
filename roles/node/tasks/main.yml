@@ -1,0 +1,10 @@
+- include_tasks: 
+    file: "harden.yml"
+    apply:
+      tags: [harden]
+  tags: always
+- include_tasks: 
+    file: "monitor.yml"
+    apply:
+      tags: monitor
+  tags: always

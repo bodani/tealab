@@ -29,3 +29,6 @@ curl -u 'admin:admin' -H 'Content-Type: application/json'  -X POST  "http://127.
 # Create folder 
 curl -u 'admin:admin' -H 'Content-Type: application/json'  -X POST  "http://127.0.0.1:3000/api/folders/" -d '{"uid": "pgsql", "title": "PGSQL"}'
 
+
+# 安装包下载地址
+# https://prometheus.io/download/

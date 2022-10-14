@@ -1,0 +1,51 @@
+#-------------------------------------------#
+# 准备配置文件
+#-------------------------------------------#
+- name: prepare alertmanager files
+  template: 
+    dest:  "{{ item.dest }}"
+    src: "{{ item.src }}"
+    mode: 0644 
+  with_items: 
+    - { "src": "alertmanager.j2", "dest": "/etc/default/alertmanager" }
+    - { "src": "alertmanager.service.j2", "dest": "/usr/lib/systemd/system/alertmanager.service" }
+    - { "src": "alertmanager.yml.j2", "dest": "/etc/prometheus/alertmanager.yml" }
+
+#-------------------------------------------#
+# 准备二进制运行文件
+#-------------------------------------------#
+- name: prepare alertmanager bin
+  copy:
+    dest: /usr/bin/
+    src: "{{local_bin}}/alertmanager/{{ item }}" 
+    mode: 0755
+  with_items: 
+    - alertmanager
+    - amtool
+  
+#-------------------------------------------#
+# 创建数据存储目录
+#-------------------------------------------#
+- name: prepare alertmanager bin
+  file:
+    path: "{{ data_path }}/alertmanager"
+    state: directory 
+  with_items: 
+    - alertmanager
+    - amtool
+
+#-------------------------------------------#
+# 启动服务
+#-------------------------------------------#
+- name: start alertmanager service
+  service: 
+    name: alertmanager
+    state: started
+    enabled: true
+    daemon_reload: true
+
+#-------------------------------------------#
+# 等待 alertmanager 服务启动成功
+#-------------------------------------------#
+- name: wait for alertmanager service start up
+  wait_for: host=127.0.0.1 port=9093 state=started 

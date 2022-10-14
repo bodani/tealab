@@ -114,3 +114,5 @@ sysctl_config:
 
 # 网络时间同步 chrony or ntp
 net_time_sync: chrony
+hostname: localhost
+idc: myself

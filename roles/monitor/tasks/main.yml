@@ -3,3 +3,4 @@
 - include_tasks: provision_grafana.yml
 # 加载基础监控 dashboard
 # - include_tasks: load_dashboards.yml
+- include_tasks: install_alertmanager.yml
