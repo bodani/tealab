@@ -72,15 +72,27 @@
 
 - name: set hostname and /etc/hosts
   block: 
+    - name: fetch old hostname
+      shell: 
+        hostname
+      register: oldhostname
+    # - debug:
+    #     msg: "{{ oldhostname.stdout }}"
+    # - name: set /etc/hosts1
+    #   lineinfile:
+    #     path: /etc/hosts
+    #     regexp: '^127.0.0.1 {{ oldhostname.stdout }}'
+    #     state: absent
+
+    - name: set /etc/hosts
+      lineinfile: 
+        path: /etc/hosts
+        line: "127.0.0.1 {{ hostname }}"
+        regexp: "^127.0.0.1	{{ oldhostname.stdout }}"
+        # firstmatch: yes
+        state: present
     - name: set hostname 
       hostname: 
         name: "{{ hostname }}"
-    - name: set /etc/hosts
-      lineinfile:
-        path: /etc/hosts
-        line: "127.0.0.1 {{ hostname }}"
-        regexp: "^{{ hostname }}"
-        firstmatch: yes
-        state: present
-  when: hostname is defined
+  when: hostname is defined and hostname != 'localhost'
   tags: hostname
