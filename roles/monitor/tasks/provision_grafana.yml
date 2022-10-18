@@ -76,7 +76,7 @@
   tags: [ always ]
   copy:
     src: dashboards/{{item}}
-    dest: /var/lib/grafana/dashboards/
+    dest: /var/lib/grafana/
     owner: grafana
     group: grafana
   with_items: 
@@ -97,5 +97,16 @@
     export GRAFANA_PASSWORD={{ grafana_admin_password }}
 
     # run provisinoing logic
-    python /var/lib/grafana/dashboards/grafana.py init /var/lib/grafana/dashboards
+    python /var/lib/grafana/grafana.py init /var/lib/grafana/dashboards
+
+- name: Sync grafana.py
+  tags: [ monitor ]
+  copy:
+    src: dashboards/{{item}}
+    dest: /var/lib/grafana/dashboards
+    owner: grafana
+    group: grafana
+  with_items: 
+    - domain_https.json
+
 ...

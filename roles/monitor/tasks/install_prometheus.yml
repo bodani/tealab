@@ -16,6 +16,8 @@
     - "/etc/prometheus/"
     - "/etc/prometheus/rules/"
     - "/etc/prometheus/nodes/"
+    - "/etc/prometheus/blackbox/"
+
 
 - name: init prometheus service config
   template: src=prometheus.service.j2 dest=/usr/lib/systemd/system/prometheus.service

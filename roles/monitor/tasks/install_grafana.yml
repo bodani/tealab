@@ -11,7 +11,7 @@
     name: /tmp/grafana-9.1.7-1.x86_64.rpm
     state: present
 
-- name: create dir 
+- name: create grafana dashboard dir 
   file: 
     path: "/var/lib/grafana/dashboards"
     state: directory

@@ -39,28 +39,5 @@
       #####################################################
       ## load grafana dashboard
       #####################################################
-      - name: Provisioning grafana with grafana.py
-        tags: [ monitor, dashboard_init ]
-        ignore_errors: true
-        shell: |
-          #!/bin/bash
-
-          # grafana access info
-          export GRAFANA_ENDPOINT="http://127.0.0.1:3000"
-          export GRAFANA_USERNAME={{ grafana_admin_username }}
-          export GRAFANA_PASSWORD={{ grafana_admin_password }}
-
-          # run provisinoing logic
-          python /var/lib/grafana/dashboards/grafana.py load /var/lib/grafana/dashboards
-    
-      #####################################################
-      ## 做一些清理工作. 为什么删除minio/.json ? 避免在load其他任务的时候重复load minio/.json
-      #####################################################
-      - name:  Delete grafana dashboard against service
-        # tags: [ monitor ]
-        file:
-          path: /var/lib/grafana/dashboards/{{ item }}
-          state: absent
-        with_items: 
-          - "minio"
+    - { role: minio, only_load_dashboard: true}
 ...

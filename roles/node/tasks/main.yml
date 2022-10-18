@@ -3,9 +3,11 @@
     apply:
       tags: [harden]
   tags: always
+  when: harden is defined and harden == true
+  
 - include_tasks: 
     file: "monitor.yml"
     apply:
       tags: monitor
   tags: always
-  when: server is undefined
+  when: monitor is defined and monitor == true

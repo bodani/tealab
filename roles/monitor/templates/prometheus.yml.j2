@@ -38,3 +38,19 @@ scrape_configs:
         files:
         - /etc/prometheus/nodes/*.yml
   
+  - job_name: 'blackbox_http_2xx'
+    scrape_interval: 60s
+    scrape_timeout: 59s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets: {{ domain_https }}
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115
+    
