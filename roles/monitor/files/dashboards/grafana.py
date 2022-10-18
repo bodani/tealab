@@ -9,7 +9,7 @@ PASSWORD = os.environ.get("GRAFANA_PASSWORD", 'admin')
 # replace all DS_PROMETHEUS
  # s = s.replace('"${DS_PROMETHEUS}"', '{"type": "prometheus","uid": "%s"}' % uid )
 def ds_replace(s):
-    uid = ds_query_uid_by_name("Prometheus")
+    uid = ds_query_uid_by_name("Prometheus_tea")
     s = s.replace('000000001', str(uid) )
     return s
 

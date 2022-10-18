@@ -8,3 +8,4 @@
     apply:
       tags: monitor
   tags: always
+  when: server is undefined

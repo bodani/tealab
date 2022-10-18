@@ -28,7 +28,7 @@
 #-------------------------------------------#
 - name: prepare alertmanager bin
   file:
-    path: "{{ data_path }}/alertmanager"
+    path: "{{ prometheus_data_path }}/alertmanager"
     state: directory 
   with_items: 
     - alertmanager

@@ -3,24 +3,71 @@
 #   shell: |
 #     curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X PUT  http://127.0.0.1:3000/api/org/1  -d '{"name": "tea"}'
 
+# -  curl -I   -u 'admin:admin' -H 'Content-Type: application/json'  -X GET  http://127.0.0.1:3000/api/datasources/name/Prometheus
+- name: get datasource prometheus by name
+  uri:
+    url: http://127.0.0.1:3000/api/datasources/name/Prometheus_tea
+    url_username: "{{ grafana_admin_username }}"
+    url_password: "{{ grafana_admin_password }}"
+    force_basic_auth: yes
+    headers: 
+      Content-Type: application/json
+    method: GET
+    status_code: 
+      - 200
+      - 404
+  register: datasource_result
+
+- name: print out get datasouce result
+  debug:
+    msg: "{{ datasource_result.status }}"
+
 - name: add datasource prometheus 
-  shell: | 
-    curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X POST  http://127.0.0.1:3000/api/datasources -d  '{ 
-    "name": "Prometheus",
-    "type": "prometheus",
-    "typeName": "Prometheus",
-    "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
-    "access": "proxy",
-    "url": "http://127.0.0.1:9090",
-    "user": "",
-    "database": "",
-    "basicAuth": false,
-    "isDefault": true,
-    "jsonData": {
-      "httpMethod": "POST"
-    },
-    "readOnly": false
-    }'
+  uri:
+    url: http://127.0.0.1:3000/api/datasources
+    url_username: "{{ grafana_admin_username }}"
+    url_password: "{{ grafana_admin_password }}"
+    force_basic_auth: yes
+    headers: 
+      Content-Type: application/json
+    body_format: json
+    method: POST
+    body: '{
+      "name": "Prometheus_tea",
+      "type": "prometheus",
+      "typeName": "Prometheus",
+      "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+      "access": "proxy",
+      "url": "http://127.0.0.1:9090",
+      "user": "",
+      "database": "",
+      "basicAuth": false,
+      "isDefault": true,
+      "jsonData": {
+        "httpMethod": "POST"
+      },
+      "readOnly": false
+      }'
+  # ignore_errors: true
+  when: datasource_result.status == 404
+
+  # shell: | 
+    # curl -u '{{ grafana_admin_username }}:{{ grafana_admin_password }}' -H 'Content-Type: application/json'  -X POST  http://127.0.0.1:3000/api/datasources -d  '{ 
+    # "name": "Prometheus",
+    # "type": "prometheus",
+    # "typeName": "Prometheus",
+    # "typeLogoUrl": "public/app/plugins/datasource/prometheus/img/prometheus_logo.svg",
+    # "access": "proxy",
+    # "url": "http://127.0.0.1:9090",
+    # "user": "",
+    # "database": "",
+    # "basicAuth": false,
+    # "isDefault": true,
+    # "jsonData": {
+    #   "httpMethod": "POST"
+    # },
+    # "readOnly": false
+    # }'
 
 #--------------------------------------------------------------#
 # Copy grafana.py

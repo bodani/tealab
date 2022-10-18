@@ -9,3 +9,4 @@ comment_tools:
   - iotop
   - jq
   - cpulimit
+  - python-requests

@@ -3832,11 +3832,6 @@
         },
         {
           "allFormat": "glob",
-          "current": {
-            "selected": true,
-            "text": "百科B区",
-            "value": "百科B区"
-          },
           "datasource": {
             "type": "prometheus",
             "uid": "000000001"
@@ -3865,11 +3860,6 @@
         {
           "allFormat": "glob",
           "allValue": "",
-          "current": {
-            "selected": false,
-            "text": "bkb51",
-            "value": "bkb51"
-          },
           "datasource": {
             "type": "prometheus",
             "uid": "000000001"

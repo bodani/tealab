@@ -1,6 +1,6 @@
 # - name: test 
 #   debug:
-#     msg: "{{ data_path }}"
+#     msg: "{{ prometheus_data_path }}"
 
 - name: create user prometheus
   user: name=prometheus shell=/sbin/nologin createhome=no
@@ -12,7 +12,7 @@
     owner: prometheus
     group: prometheus
   with_items: 
-    - "{{ data_path }}"
+    - "{{ prometheus_data_path }}"
     - "/etc/prometheus/"
     - "/etc/prometheus/rules/"
     - "/etc/prometheus/nodes/"
@@ -33,7 +33,7 @@
 
 - name: 创建数据存储路径
   file:
-    path: "{{ data_path }}"
+    path: "{{ prometheus_data_path }}"
     state: directory
     recurse: true
     owner: prometheus
