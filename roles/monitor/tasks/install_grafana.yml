@@ -4,11 +4,11 @@
     dest: /tmp/
     mode: '0755'
   with_items: 
-    - grafana-9.1.7-1.x86_64.rpm
+    - grafana.rpm
 
 - name: install grafana service
   package:
-    name: /tmp/grafana-9.1.7-1.x86_64.rpm
+    name: /tmp/grafana.rpm
     state: present
 
 - name: create grafana dashboard dir 

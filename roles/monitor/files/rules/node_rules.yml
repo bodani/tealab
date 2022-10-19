@@ -1,0 +1,8 @@
+groups:
+- name: node_rules
+  interval: 10s    #局部评估间隔,优先级高于全局
+  rules:
+  - record: instance:node_cpu:avg_irate5m  #别名,自定义 （最好能说明白是做什么的）
+                                           #相当于给下面的查询语句起了个别名方便查询
+    expr: avg(rate(node_cpu_seconds_total[5m])) by(idc,instance)* 100
+                         #需要持久化的promQL查询语句

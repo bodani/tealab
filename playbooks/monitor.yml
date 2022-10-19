@@ -1,0 +1,5 @@
+- hosts: monitor 
+  roles: 
+    - { role: monitor }
+    - { role: node ,monitor: true, harden: true}
+    - { role: monitor ,only_load_dashboard: true}

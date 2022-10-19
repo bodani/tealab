@@ -1,0 +1,56 @@
+- hosts: controller
+  become: false
+  tasks: 
+  - name: create local bin dir
+    file: 
+      path: "{{ local_bin }}"
+      state: directory 
+    tags: always
+  
+  - name: download servers package [alertmanager,blackbox_exporter,node_exporter,prometheus,grafana]
+    get_url:
+      url: "{{ item.url }}"	
+      dest: "{{ local_bin }}"	
+      checksum: sha256:{{item.checksum}}
+      mode: 0644											# 文件设定权限
+      force: yes		
+    with_items:
+      - {url: "{{ prometheus_package }}", checksum: "{{ prometheus_SHA256 }}"}
+      - {url: "{{ alertmanager_package }}", checksum: "{{ alertmanager_SHA256 }}"}
+      - {url: "{{ blackbox_exporter }}", checksum: "{{ blackbox_SHA256 }}"}
+      - {url: "{{ alertmanager_package }}", checksum: "{{ alertmanager_SHA256 }}"}
+      - {url: "{{ node_exporter_package }}", checksum: "{{ node_exporter_SHA256 }}"}
+      - {url: "{{ grafana_package_RHEL }}", checksum: "{{ grafana__SHA256 }}"}
+    tags: [monitor]
+
+  - name: download servers package [minio,mc,sidekick] part 1
+    file:
+      path: "{{ local_bin }}/minio"
+      state: directory
+    tags: [minio]
+
+  - name: download servers package [minio,mc,sidekick] part 2
+    get_url: 
+      url: "https://dl.min.io/server/minio/release/darwin-amd64/minio"
+      dest: "{{ local_bin }}/minio/"
+    with_items: 
+      - "https://dl.min.io/server/minio/release/darwin-amd64/minio"
+      - "https://dl.min.io/client/mc/release/linux-amd64/mc"
+      - "https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-amd64"
+    tags: [minio]
+
+
+  - name: Unarchive prometheus packages
+    shell: | 
+      cd {{ local_bin }}
+      files=`ls | grep .gz`
+      for f in $files
+      do
+        tf=`echo $f | cut -d '-' -f 1`
+        echo $tf
+        mkdir $tf
+        tar zxf $f -C $tf --strip-components 1 
+      done
+    tags: [always]
+
+ 

@@ -3553,11 +3553,6 @@
         },
         {
           "allFormat": "glob",
-          "current": {
-            "selected": false,
-            "text": "bk87",
-            "value": "bk87"
-          },
           "datasource": {
             "type": "prometheus",
             "uid": "000000001"
