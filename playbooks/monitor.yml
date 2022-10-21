@@ -1,5 +1,12 @@
 - hosts: monitor 
   roles: 
+##--------主要流程及内容---------------------------------------
+# 一， 服务器基础配置，必要软件安装
+# 二， 安装监控服务
+# 三， 安装 node_exporter blackbox_exporter
+# 四， 载入dashboard 到grafana 
+##-----------------------------------------------
+    - { role: node ,monitor: false, harden: true}
     - { role: monitor }
-    - { role: node ,monitor: true, harden: true}
+    - { role: node ,monitor: true, harden: false}
     - { role: monitor ,only_load_dashboard: true}
