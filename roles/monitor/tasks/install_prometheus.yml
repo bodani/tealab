@@ -23,7 +23,7 @@
 
 - name: copy prometheus servce bin 
   copy:
-    src: "{{local_bin}}/{{ item }}"
+    src: "{{local_bin}}/prometheus/{{ item }}"
     dest: /usr/local/bin/
     owner: prometheus
     group: prometheus

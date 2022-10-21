@@ -39,5 +39,7 @@
       #####################################################
       ## load grafana dashboard
       #####################################################
+  # - hosts: monitor
+    roles:
     - { role: minio, only_load_dashboard: true}
 ...

@@ -1,15 +1,30 @@
 --- 
 
-# 首次创建集群
-- import_tasks: create_etcd.yml
-  when: playbook_action == "create"
+# 安装服务
+- include_tasks: install_etcd.yml
+  when: playbook_action == "install_etcd"
+
+# 启动集群
+- include_tasks: start_etcd.yml
+  when: playbook_action == "start_etcd"
+
+
+# 创建证书
+- include_tasks: create_cert.yml
+  when: playbook_action == "create_cert"
 
 # 加入新节点
-- import_tasks: add_etcd.yml
+- include_tasks: add_etcd.yml
   when: playbook_action == "add_etcd"
 
+# 颁发证书。重新加载配置，重新启动
+- include_tasks: reload_etcd.yml
+  when: playbook_action == "reload_etcd"
+
 # 数据恢复
-- import_tasks: restore_etcd.yml
+- include_tasks: restore_etcd.yml
   when: playbook_action == "restore_etcd"
 
-- import_tasks: tuning_etcd.yml
+# 调优
+- include_tasks: tuning_etcd.yml
+  when: playbook_action == "tuning_etcd"

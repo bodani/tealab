@@ -45,7 +45,14 @@
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
 
-- name: 安装常用工具
+- name: 安装常用工具 step 1
+  yum:
+    name: "{{ base_tools }}"
+    state: latest
+    # enablerepo: tea
+  with_items: "{{ base_tools }}"
+
+- name: 安装常用工具 step 2
   yum:
     name: "{{ comment_tools }}"
     state: latest

@@ -1,10 +1,5 @@
---- 
-
-# 安装etcd
-- import_tasks: install_etcd.yml
-
-# # 制作证书      
-# - import_tasks: create_cert.yml
+- name: 关闭 etcd 服务
+  systemd: name=etcd state=stopped enabled=yes daemon_reload=yes
 
 - name: 分发etcd证书
   copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
@@ -24,7 +19,7 @@
   tags: upgrade_etcd, restart_etcd
 
 - name: 启动 etcd 服务
-  systemd: name=etcd state=restarted enabled=yes daemon_reload=yes
+  systemd: name=etcd state=started enabled=yes daemon_reload=yes
 
 - name: 等待 etcd 服务启动成功
   wait_for: host=127.0.0.1 port={{ ETCD_CLIENT_PORT }} state=started 

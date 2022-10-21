@@ -1,5 +1,7 @@
-comment_tools: 
+base_tools:
   - epel-release
+
+comment_tools: 
   - wget
   - net-tools
   - git

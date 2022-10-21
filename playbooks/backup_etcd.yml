@@ -1,13 +1,14 @@
 
 - hosts: "etcd"
   gather_facts: no
+  vars: 
+  # 数据备份 , 在etcd集群leader 节点上
+      ETCD_TMP_BACKUP_DIR: "/tmp/backup/etcd/"
   tasks:
     - name: etcd cluster leader 
       shell: curl -sL 'http://localhost:2379/metrics' | grep ^'etcd_server_is_leader' | cut -d ' ' -f2
       ignore_errors: true
       register: etcd_server_is_leader
-  
-
     - debug: var="etcd_server_is_leader.stdout"
 
     - name: 备份数据
@@ -26,7 +27,6 @@
             state: directory
             mode: 0777
           connection: local
-          
 
         - name: 拷贝数据到中控机
           # become: true

@@ -1,12 +1,46 @@
 - hosts: controller
   become: false
   tasks: 
-  - name: create local bin dir
+  - name: create local bin dir for pre-built binaries
     file: 
       path: "{{ local_bin }}"
       state: directory 
     tags: always
+
+  - name: tools
+    file:
+      path: "{{ local_bin }}/{{item}}}"
+      state: directory
+    with_items:
+      - tools 
+      - minio
+      - etcd
+    tags: [always]
   
+  - name: download certs 
+    get_url: 
+      url: "{{ item }}"
+      dest: "{{ local_bin }}/tools/"
+      mode: 755
+    with_items:
+      - "https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssl_1.6.2_linux_amd64"
+      - "https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssljson_1.6.2_linux_amd64"
+      - "https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssl-certinfo_1.6.2_linux_amd64"
+    tags: etcd
+  - name: 
+    shell: |
+      cp {{ local_bin }}/tools/cfssl_1.6.2_linux_amd64 /usr/local/bin/cfssl
+      cp {{ local_bin }}/tools/cfssljson_1.6.2_linux_amd64 /usr/local/bin/cfssljson
+      cp {{ local_bin }}/tools/cfssl-certinfo_1.6.2_linux_amd64 /usr/local/bin/cfssl-certinfo
+      chmod +x /usr/local/bin/cfssl*
+    tags: etcd
+
+  - name: download etcd
+    get_url: 
+      url: "https://github.com/etcd-io/etcd/releases/download/v3.5.5/etcd-v3.5.5-linux-amd64.tar.gz"
+      dest: "{{local_bin}}/etcd/"
+    tags: etcd
+
   - name: download servers package [alertmanager,blackbox_exporter,node_exporter,prometheus,grafana]
     get_url:
       url: "{{ item.url }}"	
@@ -24,12 +58,6 @@
     tags: [monitor]
 
   - name: download servers package [minio,mc,sidekick] part 1
-    file:
-      path: "{{ local_bin }}/minio"
-      state: directory
-    tags: [minio]
-
-  - name: download servers package [minio,mc,sidekick] part 2
     get_url: 
       url: "https://dl.min.io/server/minio/release/darwin-amd64/minio"
       dest: "{{ local_bin }}/minio/"
@@ -39,6 +67,9 @@
       - "https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-amd64"
     tags: [minio]
 
+   - name:  download servers package [minio,mc,sidekick] part 2
+     command: mv "{{ local_bin }}/minio/sidekick-linux-amd64" "{{ local_bin }}/minio/sidekick"
+    tags: [minio]
 
   - name: Unarchive prometheus packages
     shell: | 

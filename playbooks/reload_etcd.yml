@@ -1,0 +1,17 @@
+---
+ # 集群节点发生变化后
+ # 1 重新证书签名
+ # 2 节点证书配置更新后重新启动
+
+- hosts: "etcd"
+  gather_facts: false
+  vars:
+    CLUSTER_STATE: existing
+  roles:
+  ##------------------------------基本流程-----主要内容-------------- 
+  ##一， 每次执行将根据hosts ip 重新证书签名。
+  ##二， 将控制机上的证书拷贝到集群中的每个节点上。重新启动服务
+  ##---------------------------------------------------------------
+    - { role: etcd, playbook_action: "create_cert" }
+    #颁发证书，重启服务
+    - { role: etcd, playbook_action: "reload_etcd" }

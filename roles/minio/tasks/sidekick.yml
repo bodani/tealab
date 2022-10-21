@@ -1,6 +1,6 @@
 - name: install sidekick
   copy: 
-    src: "{{ local_bin }}/sidekick"
+    src: "{{ local_bin }}/minio/sidekick"
     dest: /usr/local/bin/
     owner: minio
     group: minio 

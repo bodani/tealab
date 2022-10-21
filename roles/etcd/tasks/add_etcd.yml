@@ -52,13 +52,13 @@
 # 安装etcd
 - import_tasks: install_etcd.yml
 
-- name: 中控机证书分发到新etcd中
-  copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
-  with_items:
-   - ca.pem
-   - etcd.pem
-   - etcd-key.pem
-  tags: etcd_csr
+# - name: 中控机证书分发到新etcd中
+#   copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
+#   with_items:
+#    - ca.pem
+#    - etcd.pem
+#    - etcd-key.pem
+#   tags: etcd_csr
 
 - name: 新member 加入集群, 不可重复添加
   shell: "export ETCDCTL_API=2 && etcdctl --endpoints={{ ETCD_URL }} --ca-file={{ ECTD_CERT_DIR }}/ca.pem member add etcd-{{ inventory_hostname }} \

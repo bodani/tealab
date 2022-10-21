@@ -1,18 +1,56 @@
-- name: install etcd server 
-  yum: 
-    name: "etcd"
-    state: "latest"
-    enablerepo: "tea"
-  tags: install
+# - name: install etcd server 
+#   yum: 
+#     name: "etcd"
+#     state: "latest"
+#     enablerepo: "tea"
+#   tags: install
   
 # TODO 二进制文件方式安装
+- name: create group etcd
+  group: name="etcd"  system=no
+- name: create user etcd 
+  user:
+    name: etcd
+    create_home: no
+    home: /var/lib/etcd/
+    shell: /sbin/nologin
+    group: etcd
 
-- name: create data directory
+- name: install pre_build binaries
+  copy:
+    dest: /usr/bin/
+    src: "{{ local_bin }}/etcd/{{item}}"
+    owner: etcd
+    group: etcd
+    mode: 0755
+  with_items:
+    - etcd
+    - etcdctl
+
+- name: create data directory 
   file:
     path: "{{ item }}"
     state: directory
     owner: etcd
     group: etcd
-  with_items: 
+  with_items:
+    - "/etc/etcd" 
     - "{{ ECTD_CERT_DIR }}"
     - "{{ ETCD_WAL_DIR }}"
+
+- name: 分发etcd证书
+  copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
+  with_items:
+  - ca.pem
+  - etcd.pem
+  - etcd-key.pem
+  tags: etcd_csr
+
+# etcd 服务配置文件
+- name: 创建etcd的systemd unit文件
+  template: src=etcd.service.j2 dest=/etc/systemd/system/etcd.service
+  tags: upgrade_etcd, restart_etcd
+
+- name: 创建etcd的 conf 文件
+  template: src=etcd.conf.j2 dest=/etc/etcd/etcd.conf
+  tags: upgrade_etcd, restart_etcd
