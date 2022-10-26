@@ -4,7 +4,12 @@
 #     state: latest
 #     enablerepo: "tea"
 #   tags: install
+- name: Create private group for minio user
+  group: name=minio system=yes state=present
 
+- name: Create minio user
+  user: name=minio shell="/bin/nologin" createhome=yes group=minio
+  
 - name: copy minio service
   copy:
     src: "{{local_bin}}/minio/{{ item }}"
@@ -16,12 +21,6 @@
     - minio
     - mc
   tags: install 
-
-- name: Create private group for minio user
-  group: name=minio system=yes state=present
-
-- name: Create minio user
-  user: name=minio shell="/bin/nologin" createhome=yes group=minio
 
 - name: Create mino DNS
   block:

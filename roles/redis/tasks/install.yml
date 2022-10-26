@@ -1,0 +1,27 @@
+- name: 软件准备
+  copy: 
+    src: "{{local_bin}}/redis.rpm"
+    dest: /tmp/
+
+- name: 安装redis
+  yum: name=/tmp/redis.rpm state=latest
+
+- name: 配置
+  template: 
+    src: redis.conf.j2
+    dest: /etc/redis/redis.conf
+    owner: redis
+    group: redis
+
+- name: 启动服务
+  service: 
+    name: redis
+    state: restarted
+    daemon_reload: yes
+
+- name: 等待服务启动
+  wait_for: 
+    port: 6379
+    state: started
+
+  

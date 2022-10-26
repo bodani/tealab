@@ -1,0 +1,14 @@
+
+- hosts: redis
+  roles:
+    # - { role: node, monitor: false, harden: true ,server: redis }
+    - { role: redis ,tags: [redis_only,master_replica ,sentinel] }
+- hosts: redis_sentinel
+  gather_facts: false
+  roles: 
+    - { role: redis ,tags: [sentinel] }
+
+- hosts: redis
+  gather_facts: false
+  roles: 
+    - { role: redis ,tags: [register,sentinel]}

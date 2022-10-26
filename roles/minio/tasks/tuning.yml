@@ -18,15 +18,15 @@
 - name: Copy disk tuning script
   copy:
     src: minio_disk_tunning.sh
-    dest: "/home/minio/minio_disk_tunning.sh"
-    owner: "minio"
-    group: "minio"
+    dest: "/tmp/minio_disk_tunning.sh"
+    # owner: "minio"
+    # group: "minio"
     mode: 0755
   register: minio_copy_disk_tuning_script_result
   tags: tuning
 
 - name: Run disk tuning
-  command: "sh /home/minio/minio_disk_tunning.sh"
+  command: "sh /tmp/minio_disk_tunning.sh"
   ignore_errors: true
   when: minio_copy_disk_tuning_script_result.changed
   tags: tuning

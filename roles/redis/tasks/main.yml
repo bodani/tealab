@@ -1,0 +1,31 @@
+- include_tasks: 
+    file: install.yml
+    apply: 
+      tags: 
+        - sentinel
+        - master_replica
+        - redis_only
+  tags: always
+
+- include_tasks: 
+    file: slaveof.yml
+    apply: 
+      tags: 
+       - master_replica
+       - sentinel
+  tags: always
+
+- include_tasks: 
+    file: sentinel.yml
+    apply: 
+      tags: 
+       - sentinel
+  tags: always
+
+- include_tasks: 
+    file: register.yml
+    apply: 
+      tags: 
+       - register
+  tags: always
+

@@ -1,0 +1,41 @@
+- name: install python-redis
+  yum: name=python-redis state=present
+
+# 认证连接主服务信息
+- name: replication masterauth
+  redis:
+   command: config
+   name: masterauth
+   value: "{{ redis_password }}"
+   login_port: "{{ redis_port }}"
+   login_password: "{{ redis_password }}"
+  when: replicaof is defined
+  tags: master_replica
+
+# 执行replicaof
+- name: replicaof ip port
+  redis:  
+    command: slave
+    master_host: "{{ replicaof }}"
+    master_port: "{{ redis_port }}"
+    login_password: "{{ redis_password }}"
+    login_port: "{{ redis_port }}"
+  when: replicaof is defined
+  tags: master_replica
+
+# 保存配置到文件中
+- name: replicaof rewrite'
+  shell: | 
+   redis-cli -a "{{ redis_password }}" -p "{{ redis_port }}" config rewrite
+  when: replicaof is defined
+  tags: master_replica
+
+# - name: relicaof
+#   shell: |
+#     redis-cli -h 127.0.01 -p 6379 -a f447b20a7fcbf53a5d5be013ea0b15af {{ item }}
+#   with_items: 
+#     - 'config set masterauth f447b20a7fcbf53a5d5be013ea0b15af'
+#     - 'replicaof {{ replicaof}} '
+#     - 'config rewrite'
+#   when: replicaof is defined
+#   tags: master_replica

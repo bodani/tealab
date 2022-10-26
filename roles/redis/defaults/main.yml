@@ -1,0 +1,7 @@
+sysctl_config:
+  vm.overcommit_memory:1
+
+replica_priority:  100
+
+# TMP_NODES: "{% for h in group[] %} {{ h }} ,{% endfor %}"
+

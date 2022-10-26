@@ -1,0 +1,30 @@
+
+# install redis sentinel TODO 二进制安装
+- name: 软件准备
+  copy: 
+    src: "{{local_bin}}/redis.rpm"
+    dest: /tmp/
+
+- name: 安装redis
+  yum: name=/tmp/redis.rpm state=latest  
+
+- name: 配置 sentinel
+  template: 
+    src: sentinel.conf.j2
+    dest: /etc/redis/sentinel.conf
+    owner: redis
+    group: redis
+
+
+- name: 启动服务
+  service: 
+   name: redis-sentinel
+   state: restarted
+   daemon_reload: yes
+   enabled: true
+
+- name: 等待服务启动成功
+  wait_for:
+   state: started
+   port: "{{sentinel_port}}"
+
