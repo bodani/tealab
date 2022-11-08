@@ -1,0 +1,58 @@
+- name: prepare memcached monitor
+  copy: 
+    dest: /usr/local/bin/memcached_exporter
+    src: "{{local_bin}}/memcached/memcached_exporter"
+    mode: "0755"
+  tags: monitor
+
+- name: prepare memcached_exporter service
+  template: 
+    dest: /usr/lib/systemd/system/memcached_exporter.service
+    src: memcached_exporter.service.j2
+  notify: restart memcached_exporter
+  tags: monitor
+
+- name: start memcached_exporter service
+  systemd:
+    name: memcached_exporter
+    state: started
+    daemon_reload: yes
+  notify: restart memcached_exporter
+  tags: monitor
+
+- name: wait_for memcached_exporter started
+  wait_for:
+    port: 9150
+    state: started
+  tags: monitor
+
+- name: create data path prometheus memcached 
+  file:
+    path: /etc/prometheus/memcached/
+    state: directory
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  tags: monitor
+
+- name: add memcached targets
+  copy:
+    dest: /etc/prometheus/memcached/{{ inventory_hostname }}.yml
+    content: |
+      - targets: ['{{ inventory_hostname }}:9150']
+        labels:
+          idc: 'first'
+          instance: '{{ inventory_hostname }}'
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  tags: monitor, targets
+
+- name: prepare memcached dashboard 
+  copy:
+    src: dashboards/memcached
+    dest: /var/lib/grafana/dashboards/
+    owner: grafana
+    group: grafana
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true
+  tags: monitor

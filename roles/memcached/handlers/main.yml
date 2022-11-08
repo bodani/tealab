@@ -1,0 +1,11 @@
+- name: restart memcached
+  systemd:
+    name: memcached
+    state: restarted
+    daemon_reload: yes
+
+- name: restart memcached_exporter
+  systemd:
+    name: memcached_exporter
+    state: restarted
+    daemon_reload: yes

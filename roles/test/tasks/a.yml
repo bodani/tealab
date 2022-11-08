@@ -1,0 +1,4 @@
+- name: a
+  debug: 
+    msg: "i am a"
+  tags: a

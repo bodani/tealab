@@ -41,5 +41,5 @@
       #####################################################
   # - hosts: monitor
     roles:
-    - { role: minio, only_load_dashboard: true}
+    - { role: monitor, only_load_dashboard: true}
 ...

@@ -1,0 +1,27 @@
+
+## redis sentinel 服务
+- hosts: redis_cluster
+  gather_facts: true
+  vars:
+    cluster_enabled: yes  
+  roles: 
+    - { role: node, monitor: false, harden: true ,server: redis }
+    - { role: redis ,action: 'install'} 
+
+  tasks:
+  - name: create redis cluster
+    shell: | 
+      redis-cli --cluster create --cluster-yes \
+      {% for node in groups['redis_cluster'] %}
+        {{ node }}:{{ redis_port }} \
+      {% endfor %}
+          --cluster-replicas {{ redis_cluster_replicas|default(1) }}
+    
+    run_once: true
+    tags: redis_cluster
+
+## 监控redis 
+- hosts: monitor
+  roles:
+   - { role: redis ,action: monitor,tags: 'monitor'} 
+   - { role: monitor, only_load_dashboard: true,tags: 'monitor' }

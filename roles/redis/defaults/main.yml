@@ -3,5 +3,5 @@ sysctl_config:
 
 replica_priority:  100
 
-# TMP_NODES: "{% for h in group[] %} {{ h }} ,{% endfor %}"
+cluster_enabled: no
 

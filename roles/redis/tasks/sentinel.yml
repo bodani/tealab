@@ -5,7 +5,7 @@
     src: "{{local_bin}}/redis.rpm"
     dest: /tmp/
 
-- name: 安装redis
+- name: 安装 redis-sentinel
   yum: name=/tmp/redis.rpm state=latest  
 
 - name: 配置 sentinel
@@ -15,15 +15,14 @@
     owner: redis
     group: redis
 
-
-- name: 启动服务
+- name: sentinel 启动服务
   service: 
    name: redis-sentinel
    state: restarted
    daemon_reload: yes
    enabled: true
 
-- name: 等待服务启动成功
+- name: sentinel 等待服务启动成功
   wait_for:
    state: started
    port: "{{sentinel_port}}"

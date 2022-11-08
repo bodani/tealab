@@ -422,7 +422,7 @@ proc-title-template "{title} {listen-addr} {server-mode}"
 # Snapshotting can be completely disabled with a single empty string argument
 # as in following example:
 #
-# save ""
+save {{ save }}
 #
 # Unless specified otherwise, by default Redis will save the DB:
 #   * After 3600 seconds (an hour) if at least 1 change was performed
@@ -1377,7 +1377,7 @@ disable-thp yes
 #
 # Please check https://redis.io/topics/persistence for more information.
 
-appendonly no
+appendonly {{ appendonly }}
 
 # The base name of the append only file.
 #
@@ -1404,13 +1404,13 @@ appendonly no
 # - appendonly.aof.1.incr.aof, appendonly.aof.2.incr.aof as incremental files.
 # - appendonly.aof.manifest as a manifest file.
 
-appendfilename "appendonly.aof"
+appendfilename {{ appendfilename }}
 
 # For convenience, Redis stores all persistent append-only files in a dedicated
 # directory. The name of the directory is determined by the appenddirname
 # configuration parameter.
 
-appenddirname "appendonlydir"
+appenddirname {{ appenddirname }}
 
 # The fsync() call tells the Operating System to actually write data on disk
 # instead of waiting for more data in the output buffer. Some OS will really flush
@@ -1436,7 +1436,7 @@ appenddirname "appendonlydir"
 # If unsure, use "everysec".
 
 # appendfsync always
-appendfsync everysec
+appendfsync  {{ appendfsync }} 
 # appendfsync no
 
 # When the AOF fsync policy is set to always or everysec, and a background
@@ -1458,7 +1458,7 @@ appendfsync everysec
 # If you have latency problems turn this to "yes". Otherwise leave it as
 # "no" that is the safest pick from the point of view of durability.
 
-no-appendfsync-on-rewrite no
+no-appendfsync-on-rewrite {{ no_appendfsync_on_rewrite }}
 
 # Automatic rewrite of the append only file.
 # Redis is able to automatically rewrite the log file implicitly calling
@@ -1477,8 +1477,8 @@ no-appendfsync-on-rewrite no
 # Specify a percentage of zero in order to disable the automatic AOF
 # rewrite feature.
 
-auto-aof-rewrite-percentage 100
-auto-aof-rewrite-min-size 64mb
+auto-aof-rewrite-percentage {{ auto_aof_rewrite_percentage  }}
+auto-aof-rewrite-min-size {{ auto_aof_rewrite_min_size }}
 
 # An AOF file may be found to be truncated at the end during the Redis
 # startup process, when the AOF data gets loaded back into memory.
@@ -1502,17 +1502,17 @@ auto-aof-rewrite-min-size 64mb
 # the server will still exit with an error. This option only applies when
 # Redis will try to read more data from the AOF file but not enough bytes
 # will be found.
-aof-load-truncated yes
+aof-load-truncated {{ aof_load_truncated }}
 
 # Redis can create append-only base files in either RDB or AOF formats. Using
 # the RDB format is always faster and more efficient, and disabling it is only
 # supported for backward compatibility purposes.
-aof-use-rdb-preamble yes
+aof-use-rdb-preamble {{ aof_use_rdb_preamble }}
 
 # Redis supports recording timestamp annotations in the AOF to support restoring
 # the data from a specific point-in-time. However, using this capability changes
 # the AOF format in a way that may not be compatible with existing AOF parsers.
-aof-timestamp-enabled no
+aof-timestamp-enabled {{ aof_timestamp_enabled }}
 
 ################################ SHUTDOWN #####################################
 
@@ -1574,7 +1574,7 @@ aof-timestamp-enabled no
 # started as cluster nodes can. In order to start a Redis instance as a
 # cluster node enable the cluster support uncommenting the following:
 #
-# cluster-enabled yes
+cluster-enabled {{ cluster_enabled | default no}}
 
 # Every cluster node has a cluster configuration file. This file is not
 # intended to be edited by hand. It is created and updated by Redis nodes.
@@ -1582,13 +1582,24 @@ aof-timestamp-enabled no
 # Make sure that instances running in the same system do not have
 # overlapping cluster configuration file names.
 #
-# cluster-config-file nodes-6379.conf
+{% if cluster_enabled == 'yes' %}
+cluster-config-file nodes_cluster-{{ redis_port }}.conf
+{% else %}
+#cluster-config-file nodes-6379.conf
+{% endif %}
+
 
 # Cluster node timeout is the amount of milliseconds a node must be unreachable
 # for it to be considered in failure state.
 # Most other internal time limits are a multiple of the node timeout.
 #
-# cluster-node-timeout 15000
+
+{% if cluster_enabled == 'yes' %}
+cluster_node_timeout {{ cluster_node_timeout }}
+{% else %}
+#cluster_node_timeout 1000
+{% endif %}
+
 
 # The cluster port is the port that the cluster bus will listen for inbound connections on. When set 
 # to the default value, 0, it will be bound to the command port + 10000. Setting this value requires 
@@ -1660,6 +1671,12 @@ aof-timestamp-enabled no
 #
 # cluster-migration-barrier 1
 
+{% if cluster_enabled == 'yes' %}
+cluster-migration-barrier {{ cluster_migration_barrier }}
+{% else %}
+# cluster-migration-barrier 1
+{% endif %}
+
 # Turning off this option allows to use less automatic cluster configuration.
 # It both disables migration to orphaned masters and migration from masters
 # that became empty.
@@ -1678,8 +1695,11 @@ aof-timestamp-enabled no
 # to continue to accept queries for the part of the key space that is still
 # covered. In order to do so, just set the cluster-require-full-coverage
 # option to no.
-#
+{% if cluster_enabled == 'yes' %}
+cluster-require-full-coverage {{ cluster_require_full_coverage }}
+{% else %}
 # cluster-require-full-coverage yes
+{% endif %}
 
 # This option, when set to yes, prevents replicas from trying to failover its
 # master during master failures. However the replica can still perform a
@@ -1705,7 +1725,12 @@ aof-timestamp-enabled no
 # entire cluster without this option set, with it set there is only a write outage.
 # Without a quorum of masters, slot ownership will not change automatically.
 #
+{% if cluster_enabled == 'yes' %}
+cluster-allow-reads-when-down {{ cluster_allow_reads_when_down }}
+{% else %}
 # cluster-allow-reads-when-down no
+{% endif %}
+
 
 # This option, when set to yes, allows nodes to serve pubsub shard traffic while
 # the cluster is in a down state, as long as it believes it owns the slots.
@@ -2117,7 +2142,7 @@ dynamic-hz yes
 # the file will be fsync-ed every 4 MB of data generated. This is useful
 # in order to commit the file to the disk more incrementally and avoid
 # big latency spikes.
-aof-rewrite-incremental-fsync yes
+aof-rewrite-incremental-fsync {{ aof_rewrite_incremental_fsync  }}
 
 # When redis saves RDB file, if the following option is enabled
 # the file will be fsync-ed every 4 MB of data generated. This is useful

@@ -1,0 +1,5 @@
+- hosts: 10.10.2.10
+  roles:
+  #  - { role: test , tags: ['a'] }
+   - { role: test , tags: ['dddd'] }
+   - { role: nginx , tags: ['n'] }

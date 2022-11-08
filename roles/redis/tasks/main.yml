@@ -1,31 +1,25 @@
-- include_tasks: 
-    file: install.yml
-    apply: 
-      tags: 
-        - sentinel
-        - master_replica
-        - redis_only
-  tags: always
 
-- include_tasks: 
-    file: slaveof.yml
-    apply: 
-      tags: 
-       - master_replica
-       - sentinel
-  tags: always
+## sentinel 相关
+- block:
+  - include: sentinel.yml
+  when: action == 'sentinel'
+  tags: sentinel
 
-- include_tasks: 
-    file: sentinel.yml
-    apply: 
-      tags: 
-       - sentinel
-  tags: always
+- block:
+  # 安装 redis
+    - include: install.yml
+  # redis 主从
+    - include: slaveof.yml
+    - include: register.yml
+  when: action == 'redis'
+  tags: redis
 
-- include_tasks: 
-    file: register.yml
-    apply: 
-      tags: 
-       - register
-  tags: always
+## 监控 相关
+- include: monitor.yml
+  when: action == 'monitor'
+  tags: monitor
 
+
+- include: install.yml
+  when: action == 'install'
+  tags: install
