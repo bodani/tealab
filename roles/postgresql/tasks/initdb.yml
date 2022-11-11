@@ -1,3 +1,6 @@
+############################################################
+#        初始化数据库                                        #
+############################################################
 - name: init postgres db 
   become_user: postgres
   become_method: sudo
@@ -6,6 +9,9 @@
       /usr/pgsql-{{PG_VERSION}}/bin/initdb  --data-checksums -D {{PG_DATA}}
     fi
 
+############################################################
+#         配置数据库                                        #
+############################################################
 - name: postgres include conf
   shell: |
     cat {{PG_DATA}}/postgresql.conf | grep pg_tea.conf ||  echo "include = 'pg_tea.conf' " >> {{PG_DATA}}/postgresql.conf
@@ -31,6 +37,9 @@
     src: postgresql-{{PG_VERSION}}.service.j2
     dest: /usr/lib/systemd/system/postgresql-{{PG_VERSION}}.service
 
+############################################################
+#        启动数据库服务                                      #
+############################################################
 - name: start postgresql service
   service:  
     name: postgresql-{{PG_VERSION}}
@@ -48,6 +57,9 @@
 #   shell: |
 #     psql -c "create user {{ rep_user }} with encrypted  password '{{ rep_password }}' REPLICATION ;"
 
+############################################################
+#        创建数据库 Replication User                         #
+############################################################
 - name: create user for REPLICATION
   postgresql_user:
     name: "{{ rep_user }}"

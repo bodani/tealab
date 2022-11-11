@@ -1,0 +1,41 @@
+vi repmgr.conf # /etc/repmgr/10/repmgr.conf
+## 必须项
+node_id=1
+node_name={{application_name}}
+conninfo ='host={{inventory_hostname}} dbname=repmgr user={{rep_user}} connect_timeout=2'
+data_directory = '/var/lib/pgsql/10/data'
+## 可选项
+# pg配置文件位置
+#config_directory =
+replication_user = repmgr # 默认为conninfo 中使用的user
+# 服务器所在物理位置，有助于判断当发生脑裂时网络互通逻辑
+
+use_replication_slots = true # 是否使用物理复制槽
+log_level = INFO # 日志等级
+log_file =  '/var/log/repmgr/repmgr.log' # 日志输出文件位置 ，结合lograte管理
+# 数据库yum 方式安装，使用systemd 管理时
+service_start_command   = 'sudo systemctl start postgresql-{{PG_VERSION}}'
+service_stop_command    = 'sudo systemctl stop postgresql-{{PG_VERSION}}'
+service_restart_command = 'sudo systemctl restart postgresql-{{PG_VERSION}}'
+service_reload_command  = 'sudo systemctl reload postgresql-{{PG_VERSION}}' 
+
+## repmgrd 
+failover=automatic
+promote_command='/usr/pgsql-10/bin/repmgr standby promote -f /etc/repmgr/10/repmgr.conf --log-to-file'
+follow_command='/usr/pgsql-10/bin/repmgr standby follow -f /etc/repmgr/10/repmgr.conf --log-to-file --upstream-node-id=%n'
+log_file='/var/lib/pgsql/repmgrd.log'
+monitoring_history=true #（启用监控参数）
+monitor_interval_secs=5 #（定义监视数据间隔写入时间参数）
+reconnect_attempts=10 #（故障转移之前，尝试重新连接主库次数（默认为6）参数）
+reconnect_interval=5 #（每间隔5s尝试重新连接一次参数
+
+#### 以下配置 防止主机节点fence
+# location = {{ location | default "dc"}}
+
+#child_nodes_check_interval=5           # Interval (in seconds) to check for attached child nodes (standbys)
+#child_nodes_connected_min_count=-1     # Minimum number of child nodes which must remain connected, otherwise
+                                        # disconnection command will be triggered
+#child_nodes_disconnect_min_count=-1    # Minimum number of disconnected child nodes required to execute disconnection command
+                                        # (ignored if "child_nodes_connected_min_count" set)
+#child_nodes_disconnect_timeout=30      # Interval between child node disconnection and disconnection command execution
+child_nodes_disconnect_command='' 

@@ -84,4 +84,71 @@
       /usr/bin/systemctl reload postgresql-{{PG_VERSION}}
     mode: 0400
 
+############################################################
+#         在主库创建repmgr database 。 owner 为 repuser       #
+############################################################
+- name: create database for repmgr
+  postgresql_db:
+    name: "repmgr"
+    owner: "{{ rep_user }}"
+    conn_limit: 20
+    template: "template0"
+    state: present
+  when: replicaof is undefined
+
+# 创建 repmgr extention
+- name: create extention repmgr
+  postgresql_ext: 
+    db: repmgr
+    name: repmgr
+  when: replicaof is undefined
+
+- name: config repmgr 
+  template:
+    src: repmgr-{{PG_VERSION}}.conf.j2
+    dest: /etc/repmgr/{{PG_VERSION}}/repmgr.conf
+
+############################################################
+#        注册主服务器                                        #
+############################################################
+- name: register primary
+  shell: |
+    /usr/pgsql-{{PG_VERSION}}/bin/repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf primary register 
+  when: replicaof is undefined
+
+############################################################
+#        注册从服务器                                        #
+############################################################
+- name: standby clone 
+  shell: |
+    /usr/pgsql-{{PG_VERSION}}/bin/repmgr -h {{replicaof}}} -U repmgr -d repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf standby clone  
+  when: replicaof is defined
+
+- name: start standby postgresql service
+  block:
+    - name: start standby postgresql service
+      service:  
+        name: postgresql-{{PG_VERSION}}
+        state: started
+        enabled: true
+
+    - name: wait for postgresql start
+      wait_for: 
+        port: 5432
+        state: started
     
+    - name: register standby
+      shell: 
+        /usr/pgsql-{{PG_VERSION}}/bin/repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf standby register 
+
+  when: replicaof is defined                                        
+
+
+############################################################
+#        repmgrd , autofailover                            #
+############################################################
+- name: start standby postgresql service
+  service:  
+    name: repmgr-{{PG_VERSION}}
+    state: started
+    enabled: true
