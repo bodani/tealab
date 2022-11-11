@@ -1,7 +1,0 @@
-- name: create database for repmgr
-  postgresql_db:
-    name: "{{ repmgr_db_name }}"
-    owner: "{{ repmgr_db_user }}"
-    template: "template0"
-    state: present
-  when: repmgr_is_master|bool
