@@ -1,0 +1,11 @@
+## 安装数据库服务包
+- include: install.yml
+  tags: install
+## 主库初始化数据库
+- include: initdb.yml
+  when: replicaof is undefined
+  tags: initdb
+## 从库复制数据
+- include: replication.yml
+  when: replicaof is defined
+  tags: initdb

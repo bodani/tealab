@@ -1,0 +1,15 @@
+pg_base_packages: 
+  - postgresql{{PG_VERSION}}-server
+  - postgresql{{PG_VERSION}}
+  - postgresql{{PG_VERSION}}-contrib
+
+pg_extends_packages:
+  - pg_repack{{PG_VERSION}}
+
+pg_shared_preload_libs: 
+  - pg_repack
+  - pg_stat_statements
+  - auto_explain
+
+# pg_role: master
+use_slot: false

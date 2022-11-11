@@ -1,0 +1,56 @@
+- name: init postgres db 
+  become_user: postgres
+  become_method: sudo
+  shell: |
+    if [ "`ls -A {{PG_DATA}}`" = "" ]; then
+      /usr/pgsql-{{PG_VERSION}}/bin/initdb  --data-checksums -D {{PG_DATA}}
+    fi
+
+- name: postgres include conf
+  shell: |
+    cat {{PG_DATA}}/postgresql.conf | grep pg_tea.conf ||  echo "include = 'pg_tea.conf' " >> {{PG_DATA}}/postgresql.conf
+
+- name: prepare postgres config
+  template:
+    src: pg_tea-{{PG_VERSION}}.conf.j2
+    dest: "{{PG_DATA}}/pg_tea.conf"
+    owner: postgres
+    group: postgres
+  notify: restart postgresql
+
+- name: prepare postgres pg_hba
+  template:
+    src: pg_hba-10.conf.j2
+    dest: "{{PG_DATA}}/pg_hba.conf"
+    owner: postgres
+    group: postgres
+  notify: reload postgresql
+
+- name: prepare postgres service
+  template: 
+    src: postgresql-{{PG_VERSION}}.service.j2
+    dest: /usr/lib/systemd/system/postgresql-{{PG_VERSION}}.service
+
+- name: start postgresql service
+  service:  
+    name: postgresql-{{PG_VERSION}}
+    state: started
+    enabled: true
+
+- name: wait for postgresql start
+  wait_for: 
+    port: 5432
+    state: started
+
+# - name: create replication user on master node
+#   become_user: postgres
+#   become_method: sudo
+#   shell: |
+#     psql -c "create user {{ rep_user }} with encrypted  password '{{ rep_password }}' REPLICATION ;"
+
+- name: create user for REPLICATION
+  postgresql_user:
+    name: "{{ rep_user }}"
+    password: "{{ rep_password | mandatory }}"
+    role_attr_flags: REPLICATION
+    state: present

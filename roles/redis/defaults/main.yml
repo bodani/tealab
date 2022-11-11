@@ -3,5 +3,7 @@ sysctl_config:
 
 replica_priority:  100
 
+# 默认值
 cluster_enabled: no
+
 

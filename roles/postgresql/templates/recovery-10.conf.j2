@@ -1,0 +1,6 @@
+standby_mode = 'on'
+primary_conninfo = 'application_name={{application_name}} user={{rep_user}} password={{rep_password}} host={{replicaof}} port=5432 sslmode=prefer sslcompression=1 krbsrvname=postgres target_session_attrs=any'
+recovery_target_timeline = 'latest'
+{%if use_slot %} 
+primary_slot_name = '{{application_name}}'
+{%endif%}

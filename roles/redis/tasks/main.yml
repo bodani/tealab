@@ -19,7 +19,6 @@
   when: action == 'monitor'
   tags: monitor
 
-
 - include: install.yml
   when: action == 'install'
   tags: install

@@ -1,0 +1,11 @@
+- name: restart postgresql
+  service:  
+    name: postgresql-{{PG_VERSION}}
+    state: restarted
+    enabled: true
+
+- name: reload postgresql
+  service:  
+    name: postgresql-{{PG_VERSION}}
+    state: reloaded
+    enabled: true

@@ -1,0 +1,19 @@
+
+listen_addresses = '*'         # what IP address(es) to listen on;
+                                        # comma-separated list of addresses;
+                                        # defaults to 'localhost'; use '*' for all
+                                        # (change requires restart)
+port = 5432                            # (change requires restart)
+max_connections = 1000
+shared_preload_libraries = 'pg_repack,pg_stat_statements,auto_explain ' 
+
+############### auto_explain ###################
+auto_explain.log_analyze = off
+auto_explain.log_buffers = off
+auto_explain.log_format = text
+auto_explain.log_min_duration = 5s
+auto_explain.log_nested_statements = off
+auto_explain.log_timing = on
+auto_explain.log_triggers = off
+auto_explain.log_verbose = on
+auto_explain.sample_rate = 1

@@ -1,0 +1,4 @@
+- hosts: postgresql
+  roles:
+    # - { role: node , harden: true, action: postgresql}
+    - { role: postgresql }

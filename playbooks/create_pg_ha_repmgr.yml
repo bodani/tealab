@@ -1,0 +1,5 @@
+- hosts: postgresql
+  roles:
+    - { role: postgresql , tags: install }
+    - { role: repmgr, tags: repmgr }
+  

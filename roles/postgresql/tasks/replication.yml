@@ -1,0 +1,43 @@
+- name: create replication data on replication node   
+  become_user: postgres
+  become_method: sudo
+  shell: 
+    export PGPASSWORD={{rep_password}} && pg_basebackup -h {{ replicaof }} -U {{ rep_user }} -F p -P -D {{ PG_DATA }} -r {{ rep_rate}} --checkpoint=fast -l postgresback_tea
+
+- name: create pg physical replication slot 
+  block:
+    - name: set application_name
+      shell: echo {{ application_name }}
+      register: register_application_name
+
+    - name: show appliction_name
+      debug:
+        msg: '{{ register_application_name.stdout }}'
+
+    - name: create pg physical replication slot 
+      become_user: postgres
+      shell: | 
+        psql -c  "SELECT * FROM pg_create_physical_replication_slot('{{ register_application_name.stdout }}')";
+      when: use_slot |bool
+      delegate_to: "{{ replicaof }}"
+  tags: pg_slot
+
+## 没有使用 -R 参数自动生成。 自定义 recovery.conf 内容
+- name: create replication recovery.conf   
+  template:
+    src: recovery-{{PG_VERSION}}.conf.j2
+    dest: "{{ PG_DATA }}/recovery.conf"
+    owner: postgres
+    group: postgres
+    mode: 0644
+
+- name: start postgresql service
+  service:  
+    name: postgresql-{{PG_VERSION}}
+    state: started
+    enabled: true
+
+- name: wait for postgresql start
+  wait_for: 
+    port: 5432
+    state: started
