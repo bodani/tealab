@@ -17,17 +17,17 @@
 
 - name: install pgdg rpm
   become_user: root
-  yum:
+  package:
     name: /tmp/pgdg-redhat-repo-latest.noarch.rpm
     state: present
 
 - name: install postgres package
-  yum: name={{ pg_base_packages }} state=latest
+  package: name={{ pg_base_packages }} state=present
   with_items:
     - '{{ pg_base_packages }}'
 
 - name: install postgres base extension package
-  yum: name={{ pg_extends_packages }} state=latest
+  package: name={{ pg_extends_packages }} state=present
   with_items:
     - '{{ pg_extends_packages }}'
   

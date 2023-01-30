@@ -1,0 +1,88 @@
+######################################
+# 对原有数据库进行加装patroni 
+# mkdir /etc/patroni/
+# vi /etc/patroni/patroni.yml 
+# 创建数据库用户 
+#  ------ 超级用户
+# CREATE USER $PATRONI_SUPERUSER_USERNAME WITH SUPERUSER ENCRYPTED PASSWORD '$PATRONI_SUPERUSER_PASSWORD';
+#  ------ 复制用户
+# CREATE USER $PATRONI_REPLICATION_USERNAME WITH REPLICATION ENCRYPTED PASSWORD '$PATRONI_REPLICATION_PASSWORD';
+# 
+# mkdir /var/log/patroni/ 
+# chown postgres:postgres /var/log/patroni/
+##
+######################################
+scope: test01
+namespace: /service_patroni/
+name: node2
+
+restapi:
+  listen: 10.10.2.12:8008
+  connect_address: 10.10.2.12:8008
+
+etcd:
+  hosts: 
+    - 10.10.2.13:2379
+  # - 10.10.2.14:2379
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 604800 # 一周 , 当etcd 失效时不影响数据库提供服务
+    maximum_lag_on_failover: 1048576
+    master_start_timeout: 300
+    synchronous_mode: false
+    postgresql:
+      use_pg_rewind: true
+      use_slots: false
+      parameters:
+        wal_level: 'logical'
+        hot_standby: 'on'
+        max_connections: '1000'
+        max_worker_processes: '10'
+        max_wal_senders: '10'
+        max_locks_per_transaction: '64'
+        max_prepared_transactions: '0'
+        max_replication_slots: '10'
+        max_wal_senders: '10'
+        port: '5432'
+        track_commit_timestamp: 'off'
+        wal_keep_segments: '10240'
+        full_page_writes = 'on'
+        wal_log_hints: 'on'
+        hba_file: '/var/lib/pgsql/10/data/pg_hba.conf'
+        ident_file: '/var/lib/pgsql/10/data/pg_ident.conf'
+
+postgresql:
+  listen: 0.0.0.0:5432
+  connect_address: 10.10.2.12:5432
+
+  data_dir: /var/lib/pgsql/10/data
+  bin_dir: /usr/pgsql-10/bin/
+#  config_dir:
+  pgpass: /tmp/pgpass0
+  authentication:
+# create user  rep_user with encrypted password '123456' replication connection limit 10 ;
+    replication:
+      username: rep_user
+      password: "123456"
+    superuser:
+      username: postgres
+      password: zalando
+    rewind:  # Has no effect on postgres 10 and lower
+      username: rewind_user
+      password: rewind_password
+
+log:
+  dir: /var/log/patroni
+  file_num: 100
+  file_size: 10240
+  level: INFO
+
+tags:
+    nofailover: false # 是否参与选主
+    noloadbalance: false # 是否支持 API 检测检测
+    clonefrom: false
+    #replicatefrom: ip
+    nosync: false

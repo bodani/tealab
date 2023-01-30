@@ -1,0 +1,31 @@
+- name: install patroni[etcd]
+  package:
+    name:  "{{ item }}"
+    state: present
+  with_items: 
+    - patroni-etcd
+    - patroni
+
+- name: create config dir 
+  file:
+    path: /etc/patroni/
+    state: directory
+
+- name: patroni yml
+  template: 
+    src: patroni.yml.j2
+    dest: /etc/patroni/patroni.yml
+
+- name: start leader patroni seriver
+  service:
+    name: patroni
+    state: started
+    enabled: true
+  when: replicaof is undefined
+
+- name: start replicate patroni serice
+  service:
+    name: patroni
+    state: started
+    enabled: true
+  when: replicaof is defined

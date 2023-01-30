@@ -60,9 +60,18 @@
 ############################################################
 #        创建数据库 Replication User                         #
 ############################################################
-- name: create user for REPLICATION
-  postgresql_user:
-    name: "{{ rep_user }}"
-    password: "{{ rep_password | mandatory }}"
-    role_attr_flags: REPLICATION
-    state: present
+# - name: create user for REPLICATION
+#   postgresql_user:
+#     name: "{{ rep_user }}"
+#     password: "{{ rep_password | mandatory }}"
+#     role_attr_flags: REPLICATION
+#     state: present
+#  采用 sql 创建用户 减少安装依赖
+# pip install psycopg2
+# pip install  pyghmi
+# 
+- name: create user for replication
+  become_user: postgres
+  shell: | 
+    psql -c "create user {{ rep_user }} with encrypted password '{{ rep_password | mandatory }}' replication connection limit 10 ; "
+  tags: create_pg_user

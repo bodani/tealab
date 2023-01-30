@@ -1,11 +1,29 @@
 ## 安装数据库服务包
 - include: install.yml
   tags: install
+
+##########################
+#  原生主从流复制
+########################## 
 ## 主库初始化数据库
 - include: initdb.yml
-  when: replicaof is undefined
+  when: replicaof is undefined and rep_type == "orgin"
   tags: initdb
 ## 从库复制数据
 - include: replication.yml
-  when: replicaof is defined
+  when: replicaof is defined and rep_type == "orgin"
   tags: initdb
+
+##########################
+#  repmgr 管理 主从流复制 
+########################## 
+- include: repmgr.yml
+  when: rep_type == "repmgr"
+  tags: repmgr
+
+##########################
+#  patroni 管理 主从流复制 
+########################## 
+- include: patroni.yml
+  when: rep_type == "patroni"
+  tags: patroni

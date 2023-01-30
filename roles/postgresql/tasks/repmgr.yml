@@ -85,7 +85,7 @@
     mode: 0400
 
 ############################################################
-#         在主库创建repmgr database 。 owner 为 repuser       #
+#         在主库创建repmgr database 。 owner 为 repuser      #
 ############################################################
 - name: create database for repmgr
   postgresql_db:
