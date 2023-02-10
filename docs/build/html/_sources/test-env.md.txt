@@ -1,0 +1,11 @@
+# 测试环境
+
+## 介绍
+
+使用vagrant 创建测试环境
+
+## 开始
+
+[参考](https://doc.zhangeamon.top/kvm/vagrant/)
+
+**root 默认密码 vagrant**

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>监控服务 &mdash; tea使用手册 0.0.1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="服务器管理" href="node.html" />
+    <link rel="prev" title="安装tea" href="install-tea.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> tea使用手册
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">目录</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-tea.html">安装tea</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">监控服务</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">监控介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">监控管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">查看监控</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">服务器管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="etcd.html">etcd集群管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minio.html">minio集群管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redis.html">redis高可用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redis_cluster.html">Redis 集群</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memcached.html">memcached 管理</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">tea使用手册</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>监控服务</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/monitor.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>监控服务<a class="headerlink" href="#id1" title="此标题的永久链接"></a></h1>
+<section id="id2">
+<h2>监控介绍<a class="headerlink" href="#id2" title="此标题的永久链接"></a></h2>
+<p>作为整个IDC监控的服务端。</p>
+<p>由界面显示服务 grafana 、数据存储服务 prometheus 、报警服务 altermanager 组成。</p>
+<p>数据采集端包括节点信息采集 node_exporter 、网络信息采集 blackbox_exporter组成。</p>
+<p>服务启动后主要包括：对监控服务自身节点的节点信息、网络信息、域名检测。</p>
+<p>服务资源列表</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>软件</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prometheus</td>
+<td>9090</td>
+</tr>
+<tr>
+<td>grafana</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>altermanager</td>
+<td>9093</td>
+</tr>
+<tr>
+<td>node_exporter</td>
+<td>9100</td>
+</tr>
+<tr>
+<td>blackbox_exporter</td>
+<td>9115</td>
+</tr>
+</tbody>
+</table></section>
+<section id="id3">
+<h2>监控管理<a class="headerlink" href="#id3" title="此标题的永久链接"></a></h2>
+<p>配置文件管理, 在hosts.ini 中</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">monitor</span><span class="p">]</span>
+<span class="mf">10.10.2.10</span>
+
+<span class="p">[</span><span class="n">monitor</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+<span class="c1"># prometheus data path</span>
+<span class="n">prometheus_data_path</span> <span class="o">=</span> <span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">monitor</span><span class="o">/</span><span class="n">prometheus</span>
+<span class="n">grafana_admin_username</span> <span class="o">=</span> <span class="n">admin</span>
+<span class="n">grafana_admin_password</span> <span class="o">=</span> <span class="n">admin</span>
+
+<span class="c1"># 监控域名及证书到期时间</span>
+<span class="n">domain_https</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;https://www.baidu.com&#39;</span><span class="p">,</span><span class="s1">&#39;https://doc.zhangeamon.top&#39;</span><span class="p">,</span><span class="s1">&#39;https://test.zhangeamon.top&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>软件包准备，如遇到网络问题可<a class="reference external" href="install-tea.html#id7">参考</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">prepare</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span> <span class="n">monitor</span>
+</pre></div>
+</div>
+<p>创建监控服务</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">monitor</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>查看监控<a class="headerlink" href="#id4" title="此标题的永久链接"></a></h2>
+<p>http://10.10.2.10:3000</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install-tea.html" class="btn btn-neutral float-left" title="安装tea" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="node.html" class="btn btn-neutral float-right" title="服务器管理" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 @2022, zhangeamon.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

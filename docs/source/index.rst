@@ -14,8 +14,10 @@ tea is an easy automation tool
  
    preface.md
    install-tea.md 
-   mirror.md
-   demo.md
+   monitor.md
+   node.md
    etcd.md
    minio.md
    redis.md
+   redis_cluster.md
+   memcached.md

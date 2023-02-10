@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>安装tea &mdash; tea 0.0.1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="搭建yum源" href="mirror.html" />
+    <link rel="prev" title="安装tea" href="install-tea.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> tea
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">目录</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="%E5%89%8D%E8%A8%80.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-tea.html">安装tea</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">安装tea</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mirror.html">搭建yum源</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test-env.html">测试环境</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demo.html">快速开始</a></li>
+<li class="toctree-l1"><a class="reference internal" href="etcd.html">etcd集群管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minio.html">minio集群管理</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">tea</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>安装tea</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/quik-start.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tea">
+<h1>安装tea<a class="headerlink" href="#tea" title="此标题的永久链接"></a></h1>
+<p><strong>中控机</strong></p>
+<p>​        通过中控机来管理控制所有机器。推荐安装 CentOS 7.3 及以上版本 Linux 操作系统（默认包含 Python 2.7）</p>
+<p><strong>目标机</strong></p>
+<p>​        可被中控机访问管理，推荐安装 CentOS 7.3 及以上版本 Linux 操作系统，x86_64 架构 (amd64)</p>
+<p><strong>以root 用户登录，并执行以下命令</strong></p>
+<p>安装依赖软件</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">epel</span><span class="o">-</span><span class="n">release</span> <span class="n">git</span> <span class="n">curl</span> <span class="n">sshpass</span> <span class="o">&amp;&amp;</span> \
+<span class="n">yum</span> <span class="o">-</span><span class="n">y</span> <span class="n">install</span> <span class="n">python2</span><span class="o">-</span><span class="n">pip</span>
+</pre></div>
+</div>
+<p>创建 tea 用户</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">useradd</span> <span class="o">-</span><span class="n">m</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">tea</span> <span class="n">tea</span>
+</pre></div>
+</div>
+<p>设置 tea 用户密码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">passwd</span> <span class="n">tea</span>
+</pre></div>
+</div>
+<p>配置 <code class="docutils literal notranslate"><span class="pre">tea</span></code> 用户 sudo 免密码，将 <code class="docutils literal notranslate"><span class="pre">tea</span> <span class="pre">ALL=(ALL)</span> <span class="pre">NOPASSWD:</span> <span class="pre">ALL</span></code> 添加到文件末尾即可</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">visudo</span>
+
+<span class="n">tea</span> <span class="n">ALL</span><span class="o">=</span><span class="p">(</span><span class="n">ALL</span><span class="p">)</span> <span class="n">NOPASSWD</span><span class="p">:</span> <span class="n">ALL</span>
+</pre></div>
+</div>
+<p>生成 SSH key</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">su</span> <span class="o">-</span> <span class="n">tea</span>
+<span class="n">ssh</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">t</span> <span class="n">rsa</span>
+</pre></div>
+</div>
+<p>下载tealab</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sudo su - tea
+git clone -b $tag https://github.com/xxxx.git
+</pre></div>
+</div>
+<p>安装tea</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git -b $tag  clone https://github.com/eamonzhang/tealab
+cd tealab
+docker-compose up -d
+</pre></div>
+</div>
+<p>查看ansible版本</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span> <span class="o">--</span><span class="n">version</span>
+<span class="n">ansible</span> <span class="mf">2.5.0</span>
+</pre></div>
+</div>
+<p>与其他节点ssh 免密互通</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">tea</span><span class="o">/</span><span class="n">tealab</span> <span class="o">&amp;&amp;</span> \
+<span class="n">vi</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">servers</span><span class="p">]</span>
+<span class="mf">172.16.10.1</span>
+<span class="mf">172.16.10.2</span>
+<span class="mf">172.16.10.3</span>
+<span class="mf">172.16.10.4</span>
+<span class="mf">172.16.10.5</span>
+<span class="mf">172.16.10.6</span>
+</pre></div>
+</div>
+<p>执行以下命令，按提示输入部署目标机器的 <code class="docutils literal notranslate"><span class="pre">root</span></code> 用户密码</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">create_users</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span>
+</pre></div>
+</div>
+<p>该步骤将在部署目标机器上创建 <code class="docutils literal notranslate"><span class="pre">tea</span></code> 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。</p>
+<p>测试互通效果</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span> <span class="nb">all</span> <span class="o">-</span><span class="n">m</span> <span class="n">shell</span> <span class="o">-</span><span class="n">a</span> <span class="s1">&#39;whoami&#39;</span> <span class="o">-</span><span class="n">u</span> <span class="n">tea</span>
+
+<span class="n">ansible</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="nb">all</span> <span class="o">-</span><span class="n">m</span> <span class="n">shell</span> <span class="o">-</span><span class="n">a</span> <span class="s1">&#39;whoami&#39;</span> <span class="o">-</span><span class="n">u</span> <span class="n">tea</span> <span class="o">-</span><span class="n">b</span>
+</pre></div>
+</div>
+<p>后期安全建议，目标机禁用root登录</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">disable_rootlogin</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">tea</span> <span class="o">--</span><span class="n">private</span><span class="o">-</span><span class="n">key</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">tea</span><span class="o">/.</span><span class="n">key</span>
+</pre></div>
+</div>
+<p>至此，中控机及目标机环境准备完成。</p>
+<p><strong>调试指南</strong></p>
+<p>建立首次连接访问互信</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span> <span class="nb">all</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span> <span class="o">-</span><span class="n">m</span> <span class="n">shell</span> <span class="o">-</span><span class="n">a</span> <span class="s1">&#39;whoami&#39;</span> <span class="o">-</span><span class="n">u</span> <span class="n">vagrant</span> <span class="o">-</span><span class="n">b</span> <span class="o">--</span><span class="n">private</span><span class="o">-</span><span class="n">key</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">zhangeamon</span><span class="o">/.</span><span class="n">vagrant</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">insecure_private_key</span>
+</pre></div>
+</div>
+<p>查看执行脚本中的hosts</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">test</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="nb">list</span><span class="o">-</span><span class="n">hosts</span>
+</pre></div>
+</div>
+<p>只检查，不真正执行</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">test</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">C</span>
+</pre></div>
+</div>
+<p>真正执行</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="n">test</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install-tea.html" class="btn btn-neutral float-left" title="安装tea" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="mirror.html" class="btn btn-neutral float-right" title="搭建yum源" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, zhangeamon.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

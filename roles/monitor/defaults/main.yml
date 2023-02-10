@@ -2,5 +2,5 @@
 # 数据存储位置
 promethues_data_path: /data/prometheus/
 
-hello : 123
+hello: 123
 # store_data_path

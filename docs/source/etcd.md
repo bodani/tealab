@@ -1,26 +1,5 @@
 # etcd集群管理
 
-## 自定义的服务器证书
-
-依赖下载工具下载官方地址, 
-
-https://github.com/cloudflare/cfssl/releases/tag/v1.6.2
-
-将`cfssl`, `cfssljson`  下载到中控机 `/usr/local/bin/` 目录下 , 并赋予可执行权限 `chmod +x `  
-
-```
-curl -s -L -o  /usr/local/bin/cfssl https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssl_1.6.2_linux_amd64
-curl -s -L -o /usr/local/bin/cfssljson https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssljson_1.6.2_linux_amd64
-curl -s -L -o /usr/local/bin/cfssl-certinfo https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssl-certinfo_1.6.2_linux_amd64
-chmod +x /usr/local/bin/cfssl*
-```
-
-加密传输，认证，防止核心数据被窃取或篡改
-
-communication encryption、authentication
-
-更多关于证书使用参考 https://etcd.io/docs/v3.5/op-guide/security/
-
 ## 硬件推荐
 
 https://etcd.io/docs/v3.5/op-guide/hardware/
@@ -59,7 +38,7 @@ ETCD_CLIENT_PORT = 2379
 ## 创建集群
 
 ```
- ansible-playbook -i conf/etcd.conf playbooks/create_etcd.yml
+ ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/create_etcd.yml
 ```
 
 ## 添加节点 
@@ -78,15 +57,19 @@ ETCD_CLIENT_PORT = 2379
  10.10.2.14 # 加入新节点
  ```
 
-执行加入etcd节点命令
+[将新节点加入管理](/install-tea.html#id5)
+
+执行加入etcd节点命令。 
 
 ```
 #加入etcd新节点
-ansible-playbook -i conf/etcd.conf playbooks/add_etcd.yml  -l 10.10.2.14
-
-#重新调整etcd集群
-ansible-playbook -i conf/etcd.conf playbooks/recreate_etcd.yml
+ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/add_etcd.yml  -l 10.10.2.14
+ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/reload_etcd.yml
 ```
+
+备注:  reload_etcd 的主要作用是因为新加入节点后证书需要重新签署，并重新颁发到每个节点。
+
+需要重启每个节点上的etcd服务。
 
 ## 删除节点
 
@@ -95,6 +78,7 @@ ansible-playbook -i conf/etcd.conf playbooks/recreate_etcd.yml
 ```
 #加入etcd新节点, 注意一定要加 -l 参数.
 ansible-playbook -i conf/etcd.conf playbooks/delete_etcd.yml  -l 10.10.2.14
+ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/reload_etcd.yml
 ```
 ``` important:: 删除节点为危险动作 
 ```
@@ -126,13 +110,6 @@ $ vim conf/etcd.conf
 #10.10.2.14 #  将改行删除或注释掉
 ```
 
-重新调整etcd集群
-
-```
-#重新调整etcd集群
-ansible-playbook -i conf/etcd.conf playbooks/recreate_etcd.yml
-```
-
 ## 数据备份
 
 修改配置 
@@ -146,7 +123,7 @@ ETCD_TMP_BACKUP_DIR = /tmp/backup/etcd/
 LOCAL_ETCD_BACKUP_DIR = /tmp/etcd
 ```
 
-备份etcd集群数据
+备份etcd集群数据, 实际备份操作只在leader节点上执行。
 
 ```
 ansible-playbook -i conf/etcd.conf playbooks/backup_etcd.yml
@@ -173,7 +150,12 @@ ansible-playbook -i conf/etcd.conf playbooks/restore_etcd.yml
 将原有etcd集群中的数据平滑迁移到新集群中
 
 ```
-ETCDCTL_API=3 etcdctl make-mirror [options] <destination> [flags]
+ETCDCTL_API=3 etcdctl make-mirror [options] <destination> [flags] 
+```
+
+```
+#例如
+etcdctl make-mirror --no-dest-prefix=true  新集群:2379  --endpoints=127.0.0.1:2379 --insecure-skip-tls-verify=true
 ```
 
 ## migrate v2 to v3

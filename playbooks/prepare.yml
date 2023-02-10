@@ -7,7 +7,7 @@
       state: directory 
     tags: always
 
-  - name: tools
+  - name: create directory for tools
     file:
       path: "{{ local_bin }}/{{item}}}"
       state: directory
@@ -27,6 +27,7 @@
       - "https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssljson_1.6.2_linux_amd64"
       - "https://github.com/cloudflare/cfssl/releases/download/v1.6.2/cfssl-certinfo_1.6.2_linux_amd64"
     tags: etcd
+    
   - name: 
     shell: |
       cp {{ local_bin }}/tools/cfssl_1.6.2_linux_amd64 /usr/local/bin/cfssl
@@ -67,8 +68,8 @@
       - "https://github.com/minio/sidekick/releases/latest/download/sidekick-linux-amd64"
     tags: [minio]
 
-   - name:  download servers package [minio,mc,sidekick] part 2
-     command: mv "{{ local_bin }}/minio/sidekick-linux-amd64" "{{ local_bin }}/minio/sidekick"
+  - name:  download servers package [minio,mc,sidekick] part 2
+    command: mv "{{ local_bin }}/minio/sidekick-linux-amd64" "{{ local_bin }}/minio/sidekick"
     tags: [minio]
 
   - name: Unarchive prometheus packages

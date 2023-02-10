@@ -10,7 +10,7 @@
 
 ​        被中控机访问管理的节点
 
-## 使用实体机安装
+## 环境准备
 
 - 依赖安装ansbile
 
@@ -20,7 +20,7 @@
 
 ```
 yum -y install epel-release git curl sshpass && \
-yum -y install python2-pip
+yum -y install python3-pip
 ```
 
 创建 tea 用户
@@ -51,11 +51,10 @@ ls ~/.ssh
 ```
 
 ```important:: 一定要保管好ssh key
+
 ```
 
-
-
-安装tea
+## 安装tea
 
 ```
 sudo su - tea
@@ -87,6 +86,8 @@ vi hosts.ini
 [all:vars]
 remote_user = root # 目标节点超级用户账号，用于首次连接初始化
 username = tea
+############## local repo 存放位置##############
+local_bin = "~/local_bin/"
 ```
 
 创建目标机器远程连接用户，需要远程节点超级用户权限。
@@ -99,10 +100,6 @@ username = tea
 ansible-playbook -i hosts.ini playbooks/create_user.yml -u root -k
 ```
 
-```
-tea_ctl init create_user
-```
-
 该步骤将在部署目标机器上创建 `tea` 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。
 
 测试互通效果
@@ -113,75 +110,13 @@ ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea
 ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -b 
 ```
 
-```
-tea_ctl init check_user_ssh
-```
-
-
-
 后期安全建议，目标机禁用root登录
 
 ```
 ansible-playbook -i hosts.ini playbooks/disable_rootlogin.yml -u tea --private-key /home/tea/.key
 ```
 
-目标机使用私有源
-
-```
-$ vi hosts.init 默认使用如下私有源，如需使用自己的私有源请修改
-[all:vars]
-repo_address = mirror.zhangeamon.top
-```
-
-```
-ansible-playbook -i hosts.ini playbooks/use_repo.yml -u tea
-```
-
-```
-tea_ctl init use_repo
-```
-
-至此，中控机及目标机环境准备完成。**油箱加满，准备出发**！
-
-**未来可能会提供更简洁的安装方式**
-
-- docker 
-- go-ansible
-
-## 简单总结
-
-- hosts.ini 文件中配置所有需要管理的目标机
-
-- 建立中控机与目标机之间免密互通
-
-  ```
-  # 创建tea管理用户
-  tea_ctl init create_user 
-  # 验证新用户可连接性
-  tea_ctl init check_user_ssh
-  ```
-
-- 在目标机指定私有源地址
-
-  ```
-  tea_ctl init use_repo
-  ```
-
-## 配置文件建议
-
- hosts.ini 为全局配置，所有需要被管理的节点都配置在[nodes] 段中。
-
-除repo节点，prometheus节点等在整个IDC中只需要部署一份的基础服务、其他服务建议在创建一个单独的配置文件
-
-如 redis001.conf 。
-
-这样的好处，便于在同一个IDC中管理多个redis服务。
-
-使用的时候只需指定你的配置文件即可
-
-``` 
-tea_ctl redis  create -i conf/redis001.conf
-```
+至此，中控机及目标机环境准备完成。
 
 ## 添加目标节点
 
@@ -196,20 +131,20 @@ $ vim hosts.ini
 10.10.2.14  # 新节点地址
 ```
 
-新节点建立ssh免密互通
+新节点建立ssh免密互通 
 
+创建用户 
 ```
-创建用户
-$tea_ctl init create_user -l 10.10.2.14
+ansible-playbook -i hosts.ini playbooks/create_user.yml -u root -k -l 10.10.2.14
+```
+
 测试可连接性
-$tea_ctl init check_user_ssh -l 10.10.2.14
+```
+ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -l 10.10.2.14
+
+ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -b -l 10.10.2.14
 ```
 
-新节点指定私有源地址
-
-```
-$tea_ctl init use_repo -l 10.10.2.14
-```
 
 ## 调试指南
 
@@ -237,8 +172,53 @@ sudo ansible-playbook test.yml -vvv
 sudo ansible-playbook test.yml
 ```
 
-## 接下来
+## 软件包管理
 
-tealab 目前利用yum仓库或二进制文件两种方式安装应用服务
+tealab 目前利用二进制文件或安装包方式安装应用服务。
 
-你可以使用默认的yum仓库，也可以利用tealab 轻松搭建属于自己的yum仓库服务
+在安装安装应用前将准备好的软件包放在 hosts.ini 配置文件指定的 `local_bin = "~/local_bin/"`  文件目录下
+
+如果网络环境自信, tags 按需下载软件包
+
+```
+# 网络环境自信者一键搞定，下载解压
+ansible-playbook -i download.ini playbooks/prepare.yml
+# 按需下载
+ansible-playbook -i download.ini playbooks/prepare.yml --tags xxx
+```
+
+为了解决网络问题也通过如下方式下载软件包
+
+```
+#下载软件包
+git clone https://gitee.com/zhangeamon/tea-package-download.git
+#解压软件包
+cd tea-package-download 
+sh unzip.sh
+# 注意将tea-package-download 与 local_bin = "~/local_bin/" 保持一致
+```
+
+可通过软件包来管理软件的版本。到此准备工作全部完成。
+
+**油箱加满，准备出发**！
+
+**未来可能会提供更简洁的安装方式**
+
+- docker 
+- go-ansible
+
+``` important:: 配置文件建议
+```
+
+hosts.ini 为全局配置，所有需要被管理的节点都配置在[nodes] 段中。
+
+hosts.ini 中默认只包括 [node]节点信息和[monitor]监控节点。 
+
+其他集群管理使用单独配置文件
+
+如 redis001.conf 。这样的好处，便于在同一个IDC中管理多个redis服务。
+
+使用的时候只需指定你的配置文件即可
+```
+tea_ctl redis  create -i conf/redis001.conf
+```

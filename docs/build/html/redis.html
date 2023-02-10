@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>redis高可用 &mdash; tea使用手册 0.0.1 文档</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/translations.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="Redis 集群" href="redis_cluster.html" />
+    <link rel="prev" title="minio集群管理" href="minio.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> tea使用手册
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">目录</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="preface.html">前言</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-tea.html">安装tea</a></li>
+<li class="toctree-l1"><a class="reference internal" href="monitor.html">监控服务</a></li>
+<li class="toctree-l1"><a class="reference internal" href="node.html">服务器管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="etcd.html">etcd集群管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="minio.html">minio集群管理</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">redis高可用</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">实体机配置建议:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">流程说明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">配置服务</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">一步到位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">验证</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">登录redis 查看</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sentinel">登录sentinel 查看</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">加redis 节点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">只监控</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">数据迁移</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">不停机在线升级</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="redis_cluster.html">Redis 集群</a></li>
+<li class="toctree-l1"><a class="reference internal" href="memcached.html">memcached 管理</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">tea使用手册</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>redis高可用</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/redis.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="redis">
+<h1>redis高可用<a class="headerlink" href="#redis" title="此标题的永久链接"></a></h1>
+<section id="id1">
+<h2>实体机配置建议:<a class="headerlink" href="#id1" title="此标题的永久链接"></a></h2>
+<p>​	开启swap，并设置与内存大小相等</p>
+<p>​	为充分利用cpu，可采用单实体机多redis实例方式部署。多redis实例分别使用不同的存储路径及端口号</p>
+<p>服务资源列表</p>
+<p>为保证sentinel 高可用，至少需要三台独立服务器。</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>软件</th>
+<th>端口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>redis</td>
+<td>6379</td>
+</tr>
+<tr>
+<td>sentinel</td>
+<td>26379</td>
+</tr>
+<tr>
+<td>redis_exporter</td>
+<td>9121</td>
+</tr>
+</tbody>
+</table></section>
+<section id="id2">
+<h2>流程说明<a class="headerlink" href="#id2" title="此标题的永久链接"></a></h2>
+<p>实体机： 对实体机进行对应的参数优化及必要软件服务安装</p>
+<p>redis主从</p>
+<ol class="simple">
+<li><p>安装redis实例</p></li>
+<li><p>配置redis 服务</p></li>
+<li><p>建立redis主从关系</p></li>
+</ol>
+<p>redis sentinel</p>
+<ol class="simple">
+<li><p>安装redis sentinel</p></li>
+<li><p>将redis master 注册到每个sentinel 服务中。注册完成后sentinel利用自动发现规则自成集群</p></li>
+</ol>
+</section>
+<section id="id3">
+<h2>配置服务<a class="headerlink" href="#id3" title="此标题的永久链接"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## 主从模式注意事项 master has persistence enabled</span>
+<span class="p">[</span><span class="n">redis</span><span class="p">]</span>
+<span class="c1">## 定义第一组redis主从</span>
+<span class="mf">10.10.2.11</span> <span class="n">redis_role</span><span class="o">=</span><span class="n">master</span> <span class="n">master_groupname</span><span class="o">=</span><span class="n">mymaster001</span> <span class="n">quorum</span><span class="o">=</span><span class="mi">2</span>
+<span class="mf">10.10.2.12</span> <span class="n">replicaof</span><span class="o">=</span><span class="mf">10.10.2.11</span> <span class="n">replica_priority</span><span class="o">=</span><span class="mi">100</span>
+<span class="mf">10.10.2.13</span> <span class="n">replicaof</span><span class="o">=</span><span class="mf">10.10.2.11</span> <span class="n">replica_priority</span><span class="o">=</span><span class="mi">80</span>
+
+<span class="c1">## 定义第二组redis主从</span>
+
+<span class="c1"># 至少三台</span>
+<span class="p">[</span><span class="n">redis_sentinel</span><span class="p">]</span>
+<span class="mf">10.10.2.11</span>
+<span class="mf">10.10.2.12</span>
+<span class="mf">10.10.2.13</span>
+
+<span class="p">[</span><span class="nb">all</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
+<span class="c1">############################### redis 配置相关信息 #########################################</span>
+<span class="n">redis_port</span> <span class="o">=</span> <span class="mi">6379</span>
+<span class="nb">dir</span> <span class="o">=</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">redis</span>
+<span class="n">redis_password</span> <span class="o">=</span> <span class="n">f447b20a7fcbf53a5d5be013ea0b15af</span>
+<span class="n">bind</span> <span class="o">=</span> <span class="mf">0.0.0.0</span>
+
+<span class="c1"># 主从复制配置相关</span>
+<span class="c1"># min-replicas-to-write 3</span>
+<span class="c1"># min-replicas-max-lag 10</span>
+
+<span class="c1">#限制redis服务使用的最大内存，超过阈值redis继续提供服务但是会报错。</span>
+<span class="n">maxmemory</span> <span class="o">=</span> <span class="mi">10</span><span class="n">GB</span>
+<span class="n">eviction</span> <span class="o">=</span> <span class="n">allkeys</span><span class="o">-</span><span class="n">lfu</span> 
+
+<span class="c1">################################## redis_sentinel 配置相关信息 ###############################</span>
+<span class="c1"># 连接信息</span>
+<span class="n">sentinel_port</span> <span class="o">=</span> <span class="mi">26379</span>
+<span class="c1"># 连接sentinel 密码。包括sentinel 彼此连接密码</span>
+<span class="n">sentinel_password</span> <span class="o">=</span> <span class="n">f447b20a7fcbf53a5d5be013ea0b15af</span>
+<span class="c1"># the quorum is only used to detect the failure</span>
+<span class="n">quorum</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">down</span><span class="o">-</span><span class="n">after</span><span class="o">-</span><span class="n">milliseconds</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="mi">60</span>
+<span class="n">failover</span><span class="o">-</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="mi">180</span>
+<span class="n">parallel</span><span class="o">-</span><span class="n">syncs</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">sentinel_dir</span> <span class="o">=</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">redis</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>说明: [all:vars] 中的变量为全局默认变量。 也可以在redis实例节点上分别定义。</p>
+<p>具有主从关系的redis的实例为一组，使用统一的组名。在master节点上定义。</p>
+<p>一组redis实例的存储路径及端口号建议相同，否则在发生切换时发生错误。</p>
+</section>
+<section id="id4">
+<h2>一步到位<a class="headerlink" href="#id4" title="此标题的永久链接"></a></h2>
+<p>包括redis 主从, sentinel 及监控</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">redis</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_redis</span><span class="o">.</span><span class="n">yml</span> 
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>验证<a class="headerlink" href="#id5" title="此标题的永久链接"></a></h2>
+<section id="id6">
+<h3>登录redis 查看<a class="headerlink" href="#id6" title="此标题的永久链接"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># 登录主节点redis 服务
+$ redis-cli 
+127.0.0.1:6379&gt; AUTH f447b20a7fcbf53a5d5be013ea0b15af
+OK
+127.0.0.1:6379&gt; info replication
+# Replication
+role:master
+connected_slaves:2
+slave0:ip=10.10.2.13,port=6379,state=online,offset=1548116,lag=0
+slave1:ip=10.10.2.12,port=6379,state=online,offset=1548116,lag=0
+</pre></div>
+</div>
+</section>
+<section id="sentinel">
+<h3>登录sentinel 查看<a class="headerlink" href="#sentinel" title="此标题的永久链接"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># 登录sentinel 节点 , 注意查看 flags值
+# 查看redis信息
+$ redis-cli -p 26379
+127.0.0.1:26379&gt; AUTH f447b20a7fcbf53a5d5be013ea0b15af
+OK
+# 查看master节点
+127.0.0.1:26379&gt; sentinel masters
+sentinel masters
+1)  1) &quot;name&quot;
+    2) &quot;mymaster001&quot;
+    3) &quot;ip&quot;
+    4) &quot;10.10.2.11&quot;
+    5) &quot;port&quot;
+    6) &quot;6379&quot;
+    7) &quot;runid&quot;
+    8) &quot;820a82215c08d11bbc0cbabe8061a460cd50c6f6&quot;
+    9) &quot;flags&quot;
+   10) &quot;master&quot;
+# 查看master 对应的slave 节点
+127.0.0.1:26379&gt; sentinel slaves mymaster001
+
+# 查看 sentinel 集群信息
+127.0.0.1:26379&gt; sentinel sentinels mymaster001
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2>加redis 节点<a class="headerlink" href="#id7" title="此标题的永久链接"></a></h2>
+<p>可以添加一个从节点到原redis组。也可新定义一组redis。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">## 主从模式注意事项 master has persistence enabled</span>
+<span class="p">[</span><span class="n">redis</span><span class="p">]</span>
+<span class="c1">## 定义第一组redis主从</span>
+<span class="mf">10.10.2.11</span> <span class="n">redis_role</span><span class="o">=</span><span class="n">master</span> <span class="n">master_groupname</span><span class="o">=</span><span class="n">mymaster001</span> <span class="n">quorum</span><span class="o">=</span><span class="mi">2</span>
+<span class="mf">10.10.2.12</span> <span class="n">replicaof</span><span class="o">=</span><span class="mf">10.10.2.11</span> <span class="n">replica_priority</span><span class="o">=</span><span class="mi">100</span>
+<span class="mf">10.10.2.13</span> <span class="n">replicaof</span><span class="o">=</span><span class="mf">10.10.2.11</span> <span class="n">replica_priority</span><span class="o">=</span><span class="mi">80</span>
+<span class="mf">10.10.2.14</span> <span class="n">replicaof</span><span class="o">=</span><span class="mf">10.10.2.11</span> <span class="n">replica_priority</span><span class="o">=</span><span class="mi">100</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">redis</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_redis</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span> <span class="n">redis</span> <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span> 
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h2>只监控<a class="headerlink" href="#id8" title="此标题的永久链接"></a></h2>
+<p>如果已存在redis服务，现在的需求只是对原服务添加监控。</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 只配置monitor,对原有redis进行监控</span>
+<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">redis</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_redis</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span>  <span class="n">monitor</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h2>数据迁移<a class="headerlink" href="#id9" title="此标题的永久链接"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">redis</span><span class="o">-</span><span class="n">shake</span><span class="o">.</span><span class="n">linux</span> <span class="o">-</span><span class="nb">type</span><span class="o">=</span><span class="n">sync</span> <span class="o">-</span><span class="n">conf</span><span class="o">=</span><span class="n">redis</span><span class="o">-</span><span class="n">shake</span><span class="o">.</span><span class="n">conf</span>
+</pre></div>
+</div>
+<p>参考https://help.aliyun.com/document_detail/111066.html</p>
+</section>
+<section id="id10">
+<h2>不停机在线升级<a class="headerlink" href="#id10" title="此标题的永久链接"></a></h2>
+<p>不同版本可以共存</p>
+<p>https://redis.io/docs/manual/admin/#upgrading-or-restarting-a-redis-instance-without-downtime</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="minio.html" class="btn btn-neutral float-left" title="minio集群管理" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="redis_cluster.html" class="btn btn-neutral float-right" title="Redis 集群" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 @2022, zhangeamon.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
