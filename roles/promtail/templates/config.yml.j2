@@ -1,0 +1,34 @@
+server:
+  http_listen_port: 0
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  #- url: https://USER:PASSWORD@logs-prod-us-central1.grafana.net/api/prom/push
+  {% for loki_uri in  groups['loki'] %}
+    - url: http://{{loki_uri}}:3100/loki/api/v1/push
+  {% endfor %}
+scrape_configs:
+  - job_name: system
+#      pipeline_stages:
+#      - replace:
+#          expression: '(?:[0-9]{1,3}\.){3}([0-9]{1,3})'
+#          replace: '***'
+    static_configs:
+      - targets:
+        - localhost
+        labels:
+          job: sys_log
+          host: appfelstrudel
+          agent: promtail
+          __path__: /var/log/*.log
+  - job_name: sd
+    file_sd_configs:
+     #- targets:
+     #  - localhost
+     - refresh_interval: 10s
+       files:
+        - /etc/promtail/sd_files/*.yml
+     # Refresh interval to re-read the files.

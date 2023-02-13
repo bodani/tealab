@@ -1,0 +1,18 @@
+- name: prepare promtail package
+  copy: 
+    src: "{{local_bin}}/loki/promtail-2.7.1.x86_64.rpm"
+    dest: /tmp/promtail.rpm
+
+- name: install promtail
+  yum: name=/tmp/promtail.rpm state=latest
+
+- name: config promtail 
+  template: 
+    src: config.yml.j2
+    dest: /etc/promtail/config.yml
+
+- name: start promtail
+  service:
+    name: promtail
+    state: restarted
+    daemon_reload: yes

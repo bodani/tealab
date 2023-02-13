@@ -1,0 +1,41 @@
+- name: install loki
+  copy:
+    src: "{{local_bin}}/loki/{{ item }}"
+    dest: /tmp/
+    mode: '0755'
+  with_items: 
+    - loki.rpm
+
+- name: install loki service
+  package:
+    name: /tmp/loki.rpm
+    state: present
+
+- name: create loki data path
+  file:
+    path: "{{ loki_data_path }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: '0755'
+
+- name: config loki servce
+  template:
+    src: loki-local-config.yml.j2
+    dest: /etc/loki/config.yml
+  notify: event_restart_loki
+
+- name: "loki server started"
+  service:
+    name: loki
+    enabled: true
+    state: started
+
+- name: 等待 loki 服务启动成功
+  wait_for: host=127.0.0.1 port=3100 state=started 
+
+- name: "Check if loki is accessible."
+  uri:
+    url: http://127.0.0.1:3100/ready
+    method: GET
+    status_code: 200

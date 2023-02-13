@@ -1,0 +1,102 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 0
+  http_server_read_timeout: 3m
+  # Write timeout for HTTP server
+  http_server_write_timeout: 3m
+
+common:
+  path_prefix: {{ loki_data_path }}
+  storage:
+    filesystem:
+      chunks_directory: {{ loki_data_path }}/chunks
+      rules_directory: {{ loki_data_path }}/rules
+  replication_factor: 1
+  ring:
+    instance_addr: 127.0.0.1
+    kvstore:
+      store: inmemory
+    #TODO - store in redis
+
+query_range:
+  split_queries_by_interval: 0
+  parallelise_shardable_queries: false
+  results_cache:
+    cache:
+      embedded_cache:
+        enabled: true
+        max_size_mb: 100
+
+querier:
+  max_concurrent: 2048
+
+frontend:
+  max_outstanding_per_tenant: 4096
+  compress_responses: true
+
+schema_config:
+  configs:
+    - from: 2023-01-01
+      # store index
+      store: boltdb-shipper
+      # store chunks
+      object_store: filesystem
+      schema: v11
+      index:
+      # 所有周期表的表前缀。
+        prefix: index_
+      # Table 周期.
+        period: 24h
+      chunks:
+        prefix: chunks_
+        period: 720h
+
+storage_config:
+  aws:
+    # Note: use a fully qualified domain name, like localhost.
+    # full example: http://loki:supersecret@localhost.:9000
+    s3: http://postgres:6edef2d746f2274cab951a452d5fc13d@minio4.uucin.com:9000
+    s3forcepathstyle: true
+    bucketnames: loki
+  boltdb_shipper:
+    # 本地存储位置
+    active_index_directory: {{ loki_data_path }}/boltdb-shipper-active
+    # 本地存储位置
+    cache_location: {{ loki_data_path }}/boltdb-shipper-cache
+    # 本地存储保留时间
+    cache_ttl: 24h         # Can be increased for faster performance over longer query periods, uses more disk space
+    # 共享存储位置 bucketname/index/
+    shared_store: s3
+  filesystem:
+      directory: {{ loki_data_path }}/chunks
+
+#compactor:
+#  working_directory: /loki/compactor
+#  shared_store: aws
+#  compaction_interval: 1m
+#  retention_enabled: true
+
+table_manager:
+  # The retention period must be a multiple of the index / chunks
+  # table "period" (see period_config).
+  retention_deletes_enabled: true
+  # This is 15 weeks retention, based on the 168h (1week) period durations used in the rest of the examples.
+  retention_period: {{ retention_period }}
+
+#ruler:
+#  alertmanager_url: http://localhost:9093
+
+# By default, Loki will send anonymous, but uniquely-identifiable usage and configuration
+# analytics to Grafana Labs. These statistics are sent to https://stats.grafana.org/
+#
+# Statistics help us better understand how Loki is used, and they show us performance
+# levels for most users. This helps us prioritize features and documentation.
+# For more information on what's sent, look at
+# https://github.com/grafana/loki/blob/main/pkg/usagestats/stats.go
+# Refer to the buildReport method to see what goes into a report.
+#
+# If you would like to disable reporting, uncomment the following lines:
+#analytics:
+#  reporting_enabled: false

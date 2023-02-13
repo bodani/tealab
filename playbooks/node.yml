@@ -1,9 +1,13 @@
 ---
 - hosts: nodes
   # gather_facts: false
-  roles: 
+  roles: # node init config
   - {role: node, harden: true ,monitor: true }
 
 - hosts: monitor
-  roles:
+  roles: # add xxx_exporter , prometheus and dashboard .
   - {role: monitor, only_load_dashboard: true}
+
+- hosts: logs
+  roles: # promtail collect sys log
+  - {role: promtail}

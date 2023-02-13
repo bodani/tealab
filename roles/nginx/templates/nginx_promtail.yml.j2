@@ -1,0 +1,7 @@
+ - targets:
+   - localhost
+   labels:
+     job: nginx_access_log
+     host: apps
+     agent: promtail
+     __path__: /var/log/nginx/*access.log

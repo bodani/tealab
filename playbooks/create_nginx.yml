@@ -1,5 +1,7 @@
 ---
 - hosts: nginx
   roles: 
-  - { role: os_base, server: nginx }
-  - nginx
+    - { role: node, server: nginx }
+    - { role: nginx }
+
+# https://grafana.com/grafana/dashboards/12559-grafana-loki-dashboard-for-nginx-service-mesh/
