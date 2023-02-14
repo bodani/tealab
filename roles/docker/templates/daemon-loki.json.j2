@@ -1,0 +1,9 @@
+{
+    "log-driver": "loki",
+    "log-opts": {
+    {% for loki_uri in  groups['loki'] %}
+      "loki-url": "http://{{loki_uri}}:3100/loki/api/v1/push",
+    {% endfor %}
+      "loki-batch-size": "500"
+    }
+}

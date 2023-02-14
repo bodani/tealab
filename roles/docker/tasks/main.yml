@@ -1,0 +1,14 @@
+# https://docs.docker.com/engine/install/centos/
+- include_tasks: os_prepare.yml
+  when: ansible_distribution == "CentOS"
+  tags: os_prepare
+
+- include_tasks: install.yml
+  when: ansible_distribution == "CentOS"
+  tags: install
+
+- import_tasks: logs.yml
+  tags: logs
+
+- import_tasks: monitor.yml
+  tags: monitor

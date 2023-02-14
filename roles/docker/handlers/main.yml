@@ -1,0 +1,8 @@
+- name: restart docker
+  # debug:
+  #   msg: "restart docker"
+  systemd: 
+    name: docker 
+    state: restarted
+    deamon_reload: true
+    enabled: true

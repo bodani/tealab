@@ -1,0 +1,26 @@
+# https://docs.docker.com/engine/install/centos/
+# sudo yum install docker-compose-plugin
+
+- name: prepare install
+  copy: 
+    src: docker-ce.repo
+    dest: /etc/yum.repos.d/
+
+- name: install docker
+  yum:
+    name: ['docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-buildx-plugin', 'docker-compose-plugin']
+    state: present
+
+- name: start docker
+  service: 
+    name: docker
+    state: started
+    enabled: true
+
+- name: install docker-compose
+  yum:
+    name: [docker-compose-plugin]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+    state: present
+
+# uninstall docker 
+# sudo yum remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras

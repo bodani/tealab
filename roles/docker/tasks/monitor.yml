@@ -1,0 +1,25 @@
+- name: monitor docker
+  copy:
+    src: docker-compose-cadvisor.yml
+    dest: /etc/docker/docker-compose-cadvisor.yml
+
+- name: start cadvisor container
+  shell: |
+    docker compose -f /etc/docker/docker-compose-cadvisor.yml up -d 
+
+- name: add docker target to prometheus sysctl_config
+  template:
+    src: docker-prometheus.yml.j2
+    dest: /etc/prometheus/nodes/docker_{{ inventory_hostname }}.yml
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: prepare docker dashboard json file
+  copy: 
+    src: dashboard/docker.json
+    dest: /var/lib/grafana/dashboards/docker.json
+
+- name: add docker dashboard to grafana
+  shell: |
+   /var/lib/grafana/load_dashboard.sh
+   /var/lib/grafana/clean_dashboards_jsons.sh    

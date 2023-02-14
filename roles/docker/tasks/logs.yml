@@ -1,0 +1,23 @@
+- name: print docker log driver type
+  debug:
+    msg: "{{ log_driver }}"
+
+- name: manager docker logs
+  template: 
+    src: daemon-json-file.json.j2
+    dest: /etc/docker/daemon.json
+    # owner: docker
+    # group: docker
+    mode: "0644"
+  notify: restart docker
+  when: log_driver == "json-file"
+
+- name: manager docker log driver loki
+  template: 
+    src: daemon-loki.json.j2
+    dest: /etc/docker/daemon.json
+    # owner: docker
+    # group: docker
+    mode: "0644"
+  notify: restart docker
+  when: log_driver == "loki"
