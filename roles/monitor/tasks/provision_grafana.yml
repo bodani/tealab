@@ -79,8 +79,21 @@
     dest: /var/lib/grafana/
     owner: grafana
     group: grafana
+    mode: 0755
   with_items: 
     - grafana.py
+  
+- name: Sync dashboard.py
+  tags: [ always ]
+  template:
+    src: dashboards/{{ item.src }}
+    dest: /var/lib/grafana/{{ item.dest }}
+    owner: grafana
+    group: grafana
+    mode: 0755
+  with_items: 
+    - "{{ src:load_dashboard.sh.j2 , dest: load_dashboard.sh }}"
+    - "{{ src: clean_dashboards_jsons.sh.j2, dest: clean_dashboards_jsons.sh }}"
 
 #--------------------------------------------------------------#
 # Provisioning

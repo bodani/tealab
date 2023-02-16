@@ -22,4 +22,7 @@
 - name: add docker dashboard to grafana
   shell: |
    /var/lib/grafana/load_dashboard.sh
+  
+- name: clean docker dashboard json 
+  shell: |
    /var/lib/grafana/clean_dashboards_jsons.sh    
