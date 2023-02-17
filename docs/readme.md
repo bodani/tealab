@@ -33,7 +33,3 @@ python3 -m http.server
 
 
 
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/bodani/tea.svg)](https://starchart.cc/bodani/tea)
-

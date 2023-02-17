@@ -73,3 +73,8 @@ Simple&Easy is Power: A maintenance process should be easy, obvious, coherent, a
 **The world is beautiful because of simplicity**
 
 Have a cup of tea , wait for a moment ，everything is accomplished the way you expect it to be !  
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/bodani/tea.svg)](https://starchart.cc/bodani/tea)
