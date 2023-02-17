@@ -1,10 +1,16 @@
 {
-    "log-driver": "json-file",
-    "log-opts": {
-      "max-size": "10m",
-      "max-file": "10",
-      "labels": "production_status",
-      "env": "os,customer"
-    }
-  }
-  
+  "log-driver": "json-file",
+  "log-level": "warn",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "10",
+    "labels": "production_status",
+    "env": "os,customer"
+  },
+  "registry-mirrors": [
+    "https://docker.nju.edu.cn/",
+    "https://kuamavit.mirror.aliyuncs.com",
+    ],
+  "insecure-registries": ["http://tealab.io.local:5000"],
+  "data-root": "/var/lib/docker"
+}
