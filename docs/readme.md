@@ -30,3 +30,10 @@ python3 -m http.server
 将html 目录下文件拷贝到部署服务环境即可。 
 
 如nginx  
+
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/bodani/tea.svg)](https://starchart.cc/bodani/tea)
+
