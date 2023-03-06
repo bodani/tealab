@@ -121,8 +121,12 @@ ansible-playbook -i hosts.ini -i conf/minio.yml  playbooks/create_minio.yml --ta
 ## 压力测试
 
 ```
+# need register
 mc support perf object minio --duration 20s --size 128MiB
-https://github.com/minio/warp
+
+# S3 benchmarking tool 
+./warp mixed --host=minio{1...3}:9000 --access-key=root --secret-key=f447b20a7fcbf53a5d5be013ea0b15af --concurrent=30 --obj.size=500k --get-distrib=5 --stat-distrib=0 --put-distrib=1 --delete-distrib=0  --autoterm
+
 https://zhuanlan.zhihu.com/p/600295425
 ```
 

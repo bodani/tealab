@@ -38,7 +38,7 @@ ETCD_CLIENT_PORT = 2379
 ## 创建集群
 
 ```
- ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/create_etcd.yml
+ ansible-playbook -i hosts.ini playbooks/create_etcd.yml
 ```
 
 ## 添加节点 
@@ -48,7 +48,7 @@ ETCD_CLIENT_PORT = 2379
 修改etcd集群配置文件
 
  ```
- $ vim conf/etcd.conf
+ $ vim hosts.ini
  # etcd version 3.3
  [etcd]
  10.10.2.11

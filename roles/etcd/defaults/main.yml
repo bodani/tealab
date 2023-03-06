@@ -2,5 +2,8 @@
 TMP_NODES: "{% for h in groups['etcd'] %}etcd-{{ h }}=https://{{ h }}:{{ ETCD_PEER_PORT }},{% endfor %}"
 ETCD_NODES: "{{ TMP_NODES.rstrip(',') }}"
 
+TMP_URL: "{% for h in groups['etcd'] %}https://{{ h }}:{{ ETCD_CLIENT_PORT }},{% endfor %}"
+ETCD_URL: "{{ TMP_URL.rstrip(',') }}"
+
 # etcd 集群初始状态 new/existing
 CLUSTER_STATE: "new"

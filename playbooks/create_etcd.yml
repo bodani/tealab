@@ -1,5 +1,6 @@
 ---
   - hosts: etcd
+    # gather_facts: no
     roles:
 ##------------------------------------集群安装基本流程-------------------------
 ## 一， 对实体机节点进行优化
@@ -8,9 +9,12 @@
 ## 四， 启动服务。待所有机器安装后统一启动，减少部分机器先启动后等待其他集群。
 ## 五， 对etcd进行 cpu 和io 进行调优。为什么放在服务启动后呢？ 因为cpu的优化是根据etcd的进程号
 ##--------------------------------------------------------------------------
-    - { role: node, monitor: false, harden: true ,server: etcd }
-    - { role: etcd, playbook_action: "create_cert" }
-    - { role: etcd, playbook_action: "install_etcd" }
-    - { role: etcd, playbook_action: "start_etcd" }
-    - { role: etcd, playbook_action: "tuning_etcd" }
+    # - { role: node, monitor: false, harden: true ,server: etcd }
+    # - { role: etcd, playbook_action: "create_cert" }
+    # - { role: etcd, playbook_action: "install_etcd" }
+    # - { role: etcd, playbook_action: "start_etcd" }
+    # - { role: etcd, playbook_action: "tuning_etcd" }
+## 在tea init 的时候创建 ca证书，避免在每个服务创建的是创建
+    - { role: ca }
+    - { role: etcd }
 

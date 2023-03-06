@@ -130,7 +130,7 @@ ETCD_CLIENT_PORT = 2379
 </section>
 <section id="id4">
 <h2>创建集群<a class="headerlink" href="#id4" title="此标题的永久链接"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_etcd</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_etcd</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 </section>
@@ -138,7 +138,7 @@ ETCD_CLIENT_PORT = 2379
 <h2>添加节点<a class="headerlink" href="#id5" title="此标题的永久链接"></a></h2>
 <p>​	每次只能新加入一个节点</p>
 <p>修改etcd集群配置文件</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim conf/etcd.conf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim hosts.ini
 # etcd version 3.3
 [etcd]
 10.10.2.11

@@ -1,5 +1,5 @@
 - name: 启动 etcd 服务
-  systemd: name=etcd state=started enabled=yes daemon_reload=yes
+  systemd: name=etcd state=restarted enabled=yes daemon_reload=yes
 
 - name: 等待 etcd 服务启动成功
   wait_for: host=127.0.0.1 port={{ ETCD_CLIENT_PORT }} state=started 

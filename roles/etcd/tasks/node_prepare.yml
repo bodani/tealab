@@ -1,0 +1,23 @@
+- name: chrony 同步网络时间
+  block:
+    - name: chrony install
+      yum: name=chrony state=latest 
+
+    - name: start chrony server
+      systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
+
+- name: 临时关闭 selinux
+  shell: "setenforce 0"
+  failed_when: false
+
+- name: 永久关闭 selinux
+  lineinfile:
+    dest: /etc/selinux/config
+    regexp: "^SELINUX="
+    line: "SELINUX=disabled"
+
+### TODO 开启firewalld 定义端口放行策略
+- name: 关闭firewalld
+  service: name=firewalld state=stopped enabled=false
+
+### 判断 firewalld 当前运行状态。firewall-cmd --state 。 加入通行规则

@@ -1,0 +1,44 @@
+ # check ca private key file exists
+- name: check ca exists
+  stat: path="{{ CERT_LOCAL_DIR }}/ca-key.pem"
+  register: ca_key_exists
+  delegate_to: localhost
+  run_once: true
+
+- name: debug ca exists
+  connection: local
+  debug: 
+    msg: "CA EXISTS IN  {{ CERT_LOCAL_DIR }} : {{ ca_key_exists.stat.exists }}"
+  run_once: true
+
+- name: generate ca private key 
+  delegate_to: localhost
+  block:
+  
+    - name: generate ca private key
+      openssl_privatekey: path="{{ CERT_LOCAL_DIR }}/ca-key.pem" mode=0600
+
+    - name: self-signing ca cert
+      openssl_csr:
+        path: "{{ CERT_LOCAL_DIR }}/ca.csr"
+        privatekey_path: "{{ CERT_LOCAL_DIR }}/ca-key.pem"
+        common_name: tea-ca
+        organization_name: tea
+        organizational_unit_name: ca
+        basic_constraints:
+          - CA:TRUE
+          - pathlen:1
+        basic_constraints_critical: yes
+        key_usage: [ keyCertSign, cRLSign, digitalSignature ]
+       
+    - name: generate self-signed ca 
+      openssl_certificate:
+        path: "{{ CERT_LOCAL_DIR }}/ca.pem"
+        csr_path: "{{ CERT_LOCAL_DIR }}/ca.csr"
+        privatekey_path: "{{ CERT_LOCAL_DIR }}/ca-key.pem"
+        provider: selfsigned
+        selfsigned_not_after: +{{ CERT_EXPIRY }}
+        mode: 0644
+  run_once: true
+  when: not ca_key_exists.stat.exists|bool 
+...

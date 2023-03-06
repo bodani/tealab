@@ -1,30 +1,20 @@
 --- 
+- import_tasks: node_prepare.yml
+  tags: always
 
-# 安装服务
-- include_tasks: install_etcd.yml
-  when: playbook_action == "install_etcd"
+- import_tasks: gencert.yml
+  tags: [gencert, install] 
 
-# 启动集群
-- include_tasks: start_etcd.yml
-  when: playbook_action == "start_etcd"
+- import_tasks: install_etcd.yml
+  tags: install
 
+## 当场景为 添加新节点时 
+- import_tasks: add_etcd.yml
+  tags: [add]
+  when: playbook_action="add_etcd"
 
-# 创建证书
-- include_tasks: create_cert.yml
-  when: playbook_action == "create_cert"
+- import_tasks: start_etcd.yml
+  tags: [install, start]
 
-# 加入新节点
-- include_tasks: add_etcd.yml
-  when: playbook_action == "add_etcd"
-
-# 颁发证书。重新加载配置，重新启动
-- include_tasks: reload_etcd.yml
-  when: playbook_action == "reload_etcd"
-
-# 数据恢复
-- include_tasks: restore_etcd.yml
-  when: playbook_action == "restore_etcd"
-
-# 调优
-- include_tasks: tuning_etcd.yml
-  when: playbook_action == "tuning_etcd"
+- import_tasks: tuning_etcd.yml
+  tags: [install, tuning]

@@ -18,7 +18,7 @@
     - name: prepare ca config
       template: src=etcd-csr.json.j2 dest={{ CERT_LOCAL_DIR }}/etcd-csr.json
 
-    - name: 创建 etcd证书和私钥
+    - name: 创建 etcd证书和私钥 peer 证书
       shell: "cd {{ CERT_LOCAL_DIR }} && cfssl gencert \
             -ca=ca.pem \
             -ca-key=ca-key.pem \

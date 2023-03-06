@@ -1,10 +1,3 @@
-# - name: install etcd server 
-#   yum: 
-#     name: "etcd"
-#     state: "latest"
-#     enablerepo: "tea"
-#   tags: install
-  
 # TODO 二进制文件方式安装
 - name: create group etcd
   group: name="etcd"  system=no
@@ -16,7 +9,7 @@
     shell: /sbin/nologin
     group: etcd
 
-- name: install pre_build binaries
+- name: copy etcd binaries
   copy:
     dest: /usr/bin/
     src: "{{ local_bin }}/etcd/{{item}}"
@@ -27,7 +20,7 @@
     - etcd
     - etcdctl
 
-- name: create data directory 
+- name: make data directory 
   file:
     path: "{{ item }}"
     state: directory
@@ -39,11 +32,13 @@
     - "{{ ETCD_WAL_DIR }}"
 
 - name: 分发etcd证书
-  copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
-  with_items:
-  - ca.pem
-  - etcd.pem
-  - etcd-key.pem
+  block:
+  - name: Distribute ca.pem
+    copy: src={{ CERT_LOCAL_DIR }}/ca.pem dest={{ECTD_CERT_DIR}}/ca.pem
+  - name: Distribute etcd.pem
+    copy: src={{ CERT_LOCAL_DIR }}/etcd/etcd-{{ inventory_hostname }}-key.pem dest={{ECTD_CERT_DIR}}/etcd-key.pem
+  - name: Distribute ca.pem
+    copy: src={{ CERT_LOCAL_DIR }}/etcd/etcd-{{ inventory_hostname }}-crt.pem dest={{ECTD_CERT_DIR}}/etcd.pem
   tags: etcd_csr
 
 # etcd 服务配置文件

@@ -1,50 +1,3 @@
-# - name: set NODE_IPS of the etcd cluster
-#   set_fact: NODE_IPS="{% for host in groups['etcd'] %}{{ host }} {% endfor %}"
-
-# - name: test
-#   debug:
-#     msg: "{{ NODE_IPS }}"
-
-# - name: test_etd_url
-#   debug:
-#     msg: "{{ ETCD_URL }}"
-
-# - name: 旧证书分发到新etcd中
-#   copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
-#   with_items:
-#   - ca.pem
-#   - etcd.pem
-#   - etcd-key.pem
-#   tags: etcd_csr
-
-
-# # step1:  找出集群中的一个健康节点 , 此时集群中可能包含非健康节点的情况
-# - name: get one health etcd node   
-#   shell: 'export ETCDCTL_API=3 && etcdctl \
-#                 --endpoints={{ ETCD_URL }} \
-#                 --cafile={{ ECTD_CERT_DIR }}/ca.pem \
-#                 --cert={{ ECTD_CERT_DIR }}/etcd.pem \
-#                 --key={{ ECTD_CERT_DIR }}/etcd-key.pem \
-#                 endpoint health \
-#           '
-#   register: ETCD_CLUSTER_STATUS
-#   ignore_errors: true
-
-# - debug: var="ETCD_CLUSTER_STATUS.stdout"
-
-# - name: get a running ectd node
-#   shell: 'echo -e "{{ ETCD_CLUSTER_STATUS.stdout }}" \
-#             "{{ ETCD_CLUSTER_STATUS.stderr }}" \
-#             |grep "is healthy"| grep "member" | head -n 1 | cut -d / -f3 | cut -d : -f1; '
-#   register: RUNNING_NODE
-
-# - debug: var="RUNNING_NODE.stdout"
-#   # step2: 在刚找出的节点上执行，加入新节点命令
-# - name: add a new etcd member
-#   shell: "export ETCDCTL_API=3 && etcdctl member add etcd-{{ inventory_hostname }} \
-#           --peer-urls=https://{{ inventory_hostname }}:2380"
-#   delegate_to: "{{ RUNNING_NODE.stdout }}"
-
 - name: test_etd_url
   debug:
     msg: "{{ ETCD_URL }}"
@@ -52,14 +5,9 @@
 # 安装etcd
 - import_tasks: install_etcd.yml
 
-# - name: 中控机证书分发到新etcd中
-#   copy: src={{ CERT_LOCAL_DIR }}/{{ item }} dest={{ECTD_CERT_DIR}}/{{ item }}
-#   with_items:
-#    - ca.pem
-#    - etcd.pem
-#    - etcd-key.pem
-#   tags: etcd_csr
-
 - name: 新member 加入集群, 不可重复添加
-  shell: "export ETCDCTL_API=2 && etcdctl --endpoints={{ ETCD_URL }} --ca-file={{ ECTD_CERT_DIR }}/ca.pem member add etcd-{{ inventory_hostname }} \
-          https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"
+  # shell: "export ETCDCTL_API=2 && etcdctl --endpoints={{ ETCD_URL }} --ca-file={{ ECTD_CERT_DIR }}/ca.pem member add etcd-{{ inventory_hostname }} \
+  #         https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"
+  #  export ETCDCTL_API=3 && etcdctl member add etcd-002 --peer-urls="https://10.10.2.14:2379"
+
+  

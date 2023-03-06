@@ -1,7 +1,5 @@
 - hosts: "etcd"
   vars:
-    TMP_URL: "{% for h in groups['etcd'] %}https://{{ h }}:{{ ETCD_CLIENT_PORT }},{% endfor %}"
-    ETCD_URL: "{{ TMP_URL.rstrip(',') }}"
     CLUSTER_STATE: existing
   roles:
   ##-------------------集群加入新节点基本流程-------------------------------
