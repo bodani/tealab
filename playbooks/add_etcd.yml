@@ -1,14 +1,21 @@
 - hosts: "etcd"
+  gather_facts: no
+  pre_tasks:
+    - name: validate
+      block:
+      - name: validate etcd cluster name 
+        assert:
+          that:
+            - NAME is defined
+          fail_msg: variable 'NAME' should be defined
+      - name: test
+        connection: local
+        debug:
+          msg: "etcd cluster name : {{ NAME }}"
+      run_once: true 
   vars:
+    CERT_LOCAL_DIR: "/etc/tealabs/etcd/{{ NAME }}"
     CLUSTER_STATE: existing
   roles:
-  ##-------------------集群加入新节点基本流程-------------------------------
-  # 一， 新实体机节点初始优化
-  # 二， 在新节点上安装etcd服务
-  # 三， 将控制机上的证书拷贝到新节点上。目的，因为只有证书才能连接到集群。
-  # 四， 执行加入集群命令
-  # 五， 等待执行 reload_etcd。 启动集群
-  ##---------------------------------------------------------------------
-    - { role: node, monitor: false, harden: true ,server: etcd }
-    - { role: etcd , playbook_action: "add_etcd"}
-    # 每次加入新节点后需要对证书进行重新签署。并重新颁发到各个节点上。
+      - { role: ca }
+      - { role: etcd }

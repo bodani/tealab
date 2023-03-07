@@ -96,7 +96,7 @@ local_bin = "~/local_bin/"
 执行以下命令
 
 ```
-ansible-playbook -i hosts.ini playbooks/create_user.yml -u root -k
+ansible-playbook -i hosts.ini create_user.yml -u root -k
 ```
 
 该步骤将在部署目标机器上创建 `tea` 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。
@@ -134,7 +134,7 @@ $ vim hosts.ini
 
 创建用户 
 ```
-ansible-playbook -i hosts.ini playbooks/create_user.yml -u root -k -l 10.10.2.14
+ansible-playbook -i hosts.ini create_user.yml -u root -k -l 10.10.2.14
 ```
 
 测试可连接性
@@ -181,9 +181,9 @@ tealab 目前利用二进制文件或安装包方式安装应用服务。
 
 ```
 # 网络环境自信者一键搞定，下载解压
-ansible-playbook -i download.ini playbooks/prepare.yml
+ansible-playbook -i download.ini prepare.yml
 # 按需下载
-ansible-playbook -i download.ini playbooks/prepare.yml --tags xxx
+ansible-playbook -i download.ini prepare.yml --tags xxx
 ```
 
 为了解决网络问题也通过如下方式下载软件包

@@ -1,13 +1,9 @@
-- name: test_etd_url
+- name: join_etd_url
   debug:
     msg: "{{ ETCD_URL }}"
-
-# 安装etcd
-- import_tasks: install_etcd.yml
 
 - name: 新member 加入集群, 不可重复添加
   # shell: "export ETCDCTL_API=2 && etcdctl --endpoints={{ ETCD_URL }} --ca-file={{ ECTD_CERT_DIR }}/ca.pem member add etcd-{{ inventory_hostname }} \
   #         https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"
-  #  export ETCDCTL_API=3 && etcdctl member add etcd-002 --peer-urls="https://10.10.2.14:2379"
-
-  
+  shell: | 
+    source /etc/profile.d/etcdctl.sh && etcdctl member add etcd-{{ inventory_hostname }} --peer-urls="https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"

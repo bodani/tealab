@@ -52,13 +52,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#id4">创建集群</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id5">添加节点</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">删除节点</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id7">数据备份</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id8">数据恢复</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id9">数据迁移</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#migrate-v2-to-v3">migrate v2 to v3</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id10">集群升级</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">ETCD数据管理基础操作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#leader">切换 leader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">数据备份</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">数据恢复</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">数据迁移</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11">压力测试</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12">集群升级</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#todo">TODO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id11">验证</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="minio.html">minio集群管理</a></li>
@@ -103,28 +106,28 @@
 </section>
 <section id="id3">
 <h2>编辑配置<a class="headerlink" href="#id3" title="此标题的永久链接"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim conf/etcd.conf
-# etcd version 3.3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim hosts.ini
+# etcd version 3.3 -3.5
 [etcd]
-10.10.2.11
+10.10.2.11 
 10.10.2.12
 10.10.2.13
+# 10.10.2.14
 
 [etcd:vars]
-# 自签名证书过期时间, 10年
-CERT_EXPIRY=87600h
-# 证书在中控机存放位置
-CERT_LOCAL_DIR=/etc/ssl/etcd/
-
-# 在ectd服务器中 证书存放位置
-ECTD_CERT_DIR=/etc/ssl/certs
+# 集群名称
+NAME=cluster01
 # etcd 数据存放位置
 ETCD_DATA_DIR=/var/lib/etcd
 # etcd wal日志存放位置
 ETCD_WAL_DIR=/var/lib/etcd/wal
-# 端口号, 后期不可修改， 请注意
+# 端口号, 设定完成后期不可修改， 请注意
 ETCD_PEER_PORT = 2380
 ETCD_CLIENT_PORT = 2379
+
+########### 数恢复#####################
+# 备份数据位置,该目录具有执行用户读写权限
+LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 </pre></div>
 </div>
 </section>
@@ -139,7 +142,7 @@ ETCD_CLIENT_PORT = 2379
 <p>​	每次只能新加入一个节点</p>
 <p>修改etcd集群配置文件</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim hosts.ini
-# etcd version 3.3
+# etcd version 3.3-3.5
 [etcd]
 10.10.2.11
 10.10.2.12
@@ -151,20 +154,11 @@ ETCD_CLIENT_PORT = 2379
 <p>执行加入etcd节点命令。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#加入etcd新节点</span>
 <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">add_etcd</span><span class="o">.</span><span class="n">yml</span>  <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">reload_etcd</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
-<p>备注:  reload_etcd 的主要作用是因为新加入节点后证书需要重新签署，并重新颁发到每个节点。</p>
-<p>需要重启每个节点上的etcd服务。</p>
 </section>
 <section id="id6">
 <h2>删除节点<a class="headerlink" href="#id6" title="此标题的永久链接"></a></h2>
-<p>执行删除etcd节点命令</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#加入etcd新节点, 注意一定要加 -l 参数.</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">delete_etcd</span><span class="o">.</span><span class="n">yml</span>  <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">reload_etcd</span><span class="o">.</span><span class="n">yml</span>
-</pre></div>
-</div>
 <div class="admonition important">
 <p class="admonition-title">重要</p>
 <p>删除节点为危险动作</p>
@@ -172,19 +166,24 @@ ETCD_CLIENT_PORT = 2379
 <p><strong>手动删除</strong>  如果节点为宕机状态，请在手动在集群中执行删除动作</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span># 登录到集群的中任一节点中
 # 查看现在集群接待单，找出要删除需要剔除的节点ID
-$ etcdctl member list
-e875c7a56a96ba: name=etcd-10.10.2.12 peerURLs=https://10.10.2.12:2380 clientURLs=https://10.10.2.12:2379 isLeader=false
-57a1101668dd9764: name=etcd-10.10.2.13 peerURLs=https://10.10.2.13:2380 clientURLs=https://10.10.2.13:2379 isLeader=false
-5924eb0f7f665351: name=etcd-10.10.2.14 peerURLs=https://10.10.2.14:2380 clientURLs=https://10.10.2.14:2379 isLeader=true
-7cebb079e53fc9e7: name=etcd-10.10.2.11 peerURLs=https://10.10.2.11:2380 clientURLs=https://10.10.2.11:2379 isLeader=false
+$ etcdctl member list -w table
++------------------+---------+-----------------+-------------------------+-------------------------+------------+
+|        ID        | STATUS  |      NAME       |       PEER ADDRS        |      CLIENT ADDRS       | IS LEARNER |
++------------------+---------+-----------------+-------------------------+-------------------------+------------+
+|  de875c7a56a96ba | started | etcd-10.10.2.12 | https://10.10.2.12:2380 | https://10.10.2.12:2379 |      false |
+| 57a1101668dd9764 | started | etcd-10.10.2.13 | https://10.10.2.13:2380 | https://10.10.2.13:2379 |      false |
+| 5f0749d4389084c1 | started | etcd-10.10.2.14 | https://10.10.2.14:2380 | https://10.10.2.14:2379 |      false |
+| 7cebb079e53fc9e7 | started | etcd-10.10.2.11 | https://10.10.2.11:2380 | https://10.10.2.11:2379 |      false |
++------------------+---------+-----------------+-------------------------+-------------------------+------------+
 
-# 删除 10.10.2.14 节点。对应的member id 为: 5924eb0f7f665351
-$ etcdctl remove 5924eb0f7f665351
+
+# 删除 10.10.2.11 节点。对应的member id 为: 7cebb079e53fc9e7
+$ etcdctl member remove 7cebb079e53fc9e7
 </pre></div>
 </div>
 <p>修改配置etcd集群配置文件</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim conf/etcd.conf
-# etcd version 3.3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim host.ini
+# etcd version 3.3-3.5
 [etcd]
 10.10.2.11
 10.10.2.12
@@ -194,84 +193,63 @@ $ etcdctl remove 5924eb0f7f665351
 </div>
 </section>
 <section id="id7">
-<h2>数据备份<a class="headerlink" href="#id7" title="此标题的永久链接"></a></h2>
-<p>修改配置</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim conf/etcd.conf
-# 数据备份 , 在etcd集群leader 节点上
-ETCD_TMP_BACKUP_DIR = /tmp/backup/etcd/
-
-# 在中控机上数据存储位置,改目录具有执行用户写权限
-LOCAL_ETCD_BACKUP_DIR = /tmp/etcd
+<h2>ETCD数据管理基础操作<a class="headerlink" href="#id7" title="此标题的永久链接"></a></h2>
+<section id="leader">
+<h3>切换 leader<a class="headerlink" href="#leader" title="此标题的永久链接"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">etcdctl</span>  <span class="n">move</span><span class="o">-</span><span class="n">leader</span>  <span class="mi">57</span><span class="n">a1101668dd9764</span>
 </pre></div>
 </div>
-<p>备份etcd集群数据, 实际备份操作只在leader节点上执行。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">backup_etcd</span><span class="o">.</span><span class="n">yml</span>
-</pre></div>
-</div>
-<p>执行完毕后，ectd的备份文件将存储在中控机的<code class="docutils literal notranslate"><span class="pre">LOCAL_ETCD_BACKUP_DIR</span></code>目录中</p>
 </section>
 <section id="id8">
-<h2>数据恢复<a class="headerlink" href="#id8" title="此标题的永久链接"></a></h2>
-<p>数据准备: 将备份文件放在中控集群的<code class="docutils literal notranslate"><span class="pre">LOCAL_ETCD_BACKUP_DIR</span></code>目录中，并命名为<code class="docutils literal notranslate"><span class="pre">etcd_snapshot.db</span></code></p>
+<h3>数据备份<a class="headerlink" href="#id8" title="此标题的永久链接"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">etcdctl</span> <span class="n">snapshot</span> <span class="n">save</span> <span class="n">etcd_data_backup</span><span class="o">.</span><span class="n">db</span>
+
+<span class="n">etcdctl</span> <span class="n">snapshot</span> <span class="n">status</span>  <span class="n">etcd_data_backup</span><span class="o">.</span><span class="n">db</span> <span class="o">-</span><span class="n">w</span> <span class="n">table</span>
+</pre></div>
+</div>
+<p>可定期备份并存储在S3中</p>
+</section>
+<section id="id9">
+<h3>数据恢复<a class="headerlink" href="#id9" title="此标题的永久链接"></a></h3>
+<p>数据准备: 将备份文件放在中控节点，并配置 <code class="docutils literal notranslate"><span class="pre">LOCAL_ETCD_BACKUP_DATA</span></code></p>
 <p>数据文件可以是前面数据备份产生的备份文件，也可以是其他集群备的备份文件。</p>
-<p>恢复snapshot.db 数据到etd集群</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">restore_etcd</span><span class="o">.</span><span class="n">yml</span>
+<p>恢复备份数据etcd集群 中</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">restore_etcd</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
 <p>可通过数据备份、数据恢复进行集群数据迁移</p>
 </section>
-<section id="id9">
-<h2>数据迁移<a class="headerlink" href="#id9" title="此标题的永久链接"></a></h2>
+<section id="id10">
+<h3>数据迁移<a class="headerlink" href="#id10" title="此标题的永久链接"></a></h3>
 <p>将原有etcd集群中的数据平滑迁移到新集群中</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ETCDCTL_API</span><span class="o">=</span><span class="mi">3</span> <span class="n">etcdctl</span> <span class="n">make</span><span class="o">-</span><span class="n">mirror</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">destination</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">flags</span><span class="p">]</span> 
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#例如</span>
-<span class="n">etcdctl</span> <span class="n">make</span><span class="o">-</span><span class="n">mirror</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">dest</span><span class="o">-</span><span class="n">prefix</span><span class="o">=</span><span class="n">true</span>  <span class="n">新集群</span><span class="p">:</span><span class="mi">2379</span>  <span class="o">--</span><span class="n">endpoints</span><span class="o">=</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">2379</span> <span class="o">--</span><span class="n">insecure</span><span class="o">-</span><span class="n">skip</span><span class="o">-</span><span class="n">tls</span><span class="o">-</span><span class="n">verify</span><span class="o">=</span><span class="n">true</span>
+<span class="n">etcdctl</span> <span class="n">make</span><span class="o">-</span><span class="n">mirror</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">dest</span><span class="o">-</span><span class="n">prefix</span><span class="o">=</span><span class="n">true</span>  <span class="n">新集群</span><span class="p">:</span><span class="mi">2379</span>  <span class="o">--</span><span class="n">endpoints</span><span class="o">=</span><span class="n">https</span><span class="p">::</span><span class="o">//</span><span class="n">xxxx</span><span class="p">:</span><span class="mi">2379</span> <span class="o">--</span><span class="n">insecure</span><span class="o">-</span><span class="n">skip</span><span class="o">-</span><span class="n">tls</span><span class="o">-</span><span class="n">verify</span><span class="o">=</span><span class="n">true</span>
 </pre></div>
 </div>
 </section>
-<section id="migrate-v2-to-v3">
-<h2>migrate v2 to v3<a class="headerlink" href="#migrate-v2-to-v3" title="此标题的永久链接"></a></h2>
+<section id="id11">
+<h3>压力测试<a class="headerlink" href="#id11" title="此标题的永久链接"></a></h3>
 <p>将 etcd v2 数据 复制到 v3 中,包括 ttl数据</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">migrate_etcd_v2_2_v3</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">etcdctl</span> <span class="n">check</span> <span class="n">perf</span>
 </pre></div>
 </div>
-<p>执行过程中会需要重启etcd服务</p>
 </section>
-<section id="id10">
-<h2>集群升级<a class="headerlink" href="#id10" title="此标题的永久链接"></a></h2>
-<p>​	下载新版etcd binary文件到中控机, TODO</p>
+<section id="id12">
+<h3>集群升级<a class="headerlink" href="#id12" title="此标题的永久链接"></a></h3>
+<p>​下载新版etcd binary文件到中控机, TODO</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">upgrade_etcd</span><span class="o">.</span><span class="n">yml</span>
 </pre></div>
 </div>
+</section>
 </section>
 <section id="todo">
 <h2>TODO<a class="headerlink" href="#todo" title="此标题的永久链接"></a></h2>
 <ul class="simple">
 <li><p>用户管理https://etcd.io/docs/v3.5/op-guide/authentication/rbac/</p></li>
 </ul>
-</section>
-<section id="id11">
-<h2>验证<a class="headerlink" href="#id11" title="此标题的永久链接"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># 验证查看证书
-cfssl-certinfo -cert=ca.pem
-cfssl-certinfo -cert=etcd.pem
-
-# 查看集群健康状况
-$ etcdctl --ca-file=/etc/ssl/certs/ca.pem cluster-health
-member 5d36a1683ec7182 is healthy: got healthy result from https://10.10.2.13:2389
-member 8810f5b7934fb3c5 is healthy: got healthy result from https://10.10.2.11:2389
-member a3a6e6e20c472a5a is healthy: got healthy result from https://10.10.2.12:2389
-cluster is healthy
-
-# 查看节点信息
-$ etcdctl --ca-file=/etc/ssl/certs/ca.pem member list
-5d36a1683ec7182: name=etcd-10.10.2.13 peerURLs=https://10.10.2.13:2381 clientURLs=https://10.10.2.13:2389 isLeader=false
-8810f5b7934fb3c5: name=etcd-10.10.2.11 peerURLs=https://10.10.2.11:2381 clientURLs=https://10.10.2.11:2389 isLeader=true
-a3a6e6e20c472a5a: name=etcd-10.10.2.12 peerURLs=https://10.10.2.12:2381 clientURLs=https://10.10.2.12:2389 isLeader=false
-</pre></div>
-</div>
 </section>
 </section>
 

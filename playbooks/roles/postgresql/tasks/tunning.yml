@@ -1,0 +1,18 @@
+- name: turniing
+  shell: 
+    if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+       echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    fi
+    if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+       echo never > /sys/kernel/mm/transparent_hugepage/defrag
+    fi
+
+####-----------------优化篇
+#  1，硬件  CPU、内存、磁盘 IO 等
+#  2，操作系统配置
+#  3，文件系统配置mount nobarrier、noatime,nodiratime
+#  4，数据库系统 shared_buffers，以及优化好相关的而bgwriter，WAL，checkpoint，work_mem，VACUUM
+#  5，max_worker_processes、max_parallel_workers、max_parallel_maintenance_workers和max_parallel_workers_per_gather
+#  6，应用级别， 表设计，sql优化 
+# https://mp.weixin.qq.com/s/sEroyJTcDYbBpBsTpSM5jA
+####

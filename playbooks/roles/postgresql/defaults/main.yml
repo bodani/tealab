@@ -13,3 +13,36 @@ pg_shared_preload_libs:
 
 # pg_role: master
 use_slot: false
+
+sysctl:
+  vm.swappiness = 1
+  vm.dirty_background_ratio = 10
+  vm.dirty_ratio = 40
+  vm.dirty_expire_centisecs = 3000
+  vm.dirty_writeback_centisecs = 500
+  kernel.shmmax = 18446744073692700000
+  kernel.shmall = 18446744073692700000
+  kernel.shmmni = 4096
+  kernel.sem = 250 512000 100 2048
+  fs.file-max = 312139770
+  fs.aio-max-nr = 1048576
+  net.ipv4.ip_local_port_range = 2048 65499
+  # Permits sockets in the time-wait state to be reused for new connections:
+  net.ipv4.tcp_tw_reuse = 1
+  net.core.netdev_budget = 1024
+  net.core.netdev_max_backlog = 2048
+  net.core.rmem_default = 262144
+  net.core.rmem_max = 4194304
+  net.core.wmem_default = 262144
+  net.core.wmem_max = 1048576
+  kernel.panic_on_oops = 1
+  # We don't need NUMA balancing in this box:
+  kernel.numa_balancing = 0
+  # Used if not defined by the service:
+  net.core.somaxconn = 4096
+  # Other parameters to override throughput-performance template
+  net.ipv4.tcp_rmem = 4096 87380 16777216
+  net.ipv4.tcp_wmem = 4096 65536 16777216
+  net.ipv4.tcp_window_scaling = 1
+  net.netfilter.nf_conntrack_max = 250000
+  net.ipv4.tcp_max_syn_backlog=4096

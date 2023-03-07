@@ -160,7 +160,7 @@ sudo pip install -r ./requirements.txt
 <p>创建目标机器远程连接用户，需要远程节点超级用户权限。</p>
 <p>在配置文件hosts.ini 中设置 <code class="docutils literal notranslate"><span class="pre">username='yourname'</span></code>定义用户名</p>
 <p>执行以下命令</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span>
 </pre></div>
 </div>
 <p>该步骤将在部署目标机器上创建 <code class="docutils literal notranslate"><span class="pre">tea</span></code> 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。</p>
@@ -189,7 +189,7 @@ sudo pip install -r ./requirements.txt
 </div>
 <p>新节点建立ssh免密互通</p>
 <p>创建用户</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span> <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span> <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
 </pre></div>
 </div>
 <p>测试可连接性</p>
@@ -224,9 +224,9 @@ sudo pip install -r ./requirements.txt
 <p>在安装安装应用前将准备好的软件包放在 hosts.ini 配置文件指定的 <code class="docutils literal notranslate"><span class="pre">local_bin</span> <span class="pre">=</span> <span class="pre">&quot;~/local_bin/&quot;</span></code>  文件目录下</p>
 <p>如果网络环境自信, tags 按需下载软件包</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 网络环境自信者一键搞定，下载解压</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">prepare</span><span class="o">.</span><span class="n">yml</span>
+<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">prepare</span><span class="o">.</span><span class="n">yml</span>
 <span class="c1"># 按需下载</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">prepare</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span> <span class="n">xxx</span>
+<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">prepare</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span> <span class="n">xxx</span>
 </pre></div>
 </div>
 <p>为了解决网络问题也通过如下方式下载软件包</p>

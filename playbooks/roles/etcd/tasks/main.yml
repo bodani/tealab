@@ -2,16 +2,13 @@
 - import_tasks: node_prepare.yml
   tags: always
 
-- import_tasks: gencert.yml
-  tags: [gencert, install] 
-
 - import_tasks: install_etcd.yml
   tags: install
 
 ## 当场景为 添加新节点时 
 - import_tasks: add_etcd.yml
   tags: [add]
-  when: playbook_action="add_etcd"
+  when: CLUSTER_STATE=="existing"
 
 - import_tasks: start_etcd.yml
   tags: [install, start]

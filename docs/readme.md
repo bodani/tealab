@@ -21,9 +21,7 @@ make html
 
 ## 启动服务
 
-cd build/html
-
-python3 -m http.server 
+python3 -m http.server --directory build/html
 
 ## 文档部署
 

@@ -5,5 +5,7 @@ ETCD_NODES: "{{ TMP_NODES.rstrip(',') }}"
 TMP_URL: "{% for h in groups['etcd'] %}https://{{ h }}:{{ ETCD_CLIENT_PORT }},{% endfor %}"
 ETCD_URL: "{{ TMP_URL.rstrip(',') }}"
 
+# 在ectd服务器中 证书存放位置
+ECTD_CERT_DIR: /etc/ssl/certs
 # etcd 集群初始状态 new/existing
 CLUSTER_STATE: "new"

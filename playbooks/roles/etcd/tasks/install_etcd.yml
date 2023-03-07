@@ -36,9 +36,9 @@
   - name: Distribute ca.pem
     copy: src={{ CERT_LOCAL_DIR }}/ca.pem dest={{ECTD_CERT_DIR}}/ca.pem
   - name: Distribute etcd.pem
-    copy: src={{ CERT_LOCAL_DIR }}/etcd/etcd-{{ inventory_hostname }}-key.pem dest={{ECTD_CERT_DIR}}/etcd-key.pem
+    copy: src={{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-key.pem dest={{ECTD_CERT_DIR}}/etcd-key.pem
   - name: Distribute ca.pem
-    copy: src={{ CERT_LOCAL_DIR }}/etcd/etcd-{{ inventory_hostname }}-crt.pem dest={{ECTD_CERT_DIR}}/etcd.pem
+    copy: src={{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-crt.pem dest={{ECTD_CERT_DIR}}/etcd.pem
   tags: etcd_csr
 
 # etcd 服务配置文件
@@ -49,3 +49,19 @@
 - name: 创建etcd的 conf 文件
   template: src=etcd.conf.j2 dest=/etc/etcd/etcd.conf
   tags: upgrade_etcd, restart_etcd
+
+
+- name: write etcd environment profile
+  tags: etcd_env
+  copy:
+    dest: /etc/profile.d/etcdctl.sh
+    mode: 0644
+    content: |
+      #!/bin/bash
+      alias e="etcdctl"
+      alias em="etcdctl member"
+      export ETCDCTL_API=3
+      export ETCDCTL_ENDPOINTS="https://{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }}"
+      export ETCDCTL_CACERT={{ECTD_CERT_DIR}}/ca.pem
+      export ETCDCTL_CERT={{ECTD_CERT_DIR}}/etcd.pem
+      export ETCDCTL_KEY={{ECTD_CERT_DIR}}/etcd-key.pem
