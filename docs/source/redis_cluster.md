@@ -92,7 +92,3 @@ redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 \
 ```
 ansible-playbook -i hosts.ini -i conf/redis.conf playbooks/create_redis_cluster.yml 
 ```
-
-
-
-## 

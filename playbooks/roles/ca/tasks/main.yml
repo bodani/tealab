@@ -1,0 +1,3 @@
+- import_tasks: ca.yml
+- import_tasks: cert.yml
+- import_tasks: client_cert.yml

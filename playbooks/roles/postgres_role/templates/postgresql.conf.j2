@@ -1,0 +1,40 @@
+# 连接
+listen_addresses = '*' 
+max_connections = {{ max_connections}}
+
+# 内存
+shared_buffers = 512MB
+work_mem = 64MB
+
+
+maintenance_work_mem = 16GB # 16MB    # min 1MB
+synchronous_commit = on # synchronization level; on, off, or local
+synchronous_standby_names = ''
+
+# - Checkpoints -
+min_wal_size = 2GB
+max_wal_size = 4GB
+wal_log_hints = on
+
+checkpoint_timeout = 5min		# range 30s-1h, default 5min
+checkpoint_completion_target = 0.9	# checkpoint target duration, 0.0 - 1.0, default 0.5
+checkpoint_warning = 30s		# 0 disables, default 30s
+
+# - Archiving -
+archive_command = ''   # command to use to archive a logfile segment
+archive_timeout = 0    # force a logfile segment switch after this
+        # number of seconds; 0 disables
+
+# - Replication
+wal_keep_size = 1GB
+
+log_min_duration_statement = 1000
+log_destination = 'csvlog'
+log_filename = 'postgresql-%d.log' 
+log_lock_waits = on                   # log lock waits >= deadlock_timeout
+log_statement = 'ddl'                 # none, ddl, mod, all
+log_replication_commands = off
+#log_temp_files = -1                    # log temporary files equal or larger
+                                        # than the specified size in kilobytes;
+                                        # -1 disables, 0 logs all temp files
+log_timezone = 'Asia/Shanghai'

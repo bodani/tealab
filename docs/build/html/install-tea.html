@@ -152,7 +152,6 @@ sudo pip install -r ./requirements.txt
 <span class="mf">10.10.2.13</span>
 
 <span class="p">[</span><span class="nb">all</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
-<span class="n">remote_user</span> <span class="o">=</span> <span class="n">root</span> <span class="c1"># 目标节点超级用户账号，用于首次连接初始化</span>
 <span class="n">username</span> <span class="o">=</span> <span class="n">tea</span>
 <span class="c1">############## local repo 存放位置##############</span>
 <span class="n">local_bin</span> <span class="o">=</span> <span class="s2">&quot;~/local_bin/&quot;</span>
@@ -251,13 +250,7 @@ sudo pip install -r ./requirements.txt
 <p>配置文件建议</p>
 </div>
 <p>hosts.ini 为全局配置，所有需要被管理的节点都配置在[nodes] 段中。</p>
-<p>hosts.ini 中默认只包括 [node]节点信息和[monitor]监控节点。</p>
-<p>其他集群管理使用单独配置文件</p>
-<p>如 redis001.conf 。这样的好处，便于在同一个IDC中管理多个redis服务。</p>
-<p>使用的时候只需指定你的配置文件即可</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tea_ctl</span> <span class="n">redis</span>  <span class="n">create</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">redis001</span><span class="o">.</span><span class="n">conf</span>
-</pre></div>
-</div>
+<p>TODO 思考如何支持管理多集群</p>
 </section>
 </section>
 

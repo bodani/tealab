@@ -1,0 +1,31 @@
+## 用户生成客户端访问证书
+- name: gencert certificate
+  delegate_to: localhost
+  block:
+    - name: 生成客户端证书私钥
+      openssl_privatekey:
+        path: "{{ CERT_LOCAL_DIR }}/client-key.pem"
+        mode: 0644
+
+    - name: Certificate Signing Request - 客户端 证书请求文件
+      openssl_csr:
+        path: "{{ CERT_LOCAL_DIR }}/client.csr"
+        privatekey_path: "{{ CERT_LOCAL_DIR }}/client-key.pem"
+        common_name: "tealabs"
+        organization_name: tealabs
+        organizational_unit_name: tealabs
+        force: true
+        subject_alt_name:
+          - IP:127.0.0.1
+          - DNS:localhost
+
+    - name: 客户端证书签名
+      openssl_certificate:
+        path: "{{ CERT_LOCAL_DIR }}/client-crt.pem"
+        csr_path: "{{ CERT_LOCAL_DIR }}/client.csr"
+        ownca_path: "{{ CERT_LOCAL_DIR }}/ca.pem"
+        ownca_privatekey_path: "{{ CERT_LOCAL_DIR }}/ca-key.pem"
+        provider: ownca
+        selfsigned_not_after: "+{{ CERT_EXPIRY }}"
+        mode: 0644
+  run_once: true

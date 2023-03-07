@@ -84,7 +84,6 @@ vi hosts.ini
 10.10.2.13
 
 [all:vars]
-remote_user = root # 目标节点超级用户账号，用于首次连接初始化
 username = tea
 ############## local repo 存放位置##############
 local_bin = "~/local_bin/"
@@ -212,13 +211,4 @@ sh unzip.sh
 
 hosts.ini 为全局配置，所有需要被管理的节点都配置在[nodes] 段中。
 
-hosts.ini 中默认只包括 [node]节点信息和[monitor]监控节点。 
-
-其他集群管理使用单独配置文件
-
-如 redis001.conf 。这样的好处，便于在同一个IDC中管理多个redis服务。
-
-使用的时候只需指定你的配置文件即可
-```
-tea_ctl redis  create -i conf/redis001.conf
-```
+TODO 思考如何支持管理多集群

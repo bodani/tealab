@@ -1,0 +1,33 @@
+# 创建服务证书
+- name: gencert certificate
+  delegate_to: localhost
+  block:
+# 生成私钥
+    - name: 生成私钥
+      openssl_privatekey:
+        path: "{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-key.pem"
+        mode: 0644
+
+    - name: Certificate Signing Request - 证书请求文件
+      openssl_csr:
+        path: "{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}.csr"
+        privatekey_path: "{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-key.pem"
+        common_name: "tealabs-{{ inventory_hostname }}"
+        organization_name: tealabs
+        organizational_unit_name: tealabs
+        force: true
+        subject_alt_name:
+          - IP:127.0.0.1
+          - DNS:localhost
+          - "IP:{{ inventory_hostname }}"
+          - "DNS:tealabs-{{ inventory_hostname }}"
+
+    - name: 证书签名
+      openssl_certificate:
+        path: "{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-crt.pem"
+        csr_path: "{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}.csr"
+        ownca_path: "{{ CERT_LOCAL_DIR }}/ca.pem"
+        ownca_privatekey_path: "{{ CERT_LOCAL_DIR }}/ca-key.pem"
+        provider: ownca
+        selfsigned_not_after: "+{{ CERT_EXPIRY }}"
+        mode: 0644

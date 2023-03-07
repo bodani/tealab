@@ -1,0 +1,11 @@
+# become_user: postgres
+---
+
+- name: 创建database user
+  shell: |
+    if /usr/pgsql-14/bin/psql -U postgres -h localhost -Aqt -c " select datname from pg_database where datname = 'testcitus';" | grep -q testcitus ;then
+        echo "database 已经存在"
+      else 
+        /usr/pgsql-14/bin/psql -U postgres -h localhost -c "  create database testcitus";
+        /usr/pgsql-14/bin/psql -U postgres -h localhost -d testcitus -c "  create extension citus;";
+    fi

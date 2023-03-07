@@ -11,7 +11,7 @@ https://etcd.io/docs/v3.5/op-guide/hardware/
 ## 编辑配置
 
 ```
-$ vim conf/etcd.conf
+$ vim hosts.ini
 # etcd version 3.3
 [etcd]
 10.10.2.11
