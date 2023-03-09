@@ -86,14 +86,14 @@
 - name: Sync dashboard.py
   tags: [ always ]
   template:
-    src: dashboards/{{ item.src }}
+    src: "{{ item.src }}"
     dest: /var/lib/grafana/{{ item.dest }}
     owner: grafana
     group: grafana
     mode: 0755
   with_items: 
-    - "{{ src:load_dashboard.sh.j2 , dest: load_dashboard.sh }}"
-    - "{{ src: clean_dashboards_jsons.sh.j2, dest: clean_dashboards_jsons.sh }}"
+    - { "src": "load_dashboard.sh.j2", "dest": "load_dashboard.sh" }
+    - { "src": "clean_dashboards_jsons.sh.j2", "dest": "clean_dashboards_jsons.sh" }
 
 #--------------------------------------------------------------#
 # Provisioning
@@ -112,7 +112,7 @@
     # run provisinoing logic
     python /var/lib/grafana/grafana.py init /var/lib/grafana/dashboards
 
-- name: Sync grafana.py
+- name: Add domain dashboard
   tags: [ monitor ]
   copy:
     src: dashboards/{{item}}

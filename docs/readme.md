@@ -15,6 +15,10 @@ pip3 install ./requirements.txt
     └── index.rst
 ```
 
+## 在线编辑预览
+
+sphinx-autobuild source build/html
+
 ## 编译文档
 
 make html
@@ -25,7 +29,9 @@ python3 -m http.server --directory build/html
 
 ## 文档部署
 
-将html 目录下文件拷贝到部署服务环境即可。 
+1 自动发布到  https://readthedocs.org
+
+2 将html 目录下文件拷贝到部署服务环境即可。 
 
 如nginx  
 

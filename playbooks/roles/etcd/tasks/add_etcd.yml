@@ -6,4 +6,7 @@
   # shell: "export ETCDCTL_API=2 && etcdctl --endpoints={{ ETCD_URL }} --ca-file={{ ECTD_CERT_DIR }}/ca.pem member add etcd-{{ inventory_hostname }} \
   #         https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"
   shell: | 
-    source /etc/profile.d/etcdctl.sh && etcdctl member add etcd-{{ inventory_hostname }} --peer-urls="https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}"
+    source /etc/profile.d/etcdctl.sh 
+    export ETCDCTL_ENDPOINTS={{ ETCD_URL }} 
+    etcdctl member add etcd-{{ inventory_hostname }} --peer-urls=https://{{ inventory_hostname }}:{{ ETCD_PEER_PORT }}
+  run_once: true 

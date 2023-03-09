@@ -1,3 +1,6 @@
+groups:
+- name: ETCD状态-监控告警
+  rules:
   - alert: EtcdInsufficientMembers
     expr: count(etcd_server_id) % 2 == 0
     for: 0m

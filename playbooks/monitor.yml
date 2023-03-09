@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: monitor 
   roles: 
 ##--------主要流程及内容---------------------------------------

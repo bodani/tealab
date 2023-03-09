@@ -38,7 +38,7 @@ LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 ## 创建集群
 
 ```
- ansible-playbook -i hosts.ini playbooks/create_etcd.yml
+playbooks/create_etcd.yml -i hosts.ini 
 ```
 
 ## 添加节点 
@@ -63,7 +63,7 @@ LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 
 ```
 #加入etcd新节点
-ansible-playbook -i hosts.ini -i conf/etcd.conf playbooks/add_etcd.yml  -l 10.10.2.14
+playbooks/add_etcd.yml -i hosts.ini -l 10.10.2.14
 ```
 
 ## 删除节点
@@ -91,6 +91,7 @@ $ etcdctl member list -w table
 $ etcdctl member remove 7cebb079e53fc9e7
 
 ```
+**一个好的习惯。将节点从集群中剔除后将数据存放目录清除，由变量ETCD_DATA_DIR定义**
 
 修改配置etcd集群配置文件
 
@@ -122,6 +123,9 @@ etcdctl snapshot status  etcd_data_backup.db -w table
 
 #### 数据恢复
 
+``` important:: 恢复数据前清空原有集群数据 
+```
+
 数据准备: 将备份文件放在中控节点，并配置 `LOCAL_ETCD_BACKUP_DATA`  
 
 数据文件可以是前面数据备份产生的备份文件，也可以是其他集群备的备份文件。
@@ -129,7 +133,7 @@ etcdctl snapshot status  etcd_data_backup.db -w table
 恢复备份数据etcd集群 中
 
 ```
-ansible-playbook -i hosts.ini playbooks/restore_etcd.yml
+playbooks/restore_etcd.yml -i hosts.ini
 ```
 
 可通过数据备份、数据恢复进行集群数据迁移
@@ -152,7 +156,7 @@ etcdctl make-mirror --no-dest-prefix=true  新集群:2379  --endpoints=https:://
 将 etcd v2 数据 复制到 v3 中,包括 ttl数据
 
 ```
-etcdctl check perf
+etcdctl check perf --load l
 ```
 
 #### 集群升级
@@ -160,7 +164,7 @@ etcdctl check perf
 ​下载新版etcd binary文件到中控机, TODO
 
 ```
-ansible-playbook -i conf/etcd.conf playbooks/upgrade_etcd.yml
+playbooks/upgrade_etcd.yml -i conf/etcd.conf 
 ```
 
 ## TODO

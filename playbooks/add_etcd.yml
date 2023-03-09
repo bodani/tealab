@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: "etcd"
   gather_facts: no
   pre_tasks:
@@ -8,10 +9,23 @@
           that:
             - NAME is defined
           fail_msg: variable 'NAME' should be defined
+
       - name: test
         connection: local
         debug:
           msg: "etcd cluster name : {{ NAME }}"
+      
+      - name: Task name
+        stat:
+          path: "{{ ETCD_DATA_DIR }}/member"
+        register: register_member_dir
+
+      # 如果新节点数据中遗留 旧集群数据，将会造成新旧集群节点member混乱。整个集群将挂掉。  panic: failed to update; member unknown
+      - name: 新节点数据目录是否为空
+        fail: 
+          msg: "{{ ETCD_DATA_DIR }}/member 已存在 ！"
+        when: register_member_dir.stat.exists and register_member_dir.stat.isdir
+        
       run_once: true 
   vars:
     CERT_LOCAL_DIR: "/etc/tealabs/etcd/{{ NAME }}"

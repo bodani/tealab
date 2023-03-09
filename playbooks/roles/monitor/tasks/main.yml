@@ -11,34 +11,38 @@
 ## load grafana dashboard
 #####################################################
 - block:
-  - name: Provisioning grafana with grafana.py
-    tags: [ monitor]
-    ignore_errors: true
-    shell: |
-      #!/bin/bash
+  # - name: Provisioning grafana with grafana.py
+  #   tags: [ monitor]
+  #   ignore_errors: true
+  #   shell: |
+  #     #!/bin/bash
 
-      # grafana access info
-      export GRAFANA_ENDPOINT="http://127.0.0.1:3000"
-      export GRAFANA_USERNAME={{ grafana_admin_username }}
-      export GRAFANA_PASSWORD={{ grafana_admin_password }}
+  #     # grafana access info
+  #     export GRAFANA_ENDPOINT="http://127.0.0.1:3000"
+  #     export GRAFANA_USERNAME={{ grafana_admin_username }}
+  #     export GRAFANA_PASSWORD={{ grafana_admin_password }}
 
-      # run provisinoing logic
-      python /var/lib/grafana/grafana.py load /var/lib/grafana/dashboards
+  #     # run provisinoing logic
+  #     python /var/lib/grafana/grafana.py load /var/lib/grafana/dashboards
 
-  #####################################################
-  ## 做一些清理工作. 为什么删除minio/.json ? 避免在load其他任务的时候重复load minio/.json
-  #####################################################
-  - name:  Delete tmp grafana dashboard json
-    tags: [ monitor ]
-    file:
-      path: /var/lib/grafana/dashboards
-      state: absent
+  # #####################################################
+  # ## 做一些清理工作. 为什么删除minio/.json ? 避免在load其他任务的时候重复load minio/.json
+  # #####################################################
+  # - name:  Delete tmp grafana dashboard json
+  #   tags: [ monitor ]
+  #   file:
+  #     path: /var/lib/grafana/dashboards
+  #     state: absent
 
-  - name: create grafana dashboard dir 
-    tags: [ monitor ]
-    file: 
-      path: "/var/lib/grafana/dashboards"
-      state: directory
-      owner: grafana
-      group: grafana
+  # - name: create grafana dashboard dir 
+  #   tags: [ monitor ]
+  #   file: 
+  #     path: "/var/lib/grafana/dashboards"
+  #     state: directory
+  #     owner: grafana
+  #     group: grafana
+  - name: load grafana dashboard
+    shell: | 
+      sh /var/lib/grafana/load_dashboard.sh
+      sh /var/lib/grafana/clean_dashboards_jsons.sh 
   when: only_load_dashboard is defined and only_load_dashboard == true

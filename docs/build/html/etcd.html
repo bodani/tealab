@@ -133,7 +133,7 @@ LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 </section>
 <section id="id4">
 <h2>创建集群<a class="headerlink" href="#id4" title="此标题的永久链接"></a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">create_etcd</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">playbooks</span><span class="o">/</span><span class="n">create_etcd</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> 
 </pre></div>
 </div>
 </section>
@@ -153,7 +153,7 @@ LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 <p><a class="reference external" href="/install-tea.html#id5">将新节点加入管理</a></p>
 <p>执行加入etcd节点命令。</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#加入etcd新节点</span>
-<span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">add_etcd</span><span class="o">.</span><span class="n">yml</span>  <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
+<span class="n">playbooks</span><span class="o">/</span><span class="n">add_etcd</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="o">-</span><span class="n">l</span> <span class="mf">10.10.2.14</span>
 </pre></div>
 </div>
 </section>
@@ -181,6 +181,7 @@ $ etcdctl member list -w table
 $ etcdctl member remove 7cebb079e53fc9e7
 </pre></div>
 </div>
+<p><strong>一个好的习惯。将节点从集群中剔除后将数据存放目录清除，由变量ETCD_DATA_DIR定义</strong></p>
 <p>修改配置etcd集群配置文件</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ vim host.ini
 # etcd version 3.3-3.5
@@ -211,10 +212,14 @@ $ etcdctl member remove 7cebb079e53fc9e7
 </section>
 <section id="id9">
 <h3>数据恢复<a class="headerlink" href="#id9" title="此标题的永久链接"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">重要</p>
+<p>恢复数据前清空原有集群数据</p>
+</div>
 <p>数据准备: 将备份文件放在中控节点，并配置 <code class="docutils literal notranslate"><span class="pre">LOCAL_ETCD_BACKUP_DATA</span></code></p>
 <p>数据文件可以是前面数据备份产生的备份文件，也可以是其他集群备的备份文件。</p>
 <p>恢复备份数据etcd集群 中</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">restore_etcd</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">playbooks</span><span class="o">/</span><span class="n">restore_etcd</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span>
 </pre></div>
 </div>
 <p>可通过数据备份、数据恢复进行集群数据迁移</p>
@@ -233,14 +238,14 @@ $ etcdctl member remove 7cebb079e53fc9e7
 <section id="id11">
 <h3>压力测试<a class="headerlink" href="#id11" title="此标题的永久链接"></a></h3>
 <p>将 etcd v2 数据 复制到 v3 中,包括 ttl数据</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">etcdctl</span> <span class="n">check</span> <span class="n">perf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">etcdctl</span> <span class="n">check</span> <span class="n">perf</span> <span class="o">--</span><span class="n">load</span> <span class="n">l</span>
 </pre></div>
 </div>
 </section>
 <section id="id12">
 <h3>集群升级<a class="headerlink" href="#id12" title="此标题的永久链接"></a></h3>
 <p>​下载新版etcd binary文件到中控机, TODO</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">upgrade_etcd</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">playbooks</span><span class="o">/</span><span class="n">upgrade_etcd</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">conf</span><span class="o">/</span><span class="n">etcd</span><span class="o">.</span><span class="n">conf</span> 
 </pre></div>
 </div>
 </section>

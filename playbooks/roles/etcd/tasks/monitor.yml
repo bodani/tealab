@@ -1,0 +1,129 @@
+# 配置 prometheus 
+- name: create etcd cert dir
+  file: 
+    path: /etc/prometheus/certs/etcd
+    owner: prometheus
+    group: prometheus
+    state: directory
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true
+
+- name: prepare etcd cert 
+  copy:
+    src: "{{ CERT_LOCAL_DIR }}/client-crt.pem"
+    dest: /etc/prometheus/certs/etcd/etcd.pem
+    owner: prometheus
+    group: prometheus
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: prepare etcd cert 
+  copy:
+    src: "{{ CERT_LOCAL_DIR }}/client-key.pem"
+    dest: /etc/prometheus/certs/etcd/etcd-key.pem
+    owner: prometheus
+    group: prometheus
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: prepare etcd cert 
+  copy:
+    src: "{{ CERT_LOCAL_DIR }}/ca.pem"
+    dest: /etc/prometheus/certs/etcd/ca.pem
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: create prometheus filediscover etcd yml
+  blockinfile:
+    path: /etc/prometheus/prometheus.yml
+    state: present
+    marker: "# {mark} ETCD JOB  "
+    content: |
+      #  promethes auto discover etcd jobs  
+        - job_name: 'etcds'
+          scheme: https
+          tls_config:
+            ca_file: /etc/prometheus/certs/etcd/ca.pem
+            cert_file: /etc/prometheus/certs/etcd/etcd.pem
+            key_file: /etc/prometheus/certs/etcd/etcd-key.pem
+            #insecure_skip_verify: true
+          scrape_interval: 5s
+          file_sd_configs:
+            - refresh_interval: 10s
+              files:
+              - /etc/prometheus/etcds/*.yml 
+    # validate: promtool check config %s
+  notify: restart_prometheus  
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: add etcd discover server
+  file:  
+    path: /etc/prometheus/etcds
+    state: directory
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: add etcd server yml
+  copy:
+    dest: /etc/prometheus/etcds/{{ inventory_hostname }}.yml
+    content: | 
+      - targets: ['{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }}']
+        labels:
+          name: "{{ NAME }}"
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: add etcd rules
+  copy:
+    dest: /etc/prometheus/rules/etcd_alert.yml
+    src: rules/etcd_alert.yml
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+#  ### 配置 grafana 图形界面
+- name: create etcd dashboard floder
+  file:
+    path: /var/lib/grafana/dashboards/etcd
+    state: directory
+    owner: grafana
+    group: grafana
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: prepare etcd dashboard json
+  copy:
+    dest: /var/lib/grafana/dashboards/
+    src: dashboards/etcd
+    owner: grafana
+    group: grafana
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: load grafana dashboard
+  shell: | 
+    sh /var/lib/grafana/load_dashboard.sh
+    sh /var/lib/grafana/clean_dashboards_jsons.sh
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  

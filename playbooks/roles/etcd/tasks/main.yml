@@ -15,3 +15,7 @@
 
 - import_tasks: tuning_etcd.yml
   tags: [install, tuning]
+
+- import_tasks: monitor.yml
+  # delegate_to: 
+  tags: monitor
