@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: postgresql
   roles:
     - { role: node , harden: true, action: postgresql, tags: node}

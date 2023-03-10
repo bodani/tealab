@@ -38,3 +38,8 @@ tea 的安装方式思考
 终态， 一个二进制文件工具，加配置文件
 
 python click 一个命令行工具
+
+## 功能类
+firewalld
+logrotate
+assertions

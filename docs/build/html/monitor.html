@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>监控服务 &mdash; tea使用手册 0.0.1 文档</title>
+  <title>监控服务 &mdash; tealabs使用手册 0.0.1 文档</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -21,7 +21,7 @@
     <link rel="index" title="索引" href="genindex.html" />
     <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="服务器管理" href="node.html" />
-    <link rel="prev" title="安装tea" href="install-tea.html" /> 
+    <link rel="prev" title="安装tealabs" href="install-tea.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -29,7 +29,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> tea使用手册
+            <a href="index.html" class="icon icon-home"> tealabs使用手册
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -42,7 +42,7 @@
               <p class="caption" role="heading"><span class="caption-text">目录</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="preface.html">前言</a></li>
-<li class="toctree-l1"><a class="reference internal" href="install-tea.html">安装tea</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install-tea.html">安装tealabs</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">监控服务</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id2">监控介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id3">监控管理</a></li>
@@ -63,7 +63,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">tea使用手册</a>
+          <a href="index.html">tealabs使用手册</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -124,7 +124,7 @@
 <h2>监控管理<a class="headerlink" href="#id3" title="此标题的永久链接"></a></h2>
 <p>配置文件管理, 在hosts.ini 中</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">monitor</span><span class="p">]</span>
-<span class="mf">10.10.2.10</span>
+<span class="mf">10.10.2.14</span>
 
 <span class="p">[</span><span class="n">monitor</span><span class="p">:</span><span class="nb">vars</span><span class="p">]</span>
 <span class="c1"># prometheus data path</span>
@@ -133,21 +133,17 @@
 <span class="n">grafana_admin_password</span> <span class="o">=</span> <span class="n">admin</span>
 
 <span class="c1"># 监控域名及证书到期时间</span>
-<span class="n">domain_https</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;https://www.baidu.com&#39;</span><span class="p">,</span><span class="s1">&#39;https://doc.zhangeamon.top&#39;</span><span class="p">,</span><span class="s1">&#39;https://test.zhangeamon.top&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>软件包准备，如遇到网络问题可<a class="reference external" href="install-tea.html#id7">参考</a></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">download</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">prepare</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">tags</span> <span class="n">monitor</span>
+<span class="n">domain_https</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;https://www.baidu.com&#39;</span><span class="p">,</span><span class="s1">&#39;https://doc.zhangeamon.top&#39;</span><span class="p">,</span><span class="s1">&#39;https://tea.zhangeamon.top&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>创建监控服务</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> <span class="n">playbooks</span><span class="o">/</span><span class="n">monitor</span><span class="o">.</span><span class="n">yml</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">playbooks</span><span class="o">/</span><span class="n">monitor</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span> 
 </pre></div>
 </div>
 </section>
 <section id="id4">
 <h2>查看监控<a class="headerlink" href="#id4" title="此标题的永久链接"></a></h2>
-<p>http://10.10.2.10:3000</p>
+<p>http://10.10.2.14:3000</p>
 </section>
 </section>
 
@@ -155,14 +151,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="install-tea.html" class="btn btn-neutral float-left" title="安装tea" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="install-tea.html" class="btn btn-neutral float-left" title="安装tealabs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
         <a href="node.html" class="btn btn-neutral float-right" title="服务器管理" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; 版权所有 @2022, zhangeamon.</p>
+    <p>&#169; 版权所有 @2022-2023, zhangeamon.</p>
   </div>
 
   利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 

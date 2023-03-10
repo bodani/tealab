@@ -1,4 +1,4 @@
-
+#!/usr/bin/env ansible-playbook
 - hosts: "etcd"
   vars:
     # etcd 集群间通信的IP和端口, 根据etcd组成员自动生成

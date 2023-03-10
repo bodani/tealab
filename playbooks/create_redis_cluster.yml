@@ -1,4 +1,4 @@
-
+#!/usr/bin/env ansible-playbook
 ## redis sentinel 服务
 - hosts: redis_cluster
   gather_facts: true

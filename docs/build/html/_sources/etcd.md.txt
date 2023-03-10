@@ -43,7 +43,9 @@ playbooks/create_etcd.yml -i hosts.ini
 
 ## 添加节点 
 
-​	每次只能新加入一个节点
+**每次只能新加入一个节点**
+
+[将新节点加入管理](/install-tea.html#id4)
 
 修改etcd集群配置文件
 
@@ -56,8 +58,6 @@ playbooks/create_etcd.yml -i hosts.ini
  10.10.2.13
  10.10.2.14 # 加入新节点
  ```
-
-[将新节点加入管理](/install-tea.html#id5)
 
 执行加入etcd节点命令。 
 

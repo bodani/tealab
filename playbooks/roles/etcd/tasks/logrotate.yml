@@ -1,0 +1,10 @@
+---
+- name: Copy logrotate config
+  template:
+    src: etcd-logrotate.conf.j2
+    dest: "/etc/logrotate.d/etcd{{ etcd_name_separator ~ item.name }}.conf"
+    owner: root
+    group: root
+  with_items: "{{ etcd_instances }}"
+  when: etcd_setup_logging and etcd_setup_logrotate
+...

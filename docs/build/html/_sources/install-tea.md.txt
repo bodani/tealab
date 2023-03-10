@@ -1,4 +1,4 @@
-# 安装tea 
+# 安装tealabs
 
 ## 基础概念
 
@@ -20,7 +20,14 @@
 
 ```
 yum -y install epel-release git curl sshpass && \
-yum -y install python3-pip
+yum -y install ansible
+```
+
+查看ansible版本
+
+```
+ansible --version
+ansible 2.9.27
 ```
 
 创建 tea 用户
@@ -38,7 +45,7 @@ passwd tea
 配置 `tea` 用户 sudo 免密码，将 `tea ALL=(ALL) NOPASSWD: ALL` 添加到文件末尾即可
 
 ```
-visudo
+$ visudo
 tea ALL=(ALL) NOPASSWD: ALL
 ```
 
@@ -54,30 +61,18 @@ ls ~/.ssh
 
 ```
 
-## 安装tea
+## 安装tealabs
 
 ```
 sudo su - tea
-git -b $tag  clone https://github.com/eamonzhang/tealab
+git clone https://github.com/bodani/tea.git
+#备用 git clone https://gitee.com/zhangeamon/tealab.git
 cd tealab
-sudo pip install -r ./requirements.txt
-```
-
-查看ansible版本
-
-```
-ansible --version
-ansible 2.5.0
 ```
 
 与其他节点ssh 免密互通
-
 ```
-cd /home/tea/tealab && \
-vi hosts.ini
-```
-
-```
+$ vi hosts.ini
 [nodes]
 10.10.2.11
 10.10.2.12
@@ -96,7 +91,7 @@ local_bin = "~/local_bin/"
 执行以下命令
 
 ```
-ansible-playbook -i hosts.ini create_user.yml -u root -k
+./create_user.yml -i hosts.ini  -u root -k
 ```
 
 该步骤将在部署目标机器上创建 `tea` 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。
@@ -104,15 +99,15 @@ ansible-playbook -i hosts.ini create_user.yml -u root -k
 测试互通效果
 
 ```
-ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea
+ansible -i hosts.ini nodes -m shell -a 'whoami' 
 
-ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -b 
+ansible -i hosts.ini nodes -m shell -a 'whoami'  -b 
 ```
 
 后期安全建议，目标机禁用root登录
 
 ```
-ansible-playbook -i hosts.ini playbooks/disable_rootlogin.yml -u tea --private-key /home/tea/.key
+playbooks/disable_rootlogin.yml -i hosts.ini  -u tea --private-key /home/tea/.key
 ```
 
 至此，中控机及目标机环境准备完成。
@@ -134,7 +129,7 @@ $ vim hosts.ini
 
 创建用户 
 ```
-ansible-playbook -i hosts.ini create_user.yml -u root -k -l 10.10.2.14
+./create_user.yml -i hosts.ini  -u root -k -l 10.10.2.14
 ```
 
 测试可连接性
@@ -181,20 +176,17 @@ tealab 目前利用二进制文件或安装包方式安装应用服务。
 
 ```
 # 网络环境自信者一键搞定，下载解压
-ansible-playbook -i download.ini prepare.yml
+prepare.yml -i download.ini 
 # 按需下载
-ansible-playbook -i download.ini prepare.yml --tags xxx
+prepare.yml -i download.ini  --tags xxx
 ```
 
-为了解决网络问题也通过如下方式下载软件包
-
+**推荐方式:** 为了解决网络问题也通过如下方式下载软件包  
 ```
 #下载软件包
-git clone https://gitee.com/zhangeamon/tea-package-download.git
+git clone https://gitee.com/zhangeamon/tealab_packages.git
 #解压软件包
-cd tea-package-download 
-sh unzip.sh
-# 注意将tea-package-download 与 local_bin = "~/local_bin/" 保持一致
+# 注意将tea-package-download 与 local_bin = "~/tealab_packages" 保持一致
 ```
 
 可通过软件包来管理软件的版本。到此准备工作全部完成。

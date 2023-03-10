@@ -26,7 +26,7 @@
 
 ```
 [monitor]
-10.10.2.10
+10.10.2.14
 
 [monitor:vars]
 # prometheus data path
@@ -35,22 +35,16 @@ grafana_admin_username = admin
 grafana_admin_password = admin
 
 # 监控域名及证书到期时间
-domain_https=['https://www.baidu.com','https://doc.zhangeamon.top','https://test.zhangeamon.top']
+domain_https=['https://www.baidu.com','https://doc.zhangeamon.top','https://tea.zhangeamon.top']
 
-```
-
-软件包准备，如遇到网络问题可[参考](install-tea.html#id7)
-
-```
-ansible-playbook -i download.ini playbooks/prepare.yml --tags monitor
 ```
 
 创建监控服务
 
 ```
-ansible-playbook -i hosts.ini playbooks/monitor.yml
+playbooks/monitor.yml -i hosts.ini 
 ```
 
 ## 查看监控
 
-http://10.10.2.10:3000 
+http://10.10.2.14:3000 

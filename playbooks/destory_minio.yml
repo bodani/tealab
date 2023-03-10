@@ -1,5 +1,5 @@
+#!/usr/bin/env ansible-playbook
 ---
-
 - hosts: minio
   tasks:
     - name: stop minio

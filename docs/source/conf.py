@@ -6,8 +6,8 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'tea使用手册'
-copyright = '@2022, zhangeamon'
+project = 'tealabs使用手册'
+copyright = '@2022-2023, zhangeamon'
 author = 'zhangeamon'
 
 # The full version, including alpha/beta/rc tags

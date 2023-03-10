@@ -25,29 +25,16 @@
 
 ```
 [nodes]
- 10.10.2.10  hostname=controller idc=first
  10.10.2.11  hostname=node1 idc=first
  10.10.2.12  hostname=node2 idc=first
  10.10.2.13  hostname=node3 idc=first
- 10.10.2.14  
+ 10.10.2.14  hostname=node4 idc=second
 ```
 
 创建节点管理,包括初始配置优化，常用软件安装，节点进行监控。
 
 ```
-ansible-playbook -i hosts.ini playbooks/node.yml
-```
-
-只对初始化服务器进行优化配置和安装常用软件。
-
-```
-ansible-playbook -i hosts.ini playbooks/node.yml --tags harden
-```
-
-只对服务器进行监控。
-
-```
-ansible-playbook -i hosts.ini playbooks/node.yml --tags monitor
+playbooks/node.yml -i hosts.ini 
 ```
 
 ## 结果查看

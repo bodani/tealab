@@ -1,0 +1,19 @@
+---
+- name: Allow traffic to etcd through firewall (firewalld)
+  firewalld:
+    port: "{{ item.bind_port }}/tcp"
+    state: enabled
+    zone: public
+    immediate: yes
+    permanent: yes
+  with_items: "{{ etcd }}"
+  when: ansible_os_family == 'RedHat'
+- name: Allow traffic to etcd through firewall (ufw)
+  ufw:
+    to_port: "{{ item.bind_port }}"
+    proto: tcp
+    rule: allow
+    state: reloaded
+  with_items: "{{ etcd_instances }}"
+  when: ansible_os_family == 'Debian'
+...

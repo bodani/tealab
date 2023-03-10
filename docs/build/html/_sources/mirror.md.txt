@@ -26,8 +26,6 @@ repo_address = mirror.zhangeamon.top
 #repo_port=80
 ```
 
-
-
 ```
 $ vim tealab/roles/repo/defaults/main.yml
 # 私有源存储位置设置

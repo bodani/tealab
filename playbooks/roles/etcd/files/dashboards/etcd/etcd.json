@@ -26,7 +26,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 9733,
   "graphTooltip": 0,
-  "id": 15,
+  "id": 6,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -171,6 +171,7 @@
                         "text": "否"
                       },
                       "1": {
+                        "color": "dark-green",
                         "index": 1,
                         "text": "是"
                       }
@@ -188,7 +189,7 @@
         ]
       },
       "gridPos": {
-        "h": 7,
+        "h": 5,
         "w": 24,
         "x": 0,
         "y": 0
@@ -217,7 +218,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "up{job=\"etcds\", name=\"cluster01\"}",
+          "expr": "up{job=\"etcds\", name=\"$clustername\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "实例名称",
@@ -231,7 +232,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "etcd_server_is_leader{job=\"etcds\", name=\"cluster01\"}",
+          "expr": "etcd_server_is_leader{job=\"etcds\", name=\"$clustername\"}",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -246,7 +247,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "count(up{job=\"etcds\", name=\"cluster01\"})",
+          "expr": "count(up{job=\"etcds\", name=\"$clustername\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -315,7 +316,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 7
+        "y": 5
       },
       "id": 44,
       "links": [],
@@ -399,7 +400,7 @@
         "h": 7,
         "w": 4,
         "x": 4,
-        "y": 7
+        "y": 5
       },
       "id": 72,
       "links": [],
@@ -477,7 +478,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 7
+        "y": 5
       },
       "id": 46,
       "links": [],
@@ -571,7 +572,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 7
+        "y": 5
       },
       "id": 90,
       "options": {
@@ -618,7 +619,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 74,
@@ -706,7 +707,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 20
+        "y": 18
       },
       "hiddenSeries": false,
       "id": 70,
@@ -794,7 +795,7 @@
         "h": 7,
         "w": 7,
         "x": 11,
-        "y": 20
+        "y": 18
       },
       "hiddenSeries": false,
       "id": 66,
@@ -882,7 +883,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 20
+        "y": 18
       },
       "hiddenSeries": false,
       "id": 68,
@@ -972,7 +973,7 @@
         "h": 8,
         "w": 7,
         "x": 0,
-        "y": 27
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 23,
@@ -1079,7 +1080,7 @@
         "h": 8,
         "w": 9,
         "x": 7,
-        "y": 27
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 50,
@@ -1167,7 +1168,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 27
+        "y": 25
       },
       "hiddenSeries": false,
       "id": 52,
@@ -1255,7 +1256,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "hiddenSeries": false,
       "id": 48,
@@ -1357,7 +1358,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 45
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 60,
@@ -1456,7 +1457,7 @@
         "h": 7,
         "w": 16,
         "x": 8,
-        "y": 45
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 64,
@@ -1578,7 +1579,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 52
+        "y": 50
       },
       "hiddenSeries": false,
       "id": 7,
@@ -1688,8 +1689,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1705,7 +1705,7 @@
         "h": 7,
         "w": 4,
         "x": 8,
-        "y": 52
+        "y": 50
       },
       "id": 86,
       "links": [],
@@ -1761,7 +1761,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 50
       },
       "hiddenSeries": false,
       "id": 41,
@@ -1867,7 +1867,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 22,
@@ -1971,7 +1971,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 21,
@@ -2077,7 +2077,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 16,
@@ -2172,7 +2172,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 59
+        "y": 57
       },
       "hiddenSeries": false,
       "id": 20,
@@ -2264,7 +2264,7 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 66
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 29,
@@ -2356,7 +2356,7 @@
         "h": 7,
         "w": 6,
         "x": 8,
-        "y": 66
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 82,
@@ -2447,7 +2447,7 @@
         "h": 7,
         "w": 6,
         "x": 14,
-        "y": 66
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 80,
@@ -2537,7 +2537,7 @@
         "h": 7,
         "w": 4,
         "x": 20,
-        "y": 66
+        "y": 64
       },
       "hiddenSeries": false,
       "id": 9,
@@ -2620,8 +2620,8 @@
       {
         "current": {
           "selected": false,
-          "text": "cluster01",
-          "value": "cluster01"
+          "text": "clustertest",
+          "value": "clustertest"
         },
         "datasource": {
           "type": "prometheus",
@@ -2650,8 +2650,8 @@
       {
         "current": {
           "selected": false,
-          "text": "4",
-          "value": "4"
+          "text": "3",
+          "value": "3"
         },
         "datasource": {
           "type": "prometheus",
@@ -2707,6 +2707,6 @@
   "timezone": "browser",
   "title": "Etcd监控",
   "uid": "mTemEyyizz",
-  "version": 23,
+  "version": 2,
   "weekStart": ""
 }

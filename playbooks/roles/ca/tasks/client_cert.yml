@@ -1,8 +1,8 @@
 ## 用户生成客户端访问证书
 
-- name: check ca exists
-  stat: path="{{ CERT_LOCAL_DIR }}/ca-key.pem"
-  register: ca_key_exists
+- name: check client-key exists
+  stat: path="{{ CERT_LOCAL_DIR }}/client-key.pem"
+  register: client-key
   delegate_to: localhost
   run_once: true
 
@@ -36,4 +36,4 @@
         selfsigned_not_after: "+{{ CERT_EXPIRY }}"
         mode: 0644
   run_once: true
-  when: not ca_key_exists.stat.exists|bool 
+  when: not client-key.stat.exists|bool 
