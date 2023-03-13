@@ -66,7 +66,8 @@ ls ~/.ssh
 ```
 sudo su - tea
 git clone https://github.com/bodani/tea.git
-#备用 git clone https://gitee.com/zhangeamon/tealab.git
+#备用1 https://gitee.com/zhangeamon/tealab.git
+#备用2 https://kgithub.com/bodani/tea.git
 cd tealab
 ```
 
