@@ -7,6 +7,12 @@
   gather_facts: false
   vars:
     CLUSTER_STATE: existing
+  serial: 1
+  max_fail_percentage: 25
+  vars_prompt:
+    - name: share_user
+      prompt: "what is your network username?"
+      private: yes
   roles:
   ##------------------------------基本流程-----主要内容-------------- 
   ##一， 每次执行将根据hosts ip 重新证书签名。

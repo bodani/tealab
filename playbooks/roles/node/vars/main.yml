@@ -12,3 +12,4 @@ comment_tools:
   - jq
   - cpulimit
   - python-requests
+  - hdparm

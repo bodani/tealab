@@ -1,0 +1,71 @@
+;; NOTE: This configuration are based on this article: https://opensourcedbms.com/dbms/setup-pgbouncer-connection-pooling-for-postgresql-on-centosredhatfedora/
+
+[databases]
+
+* = host= {{ inventory_hostname }}
+
+[pgbouncer]
+
+logfile = /var/log/pgbouncer/pgbouncer.log
+pidfile = /var/run/pgbouncer/pgbouncer.pid
+
+listen_addr = *
+listen_port = 6432
+
+; any, trust, plain, crypt, md5
+auth_type = hba
+
+;auth_file = /8.0/main/global/pg_auth
+auth_file = /etc/pgbouncer/userlist.txt
+auth_hba_file = /etc/pgbouncer/pgb_hba.conf
+; comma-separated list of users, who are allowed to change settings
+admin_users = postgres
+
+; comma-separated list of users who are just allowed to use SHOW command
+stats_users = tea_mon, postgres
+
+;;;
+;;; Pooler personality questions
+;;;
+
+; When server connection is released back to pool:
+;   session      - after client disconnects
+;   transaction  - after transaction finishes
+;   statement    - after statement finishes
+;
+pool_mode = session
+
+;
+; Query for cleaning connection immediately after releasing from client.
+; No need to put ROLLBACK here, pgbouncer does not reuse connections
+; where transaction is left open.
+;
+; Query for 8.3+:
+;   DISCARD ALL;
+;
+; Older versions:
+;   RESET ALL; SET SESSION AUTHORIZATION DEFAULT
+;
+; Empty if transaction pooling is in use.
+;
+; NOTE: Set from this article https://opensourcedbms.com/dbms/setup-pgbouncer-connection-pooling-for-postgresql-on-centosredhatfedora/
+server_reset_query = DISCARD ALL
+
+;; Use <appname - host> as application_name on server.
+application_name_add_host = 1
+
+;;;
+;;; Connection limits
+;;;
+
+; total number of clients that can connect
+max_client_conn = 1000
+
+; default pool size.  20 is good number when transaction pooling
+; is in use, in session pooling it needs to be the number of
+; max clients you want to handle at any moment
+; 20 is default value, but it is too low for citus create_distributed_table function
+default_pool_size = 1000
+
+; how many additional connection to allow in case of trouble
+reserve_pool_size = 5

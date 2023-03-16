@@ -6,11 +6,10 @@ listen_addresses = '*'         # what IP address(es) to listen on;
 port = 5432                            # (change requires restart)
 max_connections = 1000
 
-{%if  rep_type == "orgin" %}
 shared_preload_libraries = 'pg_repack,pg_stat_statements,auto_explain'
-{%elif  rep_type == "repmgr" %}
-shared_preload_libraries = 'repmgr,pg_repack,pg_stat_statements,auto_explain' 
-{%endif%}
+
+#shared_preload_libraries = 'repmgr,pg_repack,pg_stat_statements,auto_explain' 
+password_encryption = 'scram-sha-256'
 
 ############### auto_explain ###################
 auto_explain.log_analyze = off

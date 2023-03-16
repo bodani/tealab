@@ -18,6 +18,7 @@
     - id_rsa
     - id_rsa.pub
     - authorized_keys
+  delegate_to: localhost
 
 #   command : echo -e 'y\n'|ssh-keygen -q -t dsa -f ~/.ssh/id_dsa -C "" -N ""
 #   command : echo -e 'y\n'|ssh-keygen -q -t ecdsa -f ~/.ssh/id_ecdsa -C "" -N ""
@@ -84,9 +85,18 @@
       /usr/bin/systemctl reload postgresql-{{PG_VERSION}}
     mode: 0400
 
+- name: setting shared_preload_libraries
+  replace:
+    path: "{{PG_DATA}}/postgresql.conf"
+    regexp: "^shared_preload_libraries = (.*)"
+    replace: "shared_preload_libraries = 'pg_repack'"
+  notify:
+    - Restart PostgreSQL
+
 ############################################################
 #         在主库创建repmgr database 。 owner 为 repuser      #
 ############################################################
+# psql -c 'ALTER USER repmgr SET search_path TO repmgr, "$user", public;'
 - name: create database for repmgr
   postgresql_db:
     name: "repmgr"

@@ -3,26 +3,31 @@
 ############################################################
 - name: init postgres db 
   become_user: postgres
-  become_method: sudo
   shell: |
-    if [ "`ls -A {{PG_DATA}}`" = "" ]; then
       /usr/pgsql-{{PG_VERSION}}/bin/initdb  --data-checksums -D {{PG_DATA}}
-    fi
+  # when: need_init_db|bool 
 
 ############################################################
 #         配置数据库                                        #
 ############################################################
-- name: postgres include conf
-  shell: |
-    cat {{PG_DATA}}/postgresql.conf | grep pg_tea.conf ||  echo "include = 'pg_tea.conf' " >> {{PG_DATA}}/postgresql.conf
-
+# - name: postgres include conf
+#   shell: |
+#     cat {{PG_DATA}}/postgresql.conf | grep pg_tea.conf ||  echo "include = 'pg_tea.conf' " >> {{PG_DATA}}/postgresql.conf
 - name: prepare postgres config
   template:
     src: pg_tea-{{PG_VERSION}}.conf.j2
     dest: "{{PG_DATA}}/pg_tea.conf"
     owner: postgres
     group: postgres
-  notify: restart postgresql
+  # when: 
+  #  - need_init_db|bool
+
+- name: include pg_tea.conf
+  lineinfile:
+    path: "{{PG_DATA}}/postgresql.conf"
+    line: "include = 'pg_tea.conf'"
+  notify:
+  - restart postgresql
 
 - name: prepare postgres pg_hba
   template:
@@ -31,11 +36,6 @@
     owner: postgres
     group: postgres
   notify: reload postgresql
-
-- name: prepare postgres service
-  template: 
-    src: postgresql-{{PG_VERSION}}.service.j2
-    dest: /usr/lib/systemd/system/postgresql-{{PG_VERSION}}.service
 
 ############################################################
 #        启动数据库服务                                      #
@@ -51,27 +51,31 @@
     port: 5432
     state: started
 
-# - name: create replication user on master node
-#   become_user: postgres
-#   become_method: sudo
-#   shell: |
-#     psql -c "create user {{ rep_user }} with encrypted  password '{{ rep_password }}' REPLICATION ;"
-
-############################################################
-#        创建数据库 Replication User                         #
-############################################################
-# - name: create user for REPLICATION
-#   postgresql_user:
-#     name: "{{ rep_user }}"
-#     password: "{{ rep_password | mandatory }}"
-#     role_attr_flags: REPLICATION
-#     state: present
+### 该用户用于监控 Postgresql
+- name: create user for monitor
+  postgresql_query: 
+    db: postgres
+    query: |
+      DO
+      $do$
+      BEGIN
+        IF EXISTS (
+            SELECT FROM pg_catalog.pg_user
+            WHERE  usename = 'tea_mon') THEN
+            RAISE NOTICE 'User "monitor" already exists. Skipping.';
+        ELSE
+            create user tea_mon with role pg_monitor CONNECTION LIMIT  10;
+        END IF;
+      END
+      $do$;
+  become_user: postgres
+  # no_log: true
 #  采用 sql 创建用户 减少安装依赖
 # pip install psycopg2
 # pip install  pyghmi
 # 
-- name: create user for replication
-  become_user: postgres
-  shell: | 
-    psql -c "create user {{ rep_user }} with encrypted password '{{ rep_password | mandatory }}' replication connection limit 10 ; "
-  tags: create_pg_user
+# - name: create user for replication
+#   become_user: postgres
+#   shell: | 
+#     psql -c "create user {{ rep_user }} with encrypted password '{{ rep_password | mandatory }}' replication connection limit 10 ; "
+#   tags: create_pg_user

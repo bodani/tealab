@@ -1,5 +1,5 @@
-- name: turniing
-  shell: 
+- name: tunning
+  shell: |
     if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
        echo never > /sys/kernel/mm/transparent_hugepage/enabled
     fi
@@ -7,6 +7,8 @@
        echo never > /sys/kernel/mm/transparent_hugepage/defrag
     fi
 
+# - name: Selectively disable transparent huge pages
+#   shell: "echo madvise | tee /sys/kernel/mm/transparent_hugepage/enabled"
 ####-----------------优化篇
 #  1，硬件  CPU、内存、磁盘 IO 等
 #  2，操作系统配置

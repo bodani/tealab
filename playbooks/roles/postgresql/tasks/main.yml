@@ -1,29 +1,36 @@
-## 安装数据库服务包
+############################################################
+#        判断数据库DATA是否已经存在                            #
+############################################################
+- name: check if postgres data exists.
+  stat:
+    path: "{{PG_DATA}}/PG_VERSION"
+  register: stat_result
+
+- name: set if need initdb var
+  set_fact:
+     need_init_db : "{{ not stat_result.stat.exists}}"
+
+- name: Print init DB Messages
+  debug:
+    msg: "数据库需要初始化数据: {{ need_init_db }}"
+
+############################################################
+#        安装数据库服务包                                     #
+############################################################
 - include: install.yml
+  when: need_init_db|bool
   tags: install
+###########################################################
+#        原生主从流复制                                     #
+###########################################################
 
-##########################
-#  原生主从流复制
-########################## 
-## 主库初始化数据库
+##       主库初始化数据库
 - include: initdb.yml
-  when: replicaof is undefined and rep_type == "orgin"
+  when: replicaof is undefined and need_init_db|bool
   tags: initdb
-## 从库复制数据
+##       从库复制数据
 - include: replication.yml
-  when: replicaof is defined and rep_type == "orgin"
+  when: replicaof is defined and need_init_db|bool
   tags: initdb
-
-##########################
-#  repmgr 管理 主从流复制 
-########################## 
-- include: repmgr.yml
-  when: rep_type == "repmgr"
-  tags: repmgr
-
-##########################
-#  patroni 管理 主从流复制 
-########################## 
-- include: patroni.yml
-  when: rep_type == "patroni"
-  tags: patroni
+  
+- import_tasks: tunning.yml

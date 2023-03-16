@@ -5,14 +5,12 @@ pg_base_packages:
 
 pg_extends_packages:
   - pg_repack{{PG_VERSION}}
+  - python2-psycopg2
 
 pg_shared_preload_libs: 
   - pg_repack
   - pg_stat_statements
   - auto_explain
-
-# pg_role: master
-use_slot: false
 
 sysctl:
   vm.swappiness = 1
@@ -27,7 +25,7 @@ sysctl:
   fs.file-max = 312139770
   fs.aio-max-nr = 1048576
   net.ipv4.ip_local_port_range = 2048 65499
-  # Permits sockets in the time-wait state to be reused for new connections:
+
   net.ipv4.tcp_tw_reuse = 1
   net.core.netdev_budget = 1024
   net.core.netdev_max_backlog = 2048
@@ -36,11 +34,11 @@ sysctl:
   net.core.wmem_default = 262144
   net.core.wmem_max = 1048576
   kernel.panic_on_oops = 1
-  # We don't need NUMA balancing in this box:
+
   kernel.numa_balancing = 0
-  # Used if not defined by the service:
+
   net.core.somaxconn = 4096
-  # Other parameters to override throughput-performance template
+
   net.ipv4.tcp_rmem = 4096 87380 16777216
   net.ipv4.tcp_wmem = 4096 65536 16777216
   net.ipv4.tcp_window_scaling = 1
