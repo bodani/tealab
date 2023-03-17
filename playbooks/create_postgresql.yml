@@ -1,6 +1,6 @@
 #!/usr/bin/env ansible-playbook
 - hosts: postgresql
   roles:
-    # - { role: node , harden: true, action: postgresql, tags: node}
+    - { role: node , harden: true, action: postgresql, tags: node}
     - { role: postgresql ,tags: postgresql}
     - { role: pgbouncer, tags: pgbouncer ,when: install_pgbouncer|bool  }
