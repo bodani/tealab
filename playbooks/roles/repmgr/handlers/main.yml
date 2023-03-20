@@ -1,0 +1,19 @@
+- name: restart repmgrd
+  service:
+    name: "{{ repmgr_service }}"
+    state: restarted
+
+- name: start repmgrd
+  service:
+    name: "{{ repmgr_service }}"
+    state: started
+
+- name: stop repmgrd
+  service:
+    name: "{{ repmgr_service }}"
+    state: stop
+
+- name: reload repmgrd
+  service:
+    name: "{{ repmgr_service }}"
+    state: reloaded

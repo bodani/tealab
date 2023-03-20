@@ -1,0 +1,64 @@
+---
+# versions
+postgres_release: "{{PG_VERSION}}"
+
+# os user
+postgres_user: postgres
+postgres_group: postgres
+
+
+# packages
+repmgr_package: "repmgr_{{ postgres_release }}"
+
+# postgres vars
+# repmgr_postgres_admin_user: 'postgres'
+# repmgr_postgres_admin_user_group: 'postgres'
+
+# postgres vars
+postgres_data_directory: "/var/lib/pgsql/{{ postgres_release }}/data"
+postgres_conf_directory: "/var/lib/pgsql/{{ postgres_release }}/data"
+# postgres_conf_directory: "/etc/postgresql/{{ postgres_release }}/data"
+
+# repmgr vars
+repmgr_conf_file: 'repmgr.conf'
+repmgr_conf_dir: '/etc/repmgr/{{ postgres_release }}'
+repmgr_user: 'repmgr'
+repmgr_dbname: 'repmgr'
+repmgr_service: 'repmgr-{{ postgres_release }}.service'
+
+# repmgr config options
+repmgr_conninfo: "host={{inventory_hostname}} user={{repmgr_user}} dbname={{ repmgr_dbname }}"
+repmgr_node_id: '{{node_id}}'
+repmgr_node_name: '{{application_name}}'
+repmgr_failover: 'automatic'
+repmgr_loglevel: 'INFO'
+repmgr_logfacility: 'STDERR'
+repmgr_log_file: '/var/log/repmgr/repmgr.log'
+repmgr_pg_bindir: "/usr/pgsql-{{ postgres_release }}/bin"
+
+# repmgr commands
+repmgr_promote_command: "/usr/pgsql-{{ postgres_release }}/bin/repmgr standby promote -f /etc/repmgr/{{ postgres_release }}/repmgr.conf --log-to-file"
+repmgr_follow_command: "/usr/pgsql-{{ postgres_release }}/bin/repmgr standby follow -f /etc/repmgr/{{ postgres_release }}/repmgr.conf  --log-to-file --upstream-node-id=%n"
+repmgr_start_command: "sudo systemctl start postgresql-{{ postgres_release }}"
+repmgr_stop_command: "sudo systemctl stop postgresql-{{ postgres_release }}"
+repmgr_restart_command: "sudo systemctl restart postgresql-{{ postgres_release }}"
+repmgr_reload_command:  "systemctl reload postgresql-{{ postgres_release }}"
+monitoring_history: yes
+monitor_interval_secs: 2
+
+# role management
+repmgr_is_master: false
+repmgr_register_master: false
+repmgr_register_standby: false
+repmgr_clone_standby: false
+repmgr_bootstrap: false
+repmgr_install_only: true
+repmgr_install_postgresql: false
+
+child_nodes_check_interval: 5s
+child_nodes_disconnect_command: ""
+child_nodes_disconnect_timeout: 30s
+child_nodes_disconnect_min_count: 1
+
+
+

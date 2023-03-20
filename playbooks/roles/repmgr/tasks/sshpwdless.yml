@@ -33,37 +33,43 @@
   delegate_to: localhost
   run_once: true
 
-- name: repmgr | Fetch ssh public key 
+- name: repmgr | Fetch ssh  key pair 
   fetch:
-    dest: "/tmp/repmgr_buffer/postgres_id_rsa_key.pub"
-    src: "/var/lib/pgsql/.ssh/id_rsa.pub"
+    dest: "/tmp/repmgr_buffer/postgres_{{ item }}"
+    src: "/var/lib/pgsql/.ssh/{{ item }}"
     flat: true  
+  with_items: 
+    - id_rsa.pub
+    - id_rsa
   when: replicaof is undefined
 
-- name: repmgr | Fetch ssh  key 
-  fetch:
-    dest: "/tmp/repmgr_buffer/postgres_id_rsa_key"
-    src: "/var/lib/pgsql/.ssh/id_rsa"
-    flat: true  
-  when: replicaof is undefined
-
-- name: repmgr | Destribute public key 
+- name: repmgr | Destribute public key pair rsa
   copy: 
-    dest: "/var/lib/pgsql/.ssh/id_rsa.pub"
-    src: "/tmp/repmgr_buffer/postgres_id_rsa_key.pub"
+    dest: "/var/lib/pgsql/.ssh/{{ item }}"
+    src: "/tmp/repmgr_buffer/postgres_{{ item }}"
     owner: postgres
     group: postgres
-    mode: 0644
+    mode: '0600'
+  with_items: 
+    - id_rsa
   when: replicaof is defined
 
-- name: repmgr | Destribute private key 
+- name: repmgr | Destribute public key pair pub
   copy: 
-    dest: "/var/lib/pgsql/.ssh/id_rsa"
-    src: "/tmp/repmgr_buffer/postgres_id_rsa_key"
+    dest: "/var/lib/pgsql/.ssh/{{ item }}"
+    src: "/tmp/repmgr_buffer/postgres_{{ item }}"
     owner: postgres
     group: postgres
-    mode: 0600
+    mode: '0644'
+  with_items: 
+    - id_rsa.pub
   when: replicaof is defined
+
+- name: set authorized key
+  authorized_key:
+    user: "postgres"
+    key: "{{ lookup('file','/tmp/repmgr_buffer/postgres_id_rsa.pub') }}"
+    state: present
 
 - name: repmgr | Collect ssh fingerprints
   become_user: postgres
@@ -84,4 +90,4 @@
     mode: 0600
     line: "{{ item }}"
   with_items: "{{ __ssh_fingerprints.stdout_lines }}"
-  # no_log: true
+  no_log: true

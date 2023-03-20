@@ -1,0 +1,13 @@
+---
+- name: repmgr | register standby node
+  command: "/usr/pgsql-{{ postgres_release }}/bin/repmgr -f {{ repmgr_conf_dir }}/{{ repmgr_conf_file }} standby register"
+  when:
+    # - not repmgr_is_master|bool
+    - replicaof is defined|bool
+    # - result is failed
+  become_user: "postgres"
+  args:
+    warn: false
+  changed_when: false
+  become: true
+  notify: start repmgrd

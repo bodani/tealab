@@ -1,20 +1,33 @@
-############################################################
-#         赋予postgres 用户 , 部分sudo 执行权限               #
-############################################################
-- name: postgres sudo privates
-  copy:
-    dest: /etc/sudoers.d/postgres
-    content: | 
-      Defaults:postgres !requiretty
-      postgres ALL = NOPASSWD: /usr/bin/systemctl stop postgresql-{{PG_VERSION}}, \
-      /usr/bin/systemctl start postgresql-{{PG_VERSION}}, \
-      /usr/bin/systemctl restart postgresql-{{PG_VERSION}}, \
-      /usr/bin/systemctl reload postgresql-{{PG_VERSION}}
-    mode: 0400
+- name: repmgr | ensure repmgr pid file directory
+  file:
+    path: /run/repmgr/
+    owner: "postgres"
+    group: "postgres"
+    mode: '0740'
+    state: directory
+
+- name: repmgr | create repmgr conf dir
+  file:
+    path: "{{ repmgr_conf_dir }}"
+    owner: "postgres"
+    group: "postgres"
+    mode: '0740'
+    state: directory
+    recurse: true
+
+- name: repmgr | create repmgr conf
+  template:
+    src: repmgr.conf.j2
+    dest: "{{ repmgr_conf_dir }}/{{ repmgr_conf_file }}"
+    owner: "postgres"
+    group: "postgres"
+    mode: '0740'
+  notify: restart repmgrd
+  register: repmgr_conf
+  
 
 # - name: PostgreSQL HBA 
 
 # - name: Create repmgr user
 
 # - name: Create repmgr database
-

@@ -1,0 +1,23 @@
+---
+- name: repmgr | register master node
+  command: "/usr/pgsql-{{ postgres_release }}/bin/repmgr -f {{ repmgr_conf_dir }}/{{ repmgr_conf_file }} primary register"
+  become: true
+  become_user: "postgres"
+  args:
+    warn: false
+  changed_when: false
+  # register: result
+  ignore_errors: true
+  when:
+    - replicaof is undefined|bool
+    # - result is failed
+  notify: start repmgrd
+
+- name: repmgr | ensure repmgrd is started
+  service:
+    name: "{{ repmgr_service }}"
+    state: started
+    enabled: true
+  when:
+    - replicaof is undefined|bool
+

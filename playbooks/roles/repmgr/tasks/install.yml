@@ -3,7 +3,7 @@
 ############################################################
 - name: Install Repmgr 
   package:
-    name: repmgr_{{PG_VERSION}}
+    name: "{{ repmgr_package }}"
     state: present
   tags: repmgr
 

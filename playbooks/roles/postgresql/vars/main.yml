@@ -21,3 +21,22 @@ effective_cache_size: 8GB
 max_wal_senders:  10
 max_replication_slots: 10
 wal_level: 'logical'
+
+# 限制长事务对数据库影响
+idle_in_transaction_session_timeout: '1h'
+old_snapshot_threshold: '6h'
+
+# 垃圾回收相关 < 具体值根据系统环境及应用场景待定
+# auto_vacuum: on
+# track_counts: on
+# log_autovacuum_min_duration: 5min
+# autovacuum_max_workers: 10
+# autovacuum_naptime: 20
+# autovacuum_vacuum_threshold: 
+# autovacuum_analyze_threshold: 
+# autovacuum_vacuum_scale_factor: 
+# autovacuum_freeze_max_age: 
+# autovacuum_vacuum_cost_delay:
+# autovacuum_vacuum_cost_limit:
+
+

@@ -1,0 +1,55 @@
+# {{ansible_managed}}
+###########################################################
+# Replication Manager configuration file for Repmgr 5.x
+###########################################################
+
+#
+# Cluster configuration
+#
+node_id={{repmgr_node_id}}
+node_name={{repmgr_node_name}}
+
+#
+# Postgres connection
+#
+conninfo='{{ repmgr_conninfo }}'
+
+#
+# Common configuration
+#
+data_directory='{{postgres_data_directory}}'
+config_directory='{{postgres_conf_directory}}'
+pg_bindir='{{repmgr_pg_bindir}}'
+log_file='{{ repmgr_log_file }}'
+
+#
+# Logging
+#
+log_level='{{repmgr_loglevel}}'
+log_facility='{{repmgr_logfacility}}'
+
+#
+# Failover
+#
+failover='{{repmgr_failover}}'
+
+promote_command='{{ repmgr_promote_command }}'
+follow_command='{{ repmgr_follow_command }}'
+service_start_command='{{ repmgr_start_command }}'
+service_stop_command='{{ repmgr_stop_command }}'
+service_restart_command='{{ repmgr_restart_command }}' 
+service_reload_command='{{ repmgr_reload_command }}'
+
+##############################################
+# repmgrd options
+
+primary_visibility_consensus=true
+# 启用监控参数
+monitoring_history=yes
+# 定义监视数据间隔写入时间参数
+monitor_interval_secs=5
+# 故障转移之前，尝试重新连接主库次数（默认为6）参数
+reconnect_attempts=10
+# 每间隔5s尝试重新连接一次参数
+reconnect_interval=5
+

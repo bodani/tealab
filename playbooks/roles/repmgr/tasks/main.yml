@@ -1,3 +1,12 @@
+# 安装repmgr 软件
 - import_tasks: install.yml
+# 集群中各个节点之间免密
 - import_tasks: sshpwdless.yml
+# postgres sudo 执行重启权限
+- import_tasks: bootstrap.yml
+# 配置rempgr
 - import_tasks: configure.yml
+# 注册主节点
+- import_tasks: register_master.yml
+# 注册从节点
+- import_tasks: register_standby.yml
