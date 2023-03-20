@@ -24,33 +24,7 @@
   template:
     dest: /etc/systemd/system/pgbouncer.service.d/pgb.conf
     src: pgb.conf.j2
-    handlers: Restart PgBouncer
-
-- name: config pgbouncer 
-  template:
-    src: pgbouncer.ini.j2
-    dest: /etc/pgbouncer/pgbouncer.ini
-    owner: pgbouncer
-    group: pgbouncer
-# - name: config postgres hostname for pgbench master
-#   replace:
-#     path: /etc/pgbouncer/pgbouncer.ini
-#     regexp: 'POSTGRES_HOSTNAME_PLACEHOLDER'
-#     replace: "{{ postgres_master }}"
-
-- name: config postgres hostname 
-  replace:
-    path: /etc/pgbouncer/pgbouncer.ini
-    regexp: 'POSTGRES_HOSTNAME_PLACEHOLDER'
-    replace: "127.0.0.1"
-
-- name: Touch userlist.txt file
-  file:
-    path: /etc/pgbouncer/userlist.txt
-    state: touch
-    group: pgbouncer
-    owner: pgbouncer
-    mode: 0666
+  notify: Restart PgBouncer
 
 - name: pgbouncer hba 
   template:
@@ -60,13 +34,21 @@
     owner: pgbouncer
     mode: 0644
 
-# - name: makauth file
-#   copy:
-#     dest: /etc/pgbouncer/mkauth.py
-#     src: mkauth.py
-#     group: pgbouncer
-#     owner: pgbouncer
-#     mode: 0755
+- name: config pgbouncer 
+  template:
+    src: pgbouncer.ini.j2
+    dest: /etc/pgbouncer/pgbouncer.ini
+    owner: pgbouncer
+    group: pgbouncer
+  notify: Restart PgBouncer
+
+- name: Touch userlist.txt file
+  file:
+    path: /etc/pgbouncer/userlist.txt
+    state: touch
+    group: pgbouncer
+    owner: pgbouncer
+    mode: 0666
 
 - name: makauth file
   file:
@@ -79,12 +61,14 @@
   shell: | 
     python /etc/pgbouncer/mkauth.py /etc/pgbouncer/userlist.txt  "host=localhost user=postgres"
   become_user: root
+  notify: Restart PgBouncer
 
 - name: Start PgBouncer
   service:
     name: pgbouncer
     state: started
     enabled: yes
+    # daemon-reload: true
 
 - name: wait for pgbouncer service starting
   wait_for:
@@ -95,4 +79,4 @@
   copy: 
     dest: /etc/profile.d/pgb.sh
     src: pgb.sh
-    mode:  0777
+    mode: 0777

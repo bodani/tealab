@@ -2,7 +2,7 @@
 
 ## 简介
 
-tealab 是一款基于[ansible](https://doc.zhangeamon.top/categories/ansible/)开发的自动化运维管理工具、致力于帮助你轻松管理服务及设施。
+tealabs 是一款基于[ansible](https://doc.zhangeamon.top/categories/ansible/)开发的自动化运维管理工具、致力于帮助你轻松管理服务及设施。
 
 包括系统环境管理、服务安装、日志收集、主要指标监控、报警规则制定、重要数据备份及恢复、安全加固等。
 
@@ -10,7 +10,7 @@ tealab 是一款基于[ansible](https://doc.zhangeamon.top/categories/ansible/)�
 
 ## 支持服务
 
-tealab 适用于Linux系统环境（CentOS、Ubuntu、Debian）,可以为私有云，公有云，虚拟机等。
+tealabs 适用于Linux系统环境（CentOS、Ubuntu、Debian）,可以为私有云，公有云，虚拟机等。
 
 ### 	基础服务
 

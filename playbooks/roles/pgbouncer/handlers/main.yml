@@ -1,5 +1,5 @@
 - name: Restart PgBouncer
   systemd:  
     name: pgbouncer 
-    state: restart
+    state: restarted
     daemon-reload: true

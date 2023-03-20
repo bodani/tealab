@@ -1,0 +1,87 @@
+###########################################################################################################
+#          passwordless ssh conneciton  for `switchover`                                                  #
+###########################################################################################################
+#
+# 1 , 在主节点创建key pair
+# 2 ， 将key pair 下载到本机ansible 控制机
+# 3 ， 分发到其他从节点
+# 4 ， 清理本地节点
+# 是否存在安全问题？ 另一个思路: 在每一个node节点分别创建各自的 keypair ,将所有的public key 进行megre. private key 没有在网络中传输过。 但后期对节点的增加删除会麻烦些。
+- name: repmgr | Ensure ssh directory
+  file:
+    path: "/var/lib/pgsql/.ssh"
+    state: directory
+    owner: "postgres"
+    group: "postgres"
+    mode: '0750'
+  become: true
+  become_user: postgres
+
+- name: repmgr | Create ssh rsa key for postgres user
+  openssh_keypair:
+    path: "/var/lib/pgsql/.ssh/id_rsa"
+    type: dsa
+  become: true
+  become_user: postgres
+  when: replicaof is undefined
+
+- name: repmgr | Create buffer directory
+  file:
+    path: /tmp/repmgr_buffer/
+    state: directory
+    mode: '0777'
+  delegate_to: localhost
+  run_once: true
+
+- name: repmgr | Fetch ssh public key 
+  fetch:
+    dest: "/tmp/repmgr_buffer/postgres_id_rsa_key.pub"
+    src: "/var/lib/pgsql/.ssh/id_rsa.pub"
+    flat: true  
+  when: replicaof is undefined
+
+- name: repmgr | Fetch ssh  key 
+  fetch:
+    dest: "/tmp/repmgr_buffer/postgres_id_rsa_key"
+    src: "/var/lib/pgsql/.ssh/id_rsa"
+    flat: true  
+  when: replicaof is undefined
+
+- name: repmgr | Destribute public key 
+  copy: 
+    dest: "/var/lib/pgsql/.ssh/id_rsa.pub"
+    src: "/tmp/repmgr_buffer/postgres_id_rsa_key.pub"
+    owner: postgres
+    group: postgres
+    mode: 0644
+  when: replicaof is defined
+
+- name: repmgr | Destribute private key 
+  copy: 
+    dest: "/var/lib/pgsql/.ssh/id_rsa"
+    src: "/tmp/repmgr_buffer/postgres_id_rsa_key"
+    owner: postgres
+    group: postgres
+    mode: 0600
+  when: replicaof is defined
+
+- name: repmgr | Collect ssh fingerprints
+  become_user: postgres
+  shell: >
+    ssh-keyscan
+    {% for host in groups['postgresql'] %}
+    {{ host }}
+    {% endfor %}
+  register: __ssh_fingerprints
+
+- name: repmgr| Generate ssh known_hosts
+  become_user: postgres
+  lineinfile:
+    dest: ~/.ssh/known_hosts
+    create: yes
+    owner: "postgres"
+    group: "postgres"
+    mode: 0600
+    line: "{{ item }}"
+  with_items: "{{ __ssh_fingerprints.stdout_lines }}"
+  # no_log: true

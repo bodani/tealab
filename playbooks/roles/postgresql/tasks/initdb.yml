@@ -3,6 +3,7 @@
 ############################################################
 - name: init postgres db 
   become_user: postgres
+  become_method: sudo
   shell: |
       /usr/pgsql-{{PG_VERSION}}/bin/initdb  --data-checksums -D {{PG_DATA}}
   # when: need_init_db|bool 

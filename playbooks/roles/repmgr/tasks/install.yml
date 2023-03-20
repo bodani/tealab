@@ -1,0 +1,122 @@
+############################################################
+#        安装与postgres对应版本的repmgr软件包                  #
+############################################################
+- name: Install Repmgr 
+  package:
+    name: repmgr_{{PG_VERSION}}
+    state: present
+  tags: repmgr
+
+# - name: repmgr | create buffer directory
+#   file:
+#     path: /tmp/repmgr_buffer/
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: '0750'
+#   delegate_to: localhost
+#   run_once: true
+
+# - name: repmgr | fetch ssh public keys from nodes
+#   fetch:
+#     dest: "/tmp/repmgr_buffer/{{ ansible_hostname }}_postgres_id_rsa_key.pub"
+#     src: "/var/lib/pgsql/.pub"
+#     flat: true  
+
+# - name: collect ssh fingerprints
+#   become_user: postgres
+#   shell: >
+#     ssh-keyscan
+#     {% for host in groups['postgresql'] %}
+#     {{ host }}
+#     {% endfor %}
+#   register: __ssh_fingerprints
+
+# - name: ssh known_hosts
+#   become_user: postgres
+#   lineinfile:
+#     dest: ~/.ssh/known_hosts
+#     create: yes
+#     owner: "postgres"
+#     group: "postgres"
+#     mode: 0600
+#     line: "{{ item }}"
+#   with_items: "{{ __ssh_fingerprints.stdout_lines }}"
+
+# - name: setting shared_preload_libraries
+#   replace:
+#     path: "{{PG_DATA}}/postgresql.conf"
+#     regexp: "^shared_preload_libraries = (.*)"
+#     replace: "shared_preload_libraries = 'pg_repack'"
+#   notify:
+#     - Restart PostgreSQL
+
+# ############################################################
+# #         在主库创建repmgr database 。 owner 为 repuser      #
+# ############################################################
+# # psql -c 'ALTER USER repmgr SET search_path TO repmgr, "$user", public;'
+# - name: create database for repmgr
+#   postgresql_db:
+#     name: "repmgr"
+#     owner: "{{ rep_user }}"
+#     conn_limit: 20
+#     template: "template0"
+#     state: present
+#   when: replicaof is undefined
+
+# # 创建 repmgr extention
+# - name: create extention repmgr
+#   postgresql_ext: 
+#     db: repmgr
+#     name: repmgr
+#   when: replicaof is undefined
+
+# - name: config repmgr 
+#   template:
+#     src: repmgr-{{PG_VERSION}}.conf.j2
+#     dest: /etc/repmgr/{{PG_VERSION}}/repmgr.conf
+
+# ############################################################
+# #        注册主服务器                                        #
+# ############################################################
+# - name: register primary
+#   shell: |
+#     /usr/pgsql-{{PG_VERSION}}/bin/repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf primary register 
+#   when: replicaof is undefined
+
+# ############################################################
+# #        注册从服务器                                        #
+# ############################################################
+# - name: standby clone 
+#   shell: |
+#     /usr/pgsql-{{PG_VERSION}}/bin/repmgr -h {{replicaof}}} -U repmgr -d repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf standby clone  
+#   when: replicaof is defined
+
+# - name: start standby postgresql service
+#   block:
+#     - name: start standby postgresql service
+#       service:  
+#         name: postgresql-{{PG_VERSION}}
+#         state: started
+#         enabled: true
+
+#     - name: wait for postgresql start
+#       wait_for: 
+#         port: 5432
+#         state: started
+    
+#     - name: register standby
+#       shell: 
+#         /usr/pgsql-{{PG_VERSION}}/bin/repmgr -f /etc/repmgr/{{PG_VERSION}}/repmgr.conf standby register 
+
+#   when: replicaof is defined                                        
+
+
+# ############################################################
+# #        repmgrd , autofailover                            #
+# ############################################################
+# - name: start standby postgresql service
+#   service:  
+#     name: repmgr-{{PG_VERSION}}
+#     state: started
+#     enabled: true

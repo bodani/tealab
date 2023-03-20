@@ -3,6 +3,10 @@
 #   debug:
 #     msg: "{{ use_repo }}"
 # 安全相关
+# - name: update the system
+#   yum:
+#     name: "*"
+#     state: latest
 
 - name: 临时关闭 selinux
   shell: "setenforce 0"
