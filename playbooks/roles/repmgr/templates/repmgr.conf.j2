@@ -42,7 +42,7 @@ service_reload_command='{{ repmgr_reload_command }}'
 
 ##############################################
 # repmgrd options
-
+# 主节点可见性共识
 primary_visibility_consensus=true
 # 启用监控参数
 monitoring_history=yes
@@ -53,3 +53,8 @@ reconnect_attempts=10
 # 每间隔5s尝试重新连接一次参数
 reconnect_interval=5
 
+#### 避免双主 ，当主节点的从节点失联个数达到一定数量时(即认为主节点离开集群)将主节点自身关闭。
+child_nodes_check_interval: {{child_nodes_check_interval}}
+child_nodes_disconnect_command: {{child_nodes_disconnect_command}}
+child_nodes_disconnect_timeout: {{child_nodes_disconnect_timeout}}
+child_nodes_disconnect_min_count: {{child_nodes_disconnect_min_count}}

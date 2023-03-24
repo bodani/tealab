@@ -27,7 +27,7 @@ repmgr_dbname: 'repmgr'
 repmgr_service: 'repmgr-{{ postgres_release }}.service'
 
 # repmgr config options
-repmgr_conninfo: "host={{inventory_hostname}} user={{repmgr_user}} dbname={{ repmgr_dbname }}"
+repmgr_conninfo: "host={{inventory_hostname}} user={{repmgr_user}} dbname={{ repmgr_dbname }} connect_timeout=2"
 repmgr_node_id: '{{node_id}}'
 repmgr_node_name: '{{application_name}}'
 repmgr_failover: 'automatic'

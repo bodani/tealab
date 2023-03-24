@@ -1,0 +1,11 @@
+  /var/log/repmgr/repmgrd.log {
+        missingok
+        compress
+        rotate 52
+        maxsize 100M
+        weekly
+        create 0600 postgres postgres
+        postrotate
+            /usr/bin/killall -HUP repmgrd
+        endscript
+    }
