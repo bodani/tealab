@@ -1,3 +1,7 @@
+# # 安装并初始化主数据库
+# - import_tasks: install_pg.yml
+#   when: postgres_need_install | bool
+
 # 安装repmgr 软件
 - import_tasks: install.yml
 # 集群中各个节点之间免密
@@ -6,7 +10,23 @@
 - import_tasks: bootstrap.yml
 # 配置rempgr
 - import_tasks: configure.yml
+# 数据必要环境准备 # 手动准备 或 有roles postgres创建可自动配置
+- import_tasks: prepare_pg.yml
+  when: not prepare_pg_manu | bool
+
+### 在正式注册rempgr前  重启数据库集群。确保shared_preload_libraries 生效
+- name: prepare pg | restart postgres Serivice
+  service:
+    name: postgresql-{{postgres_release}}
+    state: restarted
+
+- name: prepare pg | wait postgresql started
+  wait_for: 
+    port: 5432
+    state: started
 # 注册主节点
 - import_tasks: register_master.yml
 # 注册从节点
 - import_tasks: register_standby.yml
+# 集群状况检测
+- import_tasks: verify_cluster.yml

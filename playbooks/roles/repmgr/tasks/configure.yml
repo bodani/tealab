@@ -25,6 +25,19 @@
   notify: restart repmgrd
   register: repmgr_conf
   
+- name: repmgr | logrotate
+  copy: 
+    src: logrotate
+    dest: /etc/logrotate.d/repmgr
+
+- name: repmgr | repmgr_ctl alias 
+  template:
+    src: repmgr_ctl.sh.j2
+    dest: /etc/profile.d/repmgr_ctl.sh
+    mode: 0700
+    owner: postgres
+    group: postgres
+
 
 # - name: PostgreSQL HBA 
 

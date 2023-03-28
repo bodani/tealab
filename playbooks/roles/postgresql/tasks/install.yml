@@ -10,7 +10,7 @@
 #     state: present
 #   tags: install
 
-- name: yum |  Setup PostgreSQL repository for {{ ansible_distribution }}
+- name: install |  Setup PostgreSQL repository for {{ ansible_distribution }}
   become_user: root
   block:
   - name: Prepare PostgreSQL RPM
@@ -18,24 +18,24 @@
       src: "pgdg-redhat-repo-latest.noarch.rpm"
       dest: /tmp/
 
-  - name: Install PostgreSQL RPM
+  - name: install |  Install PostgreSQL RPM
     package:
       name: /tmp/pgdg-redhat-repo-latest.noarch.rpm
       state: present
   when: ansible_distribution == "CentOS"
 
-- name: Install PostgreSQL Service
+- name: install | Install PostgreSQL Service
   package: name={{ pg_base_packages }} state=present
   with_items:
     - '{{ pg_base_packages }}'
   register: install_postgresql
 
-- name: Install PostgreSQL Base Extensions Packages
+- name: install | Install PostgreSQL Base Extensions Packages
   package: name={{ pg_extends_packages }} state=present
   with_items:
     - '{{ pg_extends_packages }}'
   
-- name: make postgres data dir
+- name: install | make postgres data dir
   file:
     path: "{{PG_DATA}}"
     state: directory
@@ -43,12 +43,12 @@
     group: postgres
     mode: 0700
 
-- name: Prepare Config PostgreSQL Serivice 
+- name: install | Prepare Config PostgreSQL Serivice 
   file:
     path: /etc/systemd/system/postgresql-{{PG_VERSION}}.service.d
     state: directory
 
-- name: Config PostgreSQL Serivice 
+- name: install | Config PostgreSQL Serivice 
   template:
     dest: /etc/systemd/system/postgresql-{{PG_VERSION}}.service.d/pg_service.conf
     src: postgresql-{{PG_VERSION}}_service.conf.j2

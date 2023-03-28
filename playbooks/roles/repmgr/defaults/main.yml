@@ -46,19 +46,12 @@ repmgr_reload_command:  "systemctl reload postgresql-{{ postgres_release }}"
 monitoring_history: yes
 monitor_interval_secs: 2
 
-# role management
-repmgr_is_master: false
-repmgr_register_master: false
-repmgr_register_standby: false
-repmgr_clone_standby: false
-repmgr_bootstrap: false
-repmgr_install_only: true
-repmgr_install_postgresql: false
-
+# master node check child nodes
 child_nodes_check_interval: 5s
-child_nodes_disconnect_command: ""
+child_nodes_disconnect_command: "sudo systemctl stop postgresql-{{ postgres_release }}"
 child_nodes_disconnect_timeout: 30s
 child_nodes_disconnect_min_count: 1
+child_nodes_connected_min_count: '{{master_min_child_nodes}}'
 
 
 

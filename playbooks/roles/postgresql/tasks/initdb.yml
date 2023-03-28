@@ -52,8 +52,20 @@
     port: 5432
     state: started
 
-### 该用户用于监控 Postgresql
-- name: create user for monitor
+#  采用 sql 创建用户 减少安装依赖
+# pip install psycopg2
+# pip install  pyghmi
+############################################################
+#        创建数据库 Replication User                         #
+############################################################
+- name: postgres initdb | create user for REPLICATION on master postgres
+  # postgresql_user:
+    # name: "{{ rep_user }}"
+    # password: "{{ rep_password | mandatory }}"
+    # role_attr_flags: REPLICATION
+    # state: present
+    # conn_limit: 10
+    # no_password_changes: yes
   postgresql_query: 
     db: postgres
     query: |
@@ -62,21 +74,13 @@
       BEGIN
         IF EXISTS (
             SELECT FROM pg_catalog.pg_user
-            WHERE  usename = 'tea_mon') THEN
-            RAISE NOTICE 'User "monitor" already exists. Skipping.';
+            WHERE  usename = '{{ rep_user }}') THEN
         ELSE
-            create user tea_mon with role pg_monitor CONNECTION LIMIT  10;
+            set password_encryption TO "scram-sha-256";
+            create user {{ rep_user }}  with encrypted password '{{ rep_password | mandatory }}' REPLICATION CONNECTION LIMIT 10;
         END IF;
       END
       $do$;
   become_user: postgres
-  # no_log: true
-#  采用 sql 创建用户 减少安装依赖
-# pip install psycopg2
-# pip install  pyghmi
-# 
-# - name: create user for replication
-#   become_user: postgres
-#   shell: | 
-#     psql -c "create user {{ rep_user }} with encrypted password '{{ rep_password | mandatory }}' replication connection limit 10 ; "
-#   tags: create_pg_user
+  no_log: true
+  run_once: true

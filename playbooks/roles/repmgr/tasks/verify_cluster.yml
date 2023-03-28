@@ -1,0 +1,10 @@
+---
+- name: repmgr | verify node status
+  command: "/usr/pgsql-{{ postgres_release }}/bin/repmgr -f /etc/repmgr/{{ postgres_release }}/repmgr.conf node check"
+  args:
+    warn: false
+  changed_when: false
+  register: result
+  ignore_errors: true
+  become: true
+  become_user: postgres

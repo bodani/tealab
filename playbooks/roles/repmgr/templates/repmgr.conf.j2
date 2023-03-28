@@ -54,7 +54,8 @@ reconnect_attempts=10
 reconnect_interval=5
 
 #### 避免双主 ，当主节点的从节点失联个数达到一定数量时(即认为主节点离开集群)将主节点自身关闭。
-child_nodes_check_interval: {{child_nodes_check_interval}}
-child_nodes_disconnect_command: {{child_nodes_disconnect_command}}
-child_nodes_disconnect_timeout: {{child_nodes_disconnect_timeout}}
-child_nodes_disconnect_min_count: {{child_nodes_disconnect_min_count}}
+child_nodes_check_interval= {{child_nodes_check_interval}}
+child_nodes_disconnect_command= '{{child_nodes_disconnect_command}}'
+child_nodes_disconnect_timeout= {{child_nodes_disconnect_timeout}}
+#child_nodes_disconnect_min_count= {{child_nodes_disconnect_min_count}}
+child_nodes_connected_min_count= {{child_nodes_connected_min_count}}

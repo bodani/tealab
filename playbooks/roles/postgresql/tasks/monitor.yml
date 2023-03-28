@@ -1,0 +1,19 @@
+### 该用户用于监控 Postgresql RAISE NOTICE 'User "monitor" already exists. Skipping.';
+- name: monitor | create user for monitor
+  postgresql_query: 
+    db: postgres
+    query: |
+      DO
+      $do$
+      BEGIN
+        IF EXISTS (
+            SELECT FROM pg_catalog.pg_user
+            WHERE  usename = 'tea_mon') THEN
+        ELSE
+            create user tea_mon with role pg_monitor CONNECTION LIMIT  10;
+        END IF;
+      END
+      $do$;
+  become_user: postgres
+  when: replicaof is undefined |bool
+  run_once: true

@@ -18,6 +18,8 @@ tea is an easy automation tool
    node.md
    etcd.md
    minio.md
+   postgresql.md
+   repmgr.md
    redis.md
    redis_cluster.md
    memcached.md

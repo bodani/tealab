@@ -2,3 +2,4 @@ conf/
 hosts.ini
 roles/*_role
 docs/rsync.sh
+docs/build/

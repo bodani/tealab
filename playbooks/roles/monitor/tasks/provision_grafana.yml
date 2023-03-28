@@ -110,7 +110,7 @@
     export GRAFANA_PASSWORD={{ grafana_admin_password }}
 
     # run provisinoing logic
-    python /var/lib/grafana/grafana.py init /var/lib/grafana/dashboards
+    /var/lib/grafana/grafana.py init /var/lib/grafana/dashboards
 
 - name: Add domain dashboard
   tags: [ monitor ]

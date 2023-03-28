@@ -17,3 +17,8 @@
   service:
     name: "{{ repmgr_service }}"
     state: reloaded
+
+- name: restart postgresql
+  service:
+    name: postgresql-{{postgres_release}}
+    state: restarted

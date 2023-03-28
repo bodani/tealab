@@ -1,54 +1,4 @@
 #if [ "`ls -A {{PG_DATA}}`" = "" ]; then if
-
-############################################################
-#        创建数据库 Replication User                         #
-############################################################
-- name: create user for REPLICATION on master postgres
-  # postgresql_user:
-    # name: "{{ rep_user }}"
-    # password: "{{ rep_password | mandatory }}"
-    # role_attr_flags: REPLICATION
-    # state: present
-    # conn_limit: 10
-    # no_password_changes: yes
-  postgresql_query: 
-    db: postgres
-    query: |
-      DO
-      $do$
-      BEGIN
-        IF EXISTS (
-            SELECT FROM pg_catalog.pg_user
-            WHERE  usename = '{{ rep_user }}') THEN
-        ELSE
-            set password_encryption TO "scram-sha-256";
-            create user {{ rep_user }}  with encrypted password '{{ rep_password | mandatory }}' REPLICATION CONNECTION LIMIT 10;
-        END IF;
-      END
-      $do$;
-  become_user: postgres
-  # no_log: true
-  delegate_to: "{{ replicaof }}"
-  # run_once: true
-
-############################################################
-#        配置 Replication User HBA 访问权限                  #
-############################################################
-- name: Config Replication User HBA 
-  lineinfile:
-    path: "{{PG_DATA}}/pg_hba.conf"
-    line: "host    replication     all             0.0.0.0/0               scram-sha-256"
-    state: present
-    insertafter: "# replication privilege."
-  delegate_to: "{{ replicaof }}"
-  # run_once: true
-- name: Reload Config HBA 
-  systemd:  
-    name: postgresql-{{PG_VERSION}}
-    state: reloaded
-  delegate_to: "{{ replicaof }}"
-  # run_once: true
-
 ############################################################
 #        初始化 Replication 数据库                           #
 ############################################################
@@ -67,7 +17,7 @@
 ############################################################
 #        主备数据库物理复制槽                         #
 ############################################################
-- name: create pg physical replication slot
+- name: replication | create pg physical replication slot
   postgresql_slot:
     name: "{{ application_name }}"
     slot_type: physical
@@ -75,10 +25,10 @@
     port: 5432
   when: use_slot |bool
   delegate_to: "{{ replicaof }}"
-  run_once: true
+  # run_once: true
   
 ## 没有使用 -R 参数自动生成。 自定义 recovery.conf 内容
-- name: create replication recovery.conf   
+- name: replication | create replication recovery.conf   
   template:
     src: recovery-{{PG_VERSION}}.conf.j2
     dest: "{{ PG_DATA }}/recovery.conf"
@@ -87,13 +37,13 @@
     mode: 0644
   # when: need_init_replication_db|bool
 
-- name: start postgresql service
+- name: replication | start postgresql service
   systemd:  
     name: postgresql-{{PG_VERSION}}
     state: started
     enabled: true
 
-- name: wait for postgresql start
+- name: replication | wait for postgresql start
   wait_for: 
     port: 5432
     state: started

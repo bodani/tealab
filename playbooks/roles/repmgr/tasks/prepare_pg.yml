@@ -1,0 +1,95 @@
+# 只适合有role postgres 创建的集群, 其他原有的主从数据库如果想使用repmgr管理。建议手动修改。
+- name: prepare_pg| shared_preload_libraries 'repmgr'; 
+  lineinfile:
+    dest: "{{ PG_DATA }}/pg_tea.conf"
+    regexp: "^shared_preload_libraries"
+    line: "shared_preload_libraries = 'repmgr,pg_repack,pg_stat_statements,auto_explain'"
+  with_items: 
+   - pg_tea.conf
+  # notify:  restart postgresql
+
+- name: prepare_pg | create user for repmgr
+  postgresql_query: 
+    db: postgres
+    query: |
+      DO
+      $do$
+      BEGIN
+        IF EXISTS (
+            SELECT FROM pg_catalog.pg_user
+            WHERE  usename = '{{rep_user}}') 
+        THEN
+            alter user {{rep_user}} replication login superuser encrypted password '{{rep_password}}';
+            alter user {{rep_user}} set search_path to {{rep_user}},"$user",public ;
+        ELSE
+            set password_encryption = 'scram-sha-256' ;
+            create user {{rep_user}} replication login superuser encrypted password '{{rep_password}}';
+            alter user {{rep_user}} set search_path to {{rep_user}},"$user",public ;
+        END IF;
+      END
+      $do$;
+  become_user: postgres
+  when: replicaof is undefined |bool
+  run_once: true
+
+- name: prepare_pg | create database for repmgr
+  postgresql_db: 
+    name: repmgr
+    owner: "{{rep_user}}"
+    conn_limit: '80'
+  become_user: postgres
+  when: replicaof is undefined |bool
+  run_once: true
+
+- name: prepare_pg| create .pgpass
+  file:
+    path: ~/.pgpass
+    owner: postgres
+    group: postgres
+    mode: 0600
+    state: touch
+  become_user: postgres
+
+- name: prepare_pg |  nopassword
+  lineinfile:
+    path: ~/.pgpass
+    line: "*:5432:repmgr:{{rep_user}}:{{rep_password}}" 
+    backup: yes
+  become_user: postgres
+
+# - name: prepare_pg | pg_hba conf  repmgr
+#   postgresql_pg_hba:
+#     dest: "{{ PG_DATA }}/pg_hba.conf"
+#     contype: host
+#     users: "{{rep_user}}"
+#     source: 0.0.0.0/0
+#     databases: repmgr
+#     method: scram-sha-256
+    # create: true
+
+# - name: prepare_pg | pg_hba conf replication 
+#   postgresql_pg_hba:
+#     dest: "{{ PG_DATA }}/pg_hba.conf"
+#     contype: host
+#     users: "{{rep_user}}"
+#     source: 0.0.0.0/0
+#     databases: replication
+#     method: scram-sha-256
+#     create: true
+
+# - name: replication | create replication recovery.conf   
+#   template:
+#     src: recovery-{{PG_VERSION}}.conf.j2
+#     dest: "{{ PG_DATA }}/recovery.conf"
+#     owner: postgres
+#     group: postgres
+#     mode: 0644
+- name: prepare pg  | check connection 
+  postgresql_query: 
+    db: repmgr
+    query: |
+      SELECT 1 ;
+    login_user: "{{rep_user}}"
+    login_password: "{{rep_password}}"
+    port: 5432
+    login_host: "{{inventory_hostname}}"

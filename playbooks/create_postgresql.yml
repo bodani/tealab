@@ -4,4 +4,3 @@
     - { role: node , harden: true, action: postgresql, tags: node}
     - { role: postgresql ,tags: postgresql}
     - { role: pgbouncer, tags: pgbouncer ,when: install_pgbouncer|bool  }
-    - { role: repmgr, tags: repmgr }   

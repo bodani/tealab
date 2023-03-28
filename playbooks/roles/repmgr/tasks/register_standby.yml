@@ -6,8 +6,17 @@
     - replicaof is defined|bool
     # - result is failed
   become_user: "postgres"
+  ignore_errors: true
   args:
     warn: false
   changed_when: false
   become: true
   notify: start repmgrd
+
+- name: repmgr | ensure repmgrd is started
+  service:
+    name: "{{ repmgr_service }}"
+    state: started
+    enabled: true
+  when:
+    - replicaof is defined|bool

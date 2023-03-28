@@ -1,18 +1,7 @@
 ############################################################
 #        判断数据库DATA是否已经存在                            #
 ############################################################
-- name: check if postgres data exists.
-  stat:
-    path: "{{PG_DATA}}/PG_VERSION"
-  register: stat_result
-
-- name: set if need initdb var
-  set_fact:
-     need_init_db : "{{ not stat_result.stat.exists}}"
-
-- name: Print init DB Messages
-  debug:
-    msg: "数据库需要初始化数据: {{ need_init_db }}"
+- import_tasks: validate.yml
 
 ############################################################
 #        安装数据库服务包                                     #
@@ -23,7 +12,6 @@
 ###########################################################
 #        原生主从流复制                                     #
 ###########################################################
-
 ##       主库初始化数据库
 - include: initdb.yml
   when: replicaof is undefined and need_init_db|bool
@@ -34,3 +22,7 @@
   tags: initdb
   
 - import_tasks: tunning.yml
+###########################################################
+#        监控数据                                          #
+###########################################################
+- import_tasks: monitor.yml

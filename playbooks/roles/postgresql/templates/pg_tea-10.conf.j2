@@ -11,6 +11,17 @@ shared_preload_libraries = 'pg_repack,pg_stat_statements,auto_explain'
 #shared_preload_libraries = 'repmgr,pg_repack,pg_stat_statements,auto_explain' 
 password_encryption = 'scram-sha-256'
 wal_log_hints = on
+
+############### pg log ###################
+log_destination = 'csvlog'
+logging_collector = 'on'
+log_filename = 'postgresql-%Y-%m-%d.log'
+log_rotation_age = '1d'
+log_rotation_size = '100MB'
+log_min_messages = 'info'
+log_min_duration_statement = '1000'
+log_statement = 'ddl'
+
 ############### auto_explain ###################
 auto_explain.log_analyze = off
 auto_explain.log_buffers = off
