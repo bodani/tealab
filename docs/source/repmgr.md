@@ -68,6 +68,7 @@ sudo su - postgres
 vi .pgpass
 #hostname:port:database:username:password
 #*:5432:repmgr:repmgr:123456 
+#*:5432:reolication:repmgr:123456 
 ip:port:repmgr:repmgr:repmgr
 chmod 0600  .pgpass
 ```

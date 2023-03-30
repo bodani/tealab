@@ -24,7 +24,15 @@
     mode: '0740'
   notify: restart repmgrd
   register: repmgr_conf
-  
+
+- name: repmgr| failover_validation_command shell
+  template: 
+    src: failover_validation_command.sh.j2
+    desc: /etc/repmgr/{{ postgres_release }}/failover_validation_command.sh
+    owner: "postgres"
+    group: "postgres"
+    mode: '0755'
+
 - name: repmgr | logrotate
   copy: 
     src: logrotate

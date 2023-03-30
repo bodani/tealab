@@ -1,0 +1,9 @@
+#! bin/bash
+ping -c 5 {{ inventory_hostname }}
+if [ $? -eq 0 ]; then
+	echo "ping $ip  success!"
+	return 0
+else
+	echo "ping  $ip fail!"
+	return 1
+fi

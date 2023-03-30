@@ -32,12 +32,20 @@ recovery.conf 中 的application_name 与node_name 保持一致
 repmgr_ctl cluster show
 
 #### 手动切换
+试运行
+repmgr_ctl standby switchover --dry-run
+
 repmgr_ctl standby switchover
+
+repmgr_ctl standby switchover --siblings-follow 
 
 #### 重新加入集群 
 
 数据库或节点意外挂掉后，数据库关闭状态时执行。重新将数据库加入集群中。
+试运行
 repmgr_ctl node rejoin  -d 'host=10.10.2.11,10.10.2.12,10.10.12.13 dbname=repmgr user=repmgr' --force-rewind -v --dry-run
+
+repmgr_ctl node rejoin  -d 'host=10.10.2.11,10.10.2.12,10.10.12.13 dbname=repmgr user=repmgr' --force-rewind -v 
 
  多hosts连接
  https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING

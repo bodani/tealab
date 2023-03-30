@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus Postgres Exporter Server
+
+[Service]
+User=postgres
+Environment="DATA_SOURCE_NAME=postgresql://tea_mon:password@localhost:5432/postgres?sslmode=disable"
+ExecStart=/usr/local/bin/postgres_exporter \
+    --extend.query-path /etc/postgres_exporter/postgres-queries.yml \
+    --web.listen-address=:9187
+
+[Install]
+WantedBy=multi-user.target

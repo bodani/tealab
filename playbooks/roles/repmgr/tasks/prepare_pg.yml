@@ -57,6 +57,13 @@
     backup: yes
   become_user: postgres
 
+- name: prepare_pg |  nopassword replication
+  lineinfile:
+    path: ~/.pgpass
+    line: "*:5432:replication:{{rep_user}}:{{rep_password}}" 
+    backup: yes
+  become_user: postgres
+
 # - name: prepare_pg | pg_hba conf  repmgr
 #   postgresql_pg_hba:
 #     dest: "{{ PG_DATA }}/pg_hba.conf"

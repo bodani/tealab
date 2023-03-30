@@ -45,7 +45,7 @@ repmgr_restart_command: "sudo systemctl restart postgresql-{{ postgres_release }
 repmgr_reload_command:  "systemctl reload postgresql-{{ postgres_release }}"
 monitoring_history: yes
 monitor_interval_secs: 2
-
+failover_validation_command: '/etc/repmgr/{{ postgres_release }}/failover_validation_command.sh'
 # master node check child nodes
 child_nodes_check_interval: 5s
 child_nodes_disconnect_command: "sudo systemctl stop postgresql-{{ postgres_release }}"

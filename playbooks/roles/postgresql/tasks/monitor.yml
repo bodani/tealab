@@ -10,10 +10,52 @@
             SELECT FROM pg_catalog.pg_user
             WHERE  usename = 'tea_mon') THEN
         ELSE
-            create user tea_mon with role pg_monitor CONNECTION LIMIT  10;
+            create user tea_mon CONNECTION LIMIT  10;
+            GRANT pg_monitor to tea_mon;
+            ALTER USER tea_mon SET SEARCH_PATH TO tea_mon,pg_catalog;
         END IF;
       END
       $do$;
   become_user: postgres
   when: replicaof is undefined |bool
   run_once: true
+
+- name: monitor | install postgresql_exporter 
+  copy: 
+    src: "{{local_bin}}/postgresql/postgres_exporter"
+    dest: /usr/local/bin/postgres_exporter
+    mode: 0755
+    owner: postgres
+    group: postgres
+
+- name: moinitor |  create directory postgresql_exporter
+  file:
+    path: /etc/postgres_exporter
+    state: directory
+    owner: postgres
+    group: postgres
+  
+- name: monitor | postgres query 
+  copy: 
+    src: queries.yml
+    dest: /etc/postgres_exporter/postgres-queries.yml
+    owner: postgres
+    group: postgres
+
+- name: monitor | postgres_exporter service
+  template:
+    src: postgres-exporter.service.j2
+    dest: /usr/lib/systemd/system/postgres-exporter.service
+
+- name: monitor | start postgresql exporter
+  service:
+    name: postgres-exporter
+    state: started
+    daemon-reload: true
+    enabled: true
+
+- name: wait for postgres exporter started
+  wait_for:
+    port: 9187
+    state: started
+
