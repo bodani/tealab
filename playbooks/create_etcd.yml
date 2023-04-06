@@ -8,23 +8,38 @@
         - name: validate etcd cluster name 
           assert:
             that:
-              - NAME is defined
-            fail_msg: variable 'ETCD NAME' should be defined
-        - name: test
+              - ETCD_NAME is defined
+            fail_msg: variable 'ETCD_NAME' should be defined
+        - name: show etcd name
           connection: local
           debug:
-            msg: "etcd cluster name : {{ NAME }}"
+            msg: "etcd cluster name : {{ ETCD_NAME }}"
        run_once: true 
     vars:
-      CERT_LOCAL_DIR: "/etc/tealabs/etcd/{{ NAME }}"
+      CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/{{ ETCD_NAME }}"
+
     roles:
-      - { role: ca }
+      - { role: ca ,tags: ca}
 ##------------------------------------集群安装基本流程-------------------------
 ## 一， 对实体机节点进行优化
 ## 二， 根据hosts ip 在控制机器创建证书
 ## 三， 二进制安装etcd及服务配置
 ## 四， 启动服务。待所有机器安装后统一启动，减少部分机器先启动后等待其他集群。
 ## 五， 对etcd进行 cpu 和io 进行调优。为什么放在服务启动后呢？ 因为cpu的优化是根据etcd的进程号
-      - { role: etcd }
-      
+      - { role: etcd, tags: etcd }
 
+    post_tasks:
+      - name: ETCD 证书生成位置
+        connection: local
+        debug:
+          msg: "etcd cert keys has been generated at : {{ CERT_LOCAL_DIR }}"
+        run_once: true   
+
+      - name: ETCD 集群状态收集
+        shell:
+          etcdctl endpoint health
+        register: etcd_health_result
+
+      - name: ETCD 集群状态查看  
+        debug:
+          msg: "{{etcd_health_result.stdout}}"

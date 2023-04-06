@@ -1,0 +1,113 @@
+# 配置说明
+tealab 主要依赖配置描述对服务进行管理和排版。
+
+配置文件位置 
+```
+/etc/tea/services.ini
+```
+
+## 配置文件示例
+```
+##############################################################################################
+#                       nodes   definition                                                   #
+##############################################################################################
+[nodes]
+; 10.10.2.10  hostname=controller idc=first
+10.10.2.11  hostname=node1 idc=first
+10.10.2.12  hostname=node2 idc=first
+10.10.2.13  hostname=node3 idc=first
+10.10.2.14  hostname=node4 idc=second
+
+[all:vars]
+############## user ###########################
+# 使用create_user 时，在目标节点上创建的用户
+username = tea
+############## local repo 存放位置##############
+local_bin = "~/local_bin/"
+##############################################################################################
+#                        private repo   definition                                           #
+##############################################################################################
+[repo]
+10.10.2.10
+
+##############################################################################################
+#                        monitor & logs service definition                                   #
+##############################################################################################
+#监控系统 prometheus grafana
+[monitor]
+10.10.2.14
+
+[monitor:vars]
+# prometheus data path
+prometheus_data_path = /data/monitor/prometheus
+grafana_admin_username = admin
+grafana_admin_password = admin
+
+# 监控域名及证书到期时间 
+domain_https=['https://www.baidu.com','https://doc.zhangeamon.top','https://test.zhangeamon.top']
+
+#日志存储服务loki
+[loki]
+10.10.2.14
+
+[loki:vars]
+# 日志数据存储位置
+loki_data_path=/data/loki/
+# 日志数据保留时效
+retention_period=2520h
+##############################################################################################
+#                       other services definition                                            #
+##############################################################################################
+# Other Servers
+#------------------------------------------------------------------ NGINX -----------------------------------------------------------------------------
+[nginx]
+10.10.2.13
+
+#------------------------------------------------------------------ DOCKER -----------------------------------------------------------------------------
+[docker]
+10.10.2.13
+
+[docker:vars]
+ # default json-file , loki
+log_driver = json-file
+
+#------------------------------------------------------------------ ETCD -----------------------------------------------------------------------------
+# etcd version 3.3
+[etcd]
+10.10.2.11
+10.10.2.12
+10.10.2.13
+# 10.10.2.14
+# 10.10.2.10
+
+[etcd:vars]
+ETCD_NAME=etcd001
+# 在ectd服务器中 证书存放位置
+ECTD_CERT_DIR=/etc/ssl/certs
+# etcd 数据存放位置
+ETCD_DATA_DIR=/var/lib/etcd
+# etcd wal日志存放位置
+ETCD_WAL_DIR=/var/lib/etcd/wal
+# 端口号, 设定完成后期不可修改， 请注意
+ETCD_PEER_PORT = 2380
+ETCD_CLIENT_PORT = 2379
+
+########### 数据备份#####################
+# 在中控机上数据存储位置,该目录具有执行用户写权限
+ETCD_LOCAL_BACKUP_DIR = /tmp/etcd/
+```
+
+## 配置文件加密
+
+#### 加密
+```
+ansible-vault encrypt /etc/tea/services.ini
+```
+#### 编辑
+```
+ansible-vault edit /etc/tea/services.ini
+```
+#### 解密
+```
+ansible-vault decrypt /etc/tea/services.ini
+```

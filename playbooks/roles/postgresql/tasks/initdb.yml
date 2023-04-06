@@ -6,22 +6,16 @@
   become_method: sudo
   shell: |
       /usr/pgsql-{{PG_VERSION}}/bin/initdb  --data-checksums -D {{PG_DATA}}
-  # when: need_init_db|bool 
 
 ############################################################
 #         配置数据库                                        #
 ############################################################
-# - name: postgres include conf
-#   shell: |
-#     cat {{PG_DATA}}/postgresql.conf | grep pg_tea.conf ||  echo "include = 'pg_tea.conf' " >> {{PG_DATA}}/postgresql.conf
 - name: prepare postgres config
   template:
     src: pg_tea-{{PG_VERSION}}.conf.j2
     dest: "{{PG_DATA}}/pg_tea.conf"
     owner: postgres
     group: postgres
-  # when: 
-  #  - need_init_db|bool
 
 - name: include pg_tea.conf
   lineinfile:
@@ -83,4 +77,17 @@
       $do$;
   become_user: postgres
   no_log: true
+  run_once: true
+
+############################################################
+#        创建数据库 Extension                                #
+############################################################
+- name: initdb | create extension
+  postgresql_ext:
+    name: pg_stat_statements
+    db: postgres
+  with_items: 
+    - pg_buffercache
+    - pg_stat_statements
+  become_user: postgres
   run_once: true

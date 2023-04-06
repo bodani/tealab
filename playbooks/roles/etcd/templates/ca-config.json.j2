@@ -1,7 +1,7 @@
 {
   "signing": {
     "default": {
-      "expiry": "{{ CERT_EXPIRY }}"
+      "expiry": "{{ ETCD_CERT_EXPIRY }}"
     },
     "profiles": {
       "etcd": {
@@ -11,7 +11,7 @@
             "server auth",
             "client auth"
         ],
-        "expiry": "{{ CERT_EXPIRY }}"
+        "expiry": "{{ ETCD_CERT_EXPIRY }}"
       }
     }
   }

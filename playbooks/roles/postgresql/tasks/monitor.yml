@@ -59,3 +59,79 @@
     port: 9187
     state: started
 
+##################################################################################
+#                        配置prometheus                                           #
+##################################################################################
+- name: create prometheus filediscover postgres yml
+  blockinfile:
+    path: /etc/prometheus/prometheus.yml
+    state: present
+    marker: "# {mark} Postgresql JOB  "
+    content: |
+      #  promethes auto discover etcd jobs  
+        - job_name: 'postgresql'
+          scrape_interval: 5s
+          file_sd_configs:
+            - refresh_interval: 10s
+              files:
+              - /etc/prometheus/pgs/*.yml 
+    # validate: promtool check config %s
+  notify: restart_prometheus  
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: add postgres discover server
+  file:  
+    path: /etc/prometheus/pgs
+    state: directory
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: add postgres server yml
+  copy:
+    dest: /etc/prometheus/pgs/{{ inventory_hostname }}.yml
+    content: | 
+      - targets: ['{{ inventory_hostname }}:9187']
+        labels:
+          pg_cluster_name: "{{ pg_cluster_name }}"
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: add postgres rules
+  copy:
+    dest: /etc/prometheus/rules/pg_alert.yml
+    src: rules/pg_alert.yml
+    owner: prometheus
+    group: prometheus
+    # mode: 0644
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+##################################################################################
+#                        配置grafana                                              #
+##################################################################################
+- name: prepare etcd dashboard json
+  copy:
+    dest: /var/lib/grafana/dashboards/
+    src: dashboards/pg
+    owner: grafana
+    group: grafana
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+- name: load grafana dashboard
+  shell: | 
+    sh /var/lib/grafana/load_dashboard.sh
+    sh /var/lib/grafana/clean_dashboards_jsons.sh
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  

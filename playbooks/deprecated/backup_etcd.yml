@@ -23,7 +23,7 @@
 
         - name: create local etcd data dir
           file:
-            path: "{{ LOCAL_ETCD_BACKUP_DIR }}"
+            path: "{{ ETCD_LOCAL_BACKUP_DIR }}"
             state: directory
             mode: 0777
           connection: local
@@ -32,7 +32,7 @@
           # become: true
           fetch:
             src: "{{ ETCD_TMP_BACKUP_DIR }}/etcd_snapshot.db"
-            dest: "{{ LOCAL_ETCD_BACKUP_DIR }}/"
+            dest: "{{ ETCD_LOCAL_BACKUP_DIR }}/"
             flat: true
 
         - name: clean tmp data

@@ -35,10 +35,10 @@
 - name: 分发etcd证书
   block:
   - name: Distribute ca.pem
-    copy: src={{ CERT_LOCAL_DIR }}/ca.pem dest={{ECTD_CERT_DIR}}/ca.pem
-  - name: Distribute etcd.pem
+    copy: src={{ CERT_LOCAL_DIR }}/ca.pem dest={{ECTD_CERT_DIR}}/etcd-ca.pem
+  - name: Distribute etcd-key.pem
     copy: src={{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-key.pem dest={{ECTD_CERT_DIR}}/etcd-key.pem
-  - name: Distribute ca.pem
+  - name: Distribute etcd.pem
     copy: src={{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-crt.pem dest={{ECTD_CERT_DIR}}/etcd.pem
   tags: etcd_csr
 
@@ -63,6 +63,6 @@
       alias em="etcdctl member"
       export ETCDCTL_API=3
       export ETCDCTL_ENDPOINTS="https://{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }}"
-      export ETCDCTL_CACERT={{ECTD_CERT_DIR}}/ca.pem
+      export ETCDCTL_CACERT={{ECTD_CERT_DIR}}/etcd-ca.pem
       export ETCDCTL_CERT={{ECTD_CERT_DIR}}/etcd.pem
       export ETCDCTL_KEY={{ECTD_CERT_DIR}}/etcd-key.pem

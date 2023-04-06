@@ -1,0 +1,14 @@
+#!/usr/bin/env ansible-playbook
+- hosts: "{{ server_name | default('pg_patroni')}}"
+  roles: 
+    - { role: patroni ,tags patroni}
+
+  post_tasks:
+    - name: patroni 集群状态收集
+      shell:
+        curl -I  http://{{inventory_hostname}}:8008/health
+      register: patroni_health_result
+
+    - name: patroni 集群状态查看  
+      debug:
+        msg: "{{patroni_health_result.stdout}}"

@@ -11,7 +11,7 @@
 
 - name: copy snapshot data to server nodes
   copy:
-    src: "{{ LOCAL_ETCD_BACKUP_DIR }}/etcd_snapshot.db"
+    src: "{{ ETCD_ETCD_BACKUP_DIR }}/etcd_snapshot.db"
     dest: "{{ ETCD_TMP_BACKUP_DIR }}"
     owner: etcd
     group: etcd

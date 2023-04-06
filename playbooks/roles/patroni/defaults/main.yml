@@ -1,0 +1,3 @@
+  CACERT: "{{CERT_LOCAL_BASE_DIR}}/{{ETCD_NAME}}/ca.pem"
+  ETCD_CLIENT_CERT: "{{CERT_LOCAL_BASE_DIR}}/{{ETCD_NAME}}/client-crt.pem"
+  ETCD_CLIENT_KEY: "{{CERT_LOCAL_BASE_DIR}}/{{ETCD_NAME}}/client-key.pem"

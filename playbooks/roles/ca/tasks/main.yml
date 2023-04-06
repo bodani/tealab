@@ -1,4 +1,11 @@
 ## 为了更安全，每个服务创建独立证书及签名体系
-- import_tasks: ca.yml
+- import_tasks: ca.yml 
+  delegate_to: localhost
+  run_once: true
+## 服务证书  
 - import_tasks: cert.yml
+  delegate_to: localhost
+## 服务客户端证书
 - import_tasks: client_cert.yml
+  delegate_to: localhost
+  run_once: true

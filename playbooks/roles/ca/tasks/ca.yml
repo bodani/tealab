@@ -1,26 +1,22 @@
- # check ca private key file exists
+
 - name: create ca dir if not exists
   file: 
     path: "{{ CERT_LOCAL_DIR }}"
     state: directory
     # owner:
     mode: 755
-  delegate_to: localhost
- 
+
+# check ca private key file exists
 - name: check ca exists
   stat: path="{{ CERT_LOCAL_DIR }}/ca-key.pem"
   register: ca_key_exists
-  delegate_to: localhost
-  run_once: true
 
 - name: debug ca exists
   connection: local
   debug: 
     msg: "CA EXISTS IN  {{ CERT_LOCAL_DIR }} : {{ ca_key_exists.stat.exists }}"
-  run_once: true
 
 - name: generate ca private key 
-  delegate_to: localhost
   block:
     - name: generate ca private key
       openssl_privatekey: path="{{ CERT_LOCAL_DIR }}/ca-key.pem" mode=0600
@@ -46,6 +42,5 @@
         provider: selfsigned
         selfsigned_not_after: +{{ CERT_EXPIRY }}
         mode: 0644
-  run_once: true
   when: not ca_key_exists.stat.exists|bool 
 ...

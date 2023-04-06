@@ -14,6 +14,7 @@ tea is an easy automation tool
  
    preface.md
    install-tea.md 
+   config.md
    monitor.md
    node.md
    etcd.md

@@ -1,6 +1,9 @@
 # 创建服务证书
+- name: check cert key exists
+  stat: path="{{ CERT_LOCAL_DIR }}/{{ inventory_hostname }}-key.pem"
+  register: cert_key_exists
+
 - name: gencert certificate
-  delegate_to: localhost
   block:
 # 生成私钥
     - name: 生成私钥
@@ -31,3 +34,5 @@
         provider: ownca
         selfsigned_not_after: "+{{ CERT_EXPIRY }}"
         mode: 0644
+  when: not cert_key_exists.stat.exists|bool 
+...

@@ -76,13 +76,13 @@
   with_items: "{{ groups['monitor'] }}"
   run_once: true  
 
-- name: add etcd server yml
+- name: monitor | add etcd server yml
   copy:
     dest: /etc/prometheus/etcds/{{ inventory_hostname }}.yml
     content: | 
       - targets: ['{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }}']
         labels:
-          name: "{{ NAME }}"
+          name: "{{ ETCD_NAME }}"
     owner: prometheus
     group: prometheus
     # mode: 0644

@@ -1,0 +1,149 @@
+###############################################################mini patroni config##############################################
+#                                                                                                                              #
+#                         Try to do it without modifying the parameters of the database                                        #
+#                                                                                                                              #
+#################################################################################################################################
+scope: {{ PG_CLUSTER_NAME }}
+namespace: /pg/
+name: {{ application_name }}
+
+restapi:
+  listen: {{ inventory_hostname }}:8008
+  connect_address: {{ inventory_hostname }}:8008
+
+  authentication:
+    username: {{ REST_API_USERNAME }}
+    password: {{ REST_API_PASSWORD }}
+
+ctl:
+  insecure: true # Allow connections to Patroni REST API without verifying certificates
+
+#--------------------------------------------------------------#
+# log
+#--------------------------------------------------------------#
+log:
+  level: INFO                           #  NOTEST|DEBUG|INFO|WARNING|ERROR|CRITICAL
+  dir: /var/log/patroni                 #  patroni log dir
+  file_size: 33554432                   #  32MB log triggers log rotation
+  file_num: 20                          #  keep at most 30x32MB = 1GB log
+  dateformat: '%Y-%m-%d %H:%M:%S %z'    #  IMPORTANT: discard milli timestamp
+  format: '%(asctime)s %(levelname)s: %(message)s'
+
+etcd3:
+  #Provide host to do the initial discovery of the cluster topology:
+  hosts: '{{ ETCD_HOSTS }}'
+
+{% if ETCD_USERNAME is defined | bool %}
+  username: {{ ETCD_USERNAME }}| default("")
+{% endif %}
+{% if ETCD_PASSWORD is defined | bool %}
+  password: {{ ETCD_PASSWORD }}| default("")
+{% endif %}
+  protocol: https
+  cacert: /etc/patroni/certs/etcd-ca.pem
+  cert: /etc/patroni/certs/etcd-client-cert.pem
+  key: /etc/patroni/certs/etcd-client-key.pem
+
+bootstrap:
+  # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
+  # and all other cluster members will use it as a `global configuration`
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    primary_start_timeout: 300
+    synchronous_mode: false
+    failsafe_mode: true
+    postgresql:
+      use_pg_rewind: true
+#      use_slots: true
+      #------------------------------------------------------------#
+      # how to react to database operations
+      #------------------------------------------------------------#
+      # event callback script log: /var/log/patroni/callback.log
+      callbacks:
+        on_start: /etc/patroni/callbacks/pg-failover-callback
+        on_stop: /etc/patroni/callbacks/pg-failover-callback
+        on_reload: /etc/patroni/callbacks//pg-failover-callback
+        on_restart: /etc/patroni/callbacks//pg-failover-callback
+        on_role_change: /etc/patroni/callbacks//pg-failover-callback
+      #------------------------------------------------------------#
+      # how to create replica
+      #------------------------------------------------------------#
+      # create replica method: default pg_basebackup
+      create_replica_methods:
+        - basebackup
+      basebackup:
+        - max-rate: '100M'
+        - checkpoint: fast
+        - verbose
+        - progress
+####################################################################################
+#                         postgresql start parameters                              #
+####################################################################################
+      # parameters must hold the same values on the primary and the replicas
+      parameters:
+        wal_level: logical
+        hot_standby: "on"
+        max_connections: 1000
+        max_worker_processes: 16
+        max_prepared_transactions: 0
+        max_locks_per_transaction: 64
+        wal_log_hints: "on"
+        track_commit_timestamp: "off"
+      
+        max_wal_senders: 10
+        max_replication_slots: 5
+        wal_keep_segments: 8
+        wal_keep_size: 128MB
+
+  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
+    - host all {{ MON_USER }} 127.0.0.1/32 trust
+    - host replication {{ REP_USER}} 0.0.0.0/0 scram-sha-256
+
+  # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
+# post_init: /usr/local/bin/setup_cluster.sh
+
+  # Some additional users users which needs to be created after initializing new cluster
+  users:
+    {{ MON_USER }}:
+      options:
+        - pg_monitor
+
+postgresql:
+#------------------------------------------------------------#
+# how to connect to postgres
+#------------------------------------------------------------#
+  bin_dir: {{PG_BIN}}
+  data_dir: {{PG_DATA}}
+  config_dir: {{PG_DATA}}
+  pgpass: /var/lib/pgsql/.pgpass
+  listen: 127.0.0.1,{{inventory_hostname}}:5432
+  connect_address: {{inventory_hostname}}:5432
+  use_unix_socket: true # default: /var/run/postgresql, /tmp
+
+#------------------------------------------------------------#
+# who to connect to postgres
+#------------------------------------------------------------#
+  authentication:
+    superuser:
+      username: postgres
+    replication:
+      username: {{ REP_USER }}
+      password: {{ REP_PASSWORD }}
+    rewind:  # Has no effect on postgres 10 and lower
+      username: rewind_user
+      password: 'rewind_password'
+
+#watchdog:
+#  mode: automatic # Allowed values: off, automatic, required
+#  device: /dev/watchdog
+#  safety_margin: 5
+
+tags:
+    nofailover: false
+    noloadbalance: false
+    clonefrom: false
+    nosync: false
+    version:  {{ PG_VERSION }}

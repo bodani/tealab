@@ -1,0 +1,11 @@
+- name: restart patroni
+  service:  
+    name: patroni
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: reload patroni
+  service:  
+    name: patroni
+    state: reloaded

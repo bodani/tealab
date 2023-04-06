@@ -1,13 +1,9 @@
 ## 用户生成客户端访问证书
-
 - name: check client-key exists
   stat: path="{{ CERT_LOCAL_DIR }}/client-key.pem"
-  register: client-key
-  delegate_to: localhost
-  run_once: true
+  register: client_key
 
 - name: gencert certificate
-  delegate_to: localhost
   block:
     - name: 生成客户端证书私钥
       openssl_privatekey:
@@ -35,5 +31,4 @@
         provider: ownca
         selfsigned_not_after: "+{{ CERT_EXPIRY }}"
         mode: 0644
-  run_once: true
-  when: not client-key.stat.exists|bool 
+  when: not client_key.stat.exists|bool 

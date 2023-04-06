@@ -7,13 +7,13 @@
       - name: validate etcd cluster name 
         assert:
           that:
-            - NAME is defined
-          fail_msg: variable 'NAME' should be defined
+            - ETCD_NAME is defined
+          fail_msg: variable 'ETCD_NAME' should be defined
 
       - name: test
         connection: local
         debug:
-          msg: "etcd cluster name : {{ NAME }}"
+          msg: "etcd cluster name : {{ ETCD_NAME }}"
       
       - name: Task name
         stat:
@@ -27,9 +27,21 @@
         when: register_member_dir.stat.exists and register_member_dir.stat.isdir
         
       run_once: true 
+
   vars:
-    CERT_LOCAL_DIR: "/etc/tealabs/etcd/{{ NAME }}"
+    CERT_LOCAL_DIR: "{{CERT_LOCAL_BASE_DIR}}/{{ ETCD_NAME }}"
     CLUSTER_STATE: existing
+    
   roles:
-      - { role: ca }
-      - { role: etcd }
+      - { role: ca ,tags: ca}
+      - { role: etcd, tags: etcd }
+
+  post_tasks:
+    - name: ETCD 集群状态收集
+      shell:
+        etcdctl endpoint health
+      register: etcd_health_result
+
+    - name: ETCD 集群状态查看  
+      debug:
+        msg: "{{etcd_health_result.stdout}}"
