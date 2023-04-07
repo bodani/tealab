@@ -57,7 +57,7 @@ bootstrap:
     failsafe_mode: true
     postgresql:
       use_pg_rewind: true
-#      use_slots: true
+      use_slots: false
       #------------------------------------------------------------#
       # how to react to database operations
       #------------------------------------------------------------#
@@ -99,8 +99,24 @@ bootstrap:
         wal_keep_size: 128MB
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
+    # monitor user 
     - host all {{ MON_USER }} 127.0.0.1/32 trust
-    - host replication {{ REP_USER}} 0.0.0.0/0 scram-sha-256
+    # superuser local connetion
+    - local all postgres          peer
+    # bussiness & pg_rewind user 
+    - host all all 10.0.0.0/8     scram-sha-256
+    - host all all 172.16.0.0/12  scram-sha-256
+    - host all all 192.168.0.0/16 scram-sha-256
+    # bussiness ssl 
+    - hostssl all all 10.0.0.0/8     scram-sha-256
+    - hostssl all all 172.16.0.0/12  scram-sha-256
+    - hostssl all all 192.168.0.0/16 scram-sha-256
+    # replicaion user
+    - host replication {{ REP_USER}} 10.0.0.0/8 scram-sha-256
+    - host replication {{ REP_USER}} 172.16.0.0/12 scram-sha-256
+    - host replication {{ REP_USER}} 192.168.0.0/16 scram-sha-256
+    # 
+
 
   # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
 # post_init: /usr/local/bin/setup_cluster.sh
@@ -110,6 +126,14 @@ bootstrap:
     {{ MON_USER }}:
       options:
         - pg_monitor
+    {{ REP_USER }}:
+      password: '{{ REP_PASSWORD }}'
+      options:
+        - replication
+    {% if PG_VERSION > 10 %}
+    {{ REWIND_USER }}:  # Has no effect on postgres 10 and lower (use superuser)
+      password: '{{ REWIND_PASSWORD }}'
+    {%endif%}
 
 postgresql:
 #------------------------------------------------------------#
@@ -117,7 +141,7 @@ postgresql:
 #------------------------------------------------------------#
   bin_dir: {{PG_BIN}}
   data_dir: {{PG_DATA}}
-  config_dir: {{PG_DATA}}
+  config_dir: {{PG_CONFIG}}
   pgpass: /var/lib/pgsql/.pgpass
   listen: 127.0.0.1,{{inventory_hostname}}:5432
   connect_address: {{inventory_hostname}}:5432
@@ -128,11 +152,12 @@ postgresql:
 #------------------------------------------------------------#
   authentication:
     superuser:
-      username: postgres
+      username: {{SUP_USER}}
+      password: {{SUP_PASSWORD}}
     replication:
       username: {{ REP_USER }}
       password: {{ REP_PASSWORD }}
-    rewind:  # Has no effect on postgres 10 and lower
+    rewind:  # Has no effect on postgres 10 and lower (use superuser)
       username: rewind_user
       password: 'rewind_password'
 
@@ -144,6 +169,6 @@ postgresql:
 tags:
     nofailover: false
     noloadbalance: false
-    clonefrom: false
+    clonefrom: {{clone_form}} 
     nosync: false
     version:  {{ PG_VERSION }}

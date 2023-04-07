@@ -186,9 +186,11 @@ bootstrap:
   # Some additional users users which needs to be created after initializing new cluster
   users:
     {{MON_USER}}:
-      password: {{MON_PASSWORD}}
       options:
         - pg_monitor
+
+    replicator:
+      password: 'DBUser.Replicator'
 
 postgresql:
 #------------------------------------------------------------#

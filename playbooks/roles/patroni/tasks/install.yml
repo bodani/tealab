@@ -54,13 +54,41 @@
     content: 
       alias patronictl="patronictl -c /etc/patroni/patroni.yml"
     mode: 0777
-    
-- name: install | start patroni service
+
+- name: install | init cluster leader node    
+  block:
+  - name: install | start patroni service leader
+    service: 
+      name: patroni
+      state: started
+      daemon_reload: true
+      enabled: true
+
+  # - name: install | wait for  postgres started leader
+  #   wait_for:
+  #     port: 5432
+  #     state: started
+  #     sleep: 1
+  #     delay: 5
+  #     timeout: 180
+
+  - name: install | wait for patroni started leader
+    get_url:
+      url: http://{{inventory_hostname}}:8008/primary
+      dest: /tmp/
+    register: check_result 
+    any_errors_fatal: true
+    # ignore_errors: false
+    failed_when: check_result.status_code != 200
+  when: is_leader|bool
+
+- name: install | start patroni service replica
   service: 
     name: patroni
     state: started
     daemon_reload: true
     enabled: true
+  when: not is_leader|bool
 
 - name: install | wait for postgres started
   wait_for:
