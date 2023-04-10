@@ -21,6 +21,7 @@ tea is an easy automation tool
    minio.md
    postgresql.md
    repmgr.md
+   patroni.rst
    redis.md
    redis_cluster.md
    memcached.md

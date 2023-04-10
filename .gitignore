@@ -3,3 +3,4 @@ hosts.ini
 roles/*_role
 docs/rsync.sh
 docs/build/
+docs/build/html
