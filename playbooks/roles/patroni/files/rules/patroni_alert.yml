@@ -1,0 +1,11 @@
+groups:
+- name: Patroni状态-监控告警
+  rules:
+  - alert: Patroni Postgres Running
+    expr: patroni_postgres_running == 0
+    for: 0m
+    labels:
+      severity: critical
+    annotations:
+      summary: Patroni Postgres NOT Run (instance {{ $labels.instance }})
+      description: "Patroni Postgres NOT Run\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
