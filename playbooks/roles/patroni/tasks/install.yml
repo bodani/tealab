@@ -39,6 +39,7 @@
   copy: 
     src: callbacks.sh
     dest: /etc/patroni/callbacks/callbacks.sh
+    mode: 0777
   notify: reload patroni
 
 - name: install | patroni log dir
@@ -64,18 +65,18 @@
       daemon_reload: true
       enabled: true
 
-  # - name: install | wait for  postgres started leader
-  #   wait_for:
-  #     port: 5432
-  #     state: started
-  #     sleep: 1
-  #     delay: 5
-  #     timeout: 180
+  - name: install | wait for  postgres started leader
+    wait_for:
+      port: 5432
+      state: started
+      sleep: 1
+      delay: 5
+      timeout: 180
 
   - name: install | wait for patroni started leader
     get_url:
       url: http://{{inventory_hostname}}:8008/primary
-      dest: /tmp/
+      dest: /dev/null
     register: check_result 
     any_errors_fatal: true
     # ignore_errors: false

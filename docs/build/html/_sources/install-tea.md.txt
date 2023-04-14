@@ -80,19 +80,20 @@ $ vi hosts.ini
 10.10.2.13
 
 [all:vars]
-username = tea
 ############## local repo 存放位置##############
 local_bin = "~/local_bin/"
 ```
 
 创建目标机器远程连接用户，需要远程节点超级用户权限。
 
-在配置文件hosts.ini 中设置 `username='yourname'`定义用户名 
-
 执行以下命令
 
 ```
+# 默认在node节点上创建的用户名为 tea
 ./create_user.yml -i hosts.ini  -u root -k
+
+# 自定义用户名
+./create_user.yml -i hosts.ini  -u root -k -e "username=yourname" 
 ```
 
 该步骤将在部署目标机器上创建 `tea` 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。

@@ -154,15 +154,17 @@ tea ALL=(ALL) NOPASSWD: ALL
 10.10.2.13
 
 [all:vars]
-username = tea
 ############## local repo 存放位置##############
 local_bin = &quot;~/local_bin/&quot;
 </pre></div>
 </div>
 <p>创建目标机器远程连接用户，需要远程节点超级用户权限。</p>
-<p>在配置文件hosts.ini 中设置 <code class="docutils literal notranslate"><span class="pre">username='yourname'</span></code>定义用户名</p>
 <p>执行以下命令</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span>  <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 默认在node节点上创建的用户名为 tea</span>
+<span class="o">./</span><span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span>  <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span>
+
+<span class="c1"># 自定义用户名</span>
+<span class="o">./</span><span class="n">create_user</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">i</span> <span class="n">hosts</span><span class="o">.</span><span class="n">ini</span>  <span class="o">-</span><span class="n">u</span> <span class="n">root</span> <span class="o">-</span><span class="n">k</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;username=yourname&quot;</span> 
 </pre></div>
 </div>
 <p>该步骤将在部署目标机器上创建 <code class="docutils literal notranslate"><span class="pre">tea</span></code> 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。</p>

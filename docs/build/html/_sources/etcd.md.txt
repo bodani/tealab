@@ -20,8 +20,9 @@ $ vim hosts.ini
 # 10.10.2.14
 
 [etcd:vars]
-# 集群名称
-NAME=cluster01
+ETCD_NAME=etcd001
+# 在ectd服务器中 证书存放位置
+ECTD_CERT_DIR=/etc/etcd/certs
 # etcd 数据存放位置
 ETCD_DATA_DIR=/var/lib/etcd
 # etcd wal日志存放位置
@@ -39,6 +40,20 @@ LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
 
 ```
 playbooks/create_etcd.yml -i hosts.ini 
+```
+
+## 查看集群
+
+```
+etcdctl endpoint status --cluster -w table
++------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+|        ENDPOINT        |        ID        | VERSION | DB SIZE | IS LEADER | IS LEARNER | RAFT TERM | RAFT INDEX | RAFT APPLIED INDEX | ERRORS |
++------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+| https://10.10.2.11:2379 | 502f3098caa4c961 |   3.5.7 |  954 kB |     false |      false |        15 |      20350 |              20350 |        |
+| https://10.10.2.12:2379 | 85000e0cddb968c6 |   3.5.7 |  954 kB |      true |      false |        15 |      20350 |              20350 |        |
+| https://10.10.2.13:2379 | e48b26f32e7578f8 |   3.5.7 |  954 kB |     false |      false |        15 |      20350 |              20350 |        |
++------------------------+------------------+---------+---------+-----------+------------+-----------+------------+--------------------+--------+
+
 ```
 
 ## 添加节点 

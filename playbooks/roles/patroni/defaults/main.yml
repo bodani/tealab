@@ -9,3 +9,8 @@ MON_USER: 'tea_mon'
 PG_CONFIG: "{{ PG_DIR }}"
 is_leader: false
 clone_form: false
+
+wal_log_hints: "on"
+track_commit_timestamp: "off"
+wal_level: logical
+hot_standby: "on"

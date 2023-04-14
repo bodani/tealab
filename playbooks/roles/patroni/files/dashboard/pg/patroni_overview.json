@@ -1,0 +1,516 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 25,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PgXNOPf4k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "displayMode": "auto",
+              "inspect": false
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "string"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Time"
+              },
+              "properties": [
+                {
+                  "id": "custom.hidden",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #A"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Version"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "__name__"
+              },
+              "properties": [
+                {
+                  "id": "custom.hidden",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cluster_name"
+              },
+              "properties": [
+                {
+                  "id": "custom.hidden",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "job"
+              },
+              "properties": [
+                {
+                  "id": "custom.hidden",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "scope"
+              },
+              "properties": [
+                {
+                  "id": "custom.hidden",
+                  "value": true
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #B"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Master"
+                },
+                {
+                  "id": "unit",
+                  "value": "bool_yes_no"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #C"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "SYNC"
+                },
+                {
+                  "id": "unit",
+                  "value": "bool"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #D"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "PG_VERSION"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #E"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Timeline"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #F"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "PendingRestart"
+                },
+                {
+                  "id": "unit",
+                  "value": "bool"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #G"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Paused"
+                },
+                {
+                  "id": "unit",
+                  "value": "bool_yes_no"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #H"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Health"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "200": {
+                          "color": "green",
+                          "index": 0,
+                          "text": "OK"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Value #I"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "Role"
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "0": {
+                          "index": 1,
+                          "text": "Replicate"
+                        },
+                        "1": {
+                          "index": 0,
+                          "text": "Master"
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "footer": {
+            "enablePagination": false,
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "frameIndex": 0,
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "Version"
+            }
+          ]
+        },
+        "pluginVersion": "9.1.7",
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "patroni_version{cluster_name='$clustername'}",
+            "format": "table",
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "A"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_master{scluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "B"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_sync_standby{cluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "C"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_postgres_server_version{cluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "D"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "patroni_postgres_timeline{cluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "E"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_pending_restart{cluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "F"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_is_paused{cluster_name='$clustername'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "G"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "exemplar": false,
+            "expr": "probe_http_status_code{cluster_name='pg_cluster_test'}",
+            "format": "table",
+            "hide": false,
+            "instant": true,
+            "legendFormat": "__auto",
+            "range": false,
+            "refId": "H"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PgXNOPf4k"
+            },
+            "editorMode": "code",
+            "expr": "patroni_master{cluster_name='pg_cluster_test'}",
+            "format": "table",
+            "hide": false,
+            "legendFormat": "__auto",
+            "range": true,
+            "refId": "I"
+          }
+        ],
+        "title": "Patroni Info $total",
+        "transformations": [
+          {
+            "id": "seriesToColumns",
+            "options": {
+              "byField": "instance"
+            }
+          }
+        ],
+        "type": "table"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "pg_cluster_test",
+            "value": "pg_cluster_test"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PgXNOPf4k"
+          },
+          "definition": "label_values(patroni_version,cluster_name)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "clustername",
+          "multi": false,
+          "name": "clustername",
+          "options": [],
+          "query": {
+            "query": "label_values(patroni_version,cluster_name)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "isNone": true,
+            "selected": false,
+            "text": "None",
+            "value": ""
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PgXNOPf4k"
+          },
+          "definition": "query_result(count(patroni_postgres_running{scope=\"$scope\"}))",
+          "hide": 2,
+          "includeAll": false,
+          "multi": false,
+          "name": "total",
+          "options": [],
+          "query": {
+            "query": "query_result(count(patroni_postgres_running{scope=\"$scope\"}))",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "/{} (.*) .*/",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Patrioni",
+    "uid": "kAAclyY4k",
+    "version": 4,
+    "weekStart": ""
+  }

@@ -4,7 +4,13 @@
 - hosts: nodes
   gather_facts: false
   # remote_user: "{{ remote_user }}"
+  vars:
+    username: 'tea' 
   tasks:
+    - name: remote user 
+      debug:
+        msg: 'remote node user name : {{username}} will be created'
+
     - name: create user
       user: name={{ username }} shell=/bin/bash createhome=yes
 

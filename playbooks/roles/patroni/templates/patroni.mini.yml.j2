@@ -51,7 +51,7 @@ bootstrap:
     ttl: 30
     loop_wait: 10
     retry_timeout: 10
-    maximum_lag_on_failover: 1048576
+    maximum_lag_on_failover: 10485760
     primary_start_timeout: 300
     synchronous_mode: false
     failsafe_mode: true
@@ -63,11 +63,11 @@ bootstrap:
       #------------------------------------------------------------#
       # event callback script log: /var/log/patroni/callback.log
       callbacks:
-        on_start: /etc/patroni/callbacks/pg-failover-callback
-        on_stop: /etc/patroni/callbacks/pg-failover-callback
-        on_reload: /etc/patroni/callbacks//pg-failover-callback
-        on_restart: /etc/patroni/callbacks//pg-failover-callback
-        on_role_change: /etc/patroni/callbacks//pg-failover-callback
+        #on_start: /etc/patroni/callbacks/callback.sh
+        #on_stop: /etc/patroni/callbacks/callback.sh
+        #on_reload: /etc/patroni/callbacks/callback.sh
+        #on_restart: /etc/patroni/callbacks/callback.sh
+        on_role_change: /etc/patroni/callbacks/callback.sh
       #------------------------------------------------------------#
       # how to create replica
       #------------------------------------------------------------#
@@ -84,25 +84,26 @@ bootstrap:
 ####################################################################################
       # parameters must hold the same values on the primary and the replicas
       parameters:
-        wal_level: logical
-        hot_standby: "on"
-        max_connections: 1000
-        max_worker_processes: 16
-        max_prepared_transactions: 0
-        max_locks_per_transaction: 64
-        wal_log_hints: "on"
-        track_commit_timestamp: "off"
+        wal_level: {{ wal_level }}
+        hot_standby: {{ hot_standby }}
+        max_connections: {{ max_connections }}
+        max_worker_processes: {{ max_worker_processes }}
+        max_prepared_transactions: {{ max_prepared_transactions }}
+        max_locks_per_transaction: {{ max_locks_per_transaction }}
+        wal_log_hints: {{ wal_log_hints }}
+        track_commit_timestamp: {{ track_commit_timestamp }}
       
-        max_wal_senders: 10
-        max_replication_slots: 5
-        wal_keep_segments: 8
-        wal_keep_size: 128MB
+        max_wal_senders: {{ max_wal_senders }}
+        max_replication_slots: {{ max_replication_slots }}
+        wal_keep_segments: {{ wal_keep_segments }}
+        wal_keep_size: {{ wal_keep_size }}
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
     # monitor user 
     - host all {{ MON_USER }} 127.0.0.1/32 trust
     # superuser local connetion
     - local all postgres          peer
+    - local postgres {{ SUP_USER }}         scram-sha-256
     # bussiness & pg_rewind user 
     - host all all 10.0.0.0/8     scram-sha-256
     - host all all 172.16.0.0/12  scram-sha-256
