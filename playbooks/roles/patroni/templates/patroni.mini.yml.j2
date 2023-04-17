@@ -116,25 +116,16 @@ bootstrap:
     - host replication {{ REP_USER}} 10.0.0.0/8 scram-sha-256
     - host replication {{ REP_USER}} 172.16.0.0/12 scram-sha-256
     - host replication {{ REP_USER}} 192.168.0.0/16 scram-sha-256
-    # 
-
 
   # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
-# post_init: /usr/local/bin/setup_cluster.sh
-
+  post_init: /etc/patroni/setup_cluster.sh
+  
   # Some additional users users which needs to be created after initializing new cluster
   users:
-    {{ MON_USER }}:
-      options:
-        - pg_monitor
     {{ REP_USER }}:
       password: '{{ REP_PASSWORD }}'
       options:
-        - replication
-    {% if PG_VERSION > 10 %}
-    {{ REWIND_USER }}:  # Has no effect on postgres 10 and lower (use superuser)
-      password: '{{ REWIND_PASSWORD }}'
-    {%endif%}
+        - REPLICATION
 
 postgresql:
 #------------------------------------------------------------#
@@ -154,13 +145,17 @@ postgresql:
   authentication:
     superuser:
       username: {{SUP_USER}}
+{% if SUP_PASSWORD is defined %}      
       password: {{SUP_PASSWORD}}
+{% endif%}
     replication:
       username: {{ REP_USER }}
       password: {{ REP_PASSWORD }}
+{% if PG_VERSION > 10 %}
     rewind:  # Has no effect on postgres 10 and lower (use superuser)
-      username: rewind_user
-      password: 'rewind_password'
+      username: {{ REWIND_USER }}
+      password: '{{ REWIND_PASSWORD }}'
+{%endif%}
 
 #watchdog:
 #  mode: automatic # Allowed values: off, automatic, required
@@ -173,3 +168,6 @@ tags:
     clonefrom: {{clone_form}} 
     nosync: false
     version:  {{ PG_VERSION }}
+
+
+    

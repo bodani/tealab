@@ -14,7 +14,3 @@ ELSE
 END IF;
 END
 $do$;
-
-  SELECT COUNT(*) AS "__c
-ount" FROM "pda_message" INNER JOIN "message_message" ON ("pda_message"."message_ptr_id" = "message_message"."message_id") WHERE ("pda_message"."is_read" = false AND "message_messag
-e"."user_id" = 'f672b090d80711eca54e0242ac120002' AND NOT ("message_message"."body" @> '{"status": 2}' AND "message_message"."code" = 2002701))

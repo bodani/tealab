@@ -2,6 +2,8 @@
 ---
   - hosts: etcd
     gather_facts: no
+    vars:
+      ETCD_NAME: "etcd"
     pre_tasks:
      - name: validate
        block:

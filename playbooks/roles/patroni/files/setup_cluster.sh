@@ -1,0 +1,1 @@
+psql "$1" -f /etc/patroni/setup.sql
