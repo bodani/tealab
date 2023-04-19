@@ -4,8 +4,8 @@ GRANT EXECUTE ON function pg_catalog.pg_stat_file(text, boolean) TO {{ REWIND_US
 GRANT EXECUTE ON function pg_catalog.pg_read_binary_file(text) TO {{ REWIND_USER }};
 GRANT EXECUTE ON function pg_catalog.pg_read_binary_file(text, bigint, bigint, boolean) TO {{ REWIND_USER }};
 
-CREATE USER {{ MON_USER }} CONNECTION LIMIT  10;
-GRANT pg_monitor TO {{ MON_USER }};
-
 CREATE EXTENSION pg_stat_statements;
 CREATE EXTENSION pg_buffercache;
+
+CREATE USER {{ MON_USER }} CONNECTION LIMIT  10;
+GRANT pg_monitor TO {{ MON_USER }};

@@ -1,5 +1,5 @@
 #!/bin/bash
-#  Create & manage k8s clusters
+#  Create & manage  clusters
 
 set -o nounset
 set -o errexit

@@ -140,9 +140,10 @@ postgresql:
   use_unix_socket: true # default: /var/run/postgresql, /tmp
 
 #------------------------------------------------------------#
-# who to connect to postgres
+# who to connect to postgres 
 #------------------------------------------------------------#
   authentication:
+# create user @ initdb -U 
     superuser:
       username: {{SUP_USER}}
 {% if SUP_PASSWORD is defined %}      

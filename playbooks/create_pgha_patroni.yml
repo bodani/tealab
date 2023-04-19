@@ -2,7 +2,9 @@
 - hosts: "{{ server_name | default('pg_patroni')}}"
   # any_errors_fatal: true
   roles: 
-    - { role: patroni ,tags patroni}
+    - { role: postgresql, tags: install }
+    - { role: patroni ,tags: patroni }
+    - { role: postgresql, tags: monitor,logs }
 
   post_tasks:
     - name: patroni 集群状态收集

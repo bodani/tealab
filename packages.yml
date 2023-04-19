@@ -1,0 +1,20 @@
+#!/usr/bin/env ansible-playbook
+---
+- hosts: 127.0.0.1
+  become: false
+  connection: local
+  tasks: 
+  - name: create local bin dir for pre-built binaries
+    file: 
+      path: "{{ local_bin }}"
+      state: directory 
+    tags: always
+    
+  - name: git clone from tealab packages
+    git:
+      repo: https://gitee.com/zhangeamon/tealab_packages.git
+      dest: "{{ local_bin }}"
+    # when: ansible_distribution == "CentOS" 
+
+
+ 

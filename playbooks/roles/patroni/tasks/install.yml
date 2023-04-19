@@ -14,7 +14,6 @@
     dest: /usr/lib/systemd/system/patroni.service
   notify: restart patroni
 
-
 - name: install | create certs dir
   file: 
     path: /etc/patroni/certs/
@@ -58,6 +57,17 @@
 
 - name: install | init cluster leader node    
   block:
+  # run this custom script after initdb
+  - name: prepare setup_cluster script
+    copy:
+      src: setup_cluster.sh
+      dest: /etc/patroni/setup_cluster.sh
+  
+  - name: prepare db sql 
+    template:
+      src: setup_cluster.sql.j2
+      dest: /etc/patroni/setup_cluster.sql
+
   - name: install | start patroni service leader
     service: 
       name: patroni
@@ -81,6 +91,12 @@
     any_errors_fatal: true
     # ignore_errors: false
     failed_when: check_result.status_code != 200
+
+  - name: remove temp setup_cluster sql
+    file:  
+      path: /etc/patroni/setup_cluster.sql
+      state: absent
+
   when: is_leader|bool
 
 - name: install | start patroni service replica
