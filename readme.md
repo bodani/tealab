@@ -12,6 +12,11 @@ tealabs 是一款基于[ansible](https://doc.zhangeamon.top/categories/ansible/)
 
 tealabs 适用于Linux系统环境（CentOS、Ubuntu、Debian）,可以为私有云，公有云，虚拟机等。
 
+## 一键安装
+```
+curl -fsSL https://gitee.com/zhangeamon/tealab/raw/main/bin/install.sh | sh -
+```
+
 ### 	基础服务
 
 - nginx

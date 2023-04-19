@@ -59,16 +59,16 @@ function ready_tea_code() {
   logger info "ready for tea code"
   # code 已经存在是否更新
   if [ -d "/home/tea/tealab/" ]; then
-    read  -p "tealab already exists , Overwrite (y/n)?" ow
-    echo "you enter: " $ow
-    if [[ "$ow" == "y" || "$ow" == "Y" ]]; then
-      mv /home/tea/tealab/ /home/tea/tealab.back/
-      download_tea_code
-      rm -rf /home/tea/tealab.back/
-    fi
-  else
-    download_tea_code
+    # read  -p "tealab already exists , Overwrite (y/n)?" ow
+    # echo "you enter: " $ow
+    # if [[ "$ow" == "y" || "$ow" == "Y" ]]; then
+      mv /home/tea/tealab/ /home/tea/tealab.back_`date +%Y-%m-%d_%H%M`
+      # download_tea_code
+      # rm -rf /home/tea/tealab.back/
+    # fi
+  # else
   fi
+  download_tea_code
 }
 
 function download_tea_code(){
