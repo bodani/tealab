@@ -62,6 +62,7 @@ function ready_tea_code() {
     # read  -p "tealab already exists , Overwrite (y/n)?" ow
     # echo "you enter: " $ow
     # if [[ "$ow" == "y" || "$ow" == "Y" ]]; then
+      logger info "backup tealab"
       mv /home/tea/tealab/ /home/tea/tealab.back_`date +%Y-%m-%d_%H%M`
       # download_tea_code
       # rm -rf /home/tea/tealab.back/
@@ -75,6 +76,7 @@ function download_tea_code(){
   tag=v0.0.2
   wget https://gitee.com/zhangeamon/tealab/repository/archive/$tag -O tealab.zip 
   unzip -quo tealab.zip -d /home/tea/
+  rm -f tealab.zip 
   mv /home/tea/tealab-$tag /home/tea/tealab
   logger info "download tea code complate"
 }
@@ -88,6 +90,7 @@ function config_tea(){
   sudo cp /home/tea/tealab/ansible.cfg /etc/ansible/ansible.cfg
 
   sudo touch /var/log/ansible.log
+  sudo chown tea:tea /var/log/ansible.log
   sudo chmod 644 /var/log/ansible.log
   logger info "config tea compalte"
 }

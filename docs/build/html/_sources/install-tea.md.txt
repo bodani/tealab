@@ -10,78 +10,27 @@
 
 ​        被中控机访问管理的节点
 
-## 环境准备
-
-- 依赖安装ansbile
-
-**以root 用户登录，并执行以下命令** 
-
-安装依赖软件
-
+## 一键安装
+在中控机运行
 ```
-yum -y install epel-release git curl sshpass && \
-yum -y install ansible
+curl -fsSL https://gitee.com/zhangeamon/tealab/raw/main/bin/install.sh | sh -
 ```
-
-查看ansible版本
-
-```
-ansible --version
-ansible 2.9.27
-```
-
-创建 tea 用户
-
-```
-useradd -m -d /home/tea tea
-```
-
-设置 tea 用户密码
-
-````
-passwd tea
-````
-
-配置 `tea` 用户 sudo 免密码，将 `tea ALL=(ALL) NOPASSWD: ALL` 添加到文件末尾即可
-
-```
-$ visudo
-tea ALL=(ALL) NOPASSWD: ALL
-```
-
-生成 SSH key
-
-```
-su - tea
-ssh-keygen -t rsa
-ls ~/.ssh
-```
+- 将在`\home\tea\.ssh`目录中生成ssh key
+- 请切换到tea用户进行使用 `sudo su - tea && cd tealab`
+- 配置文件位置 `\etc\tea\tea.conf` 
 
 ```important:: 一定要保管好ssh key
 
 ```
 
-## 安装tealabs
-
+## 管理节点
+与其他主机节点建立ssh 免密互通
 ```
-sudo su - tea
-git clone https://github.com/bodani/tea.git
-#备用1 https://gitee.com/zhangeamon/tealab.git
-#备用2 https://kgithub.com/bodani/tea.git
-cd tealab
-```
-
-与其他节点ssh 免密互通
-```
-$ vi hosts.ini
+$ vi tea.conf
 [nodes]
 10.10.2.11
 10.10.2.12
 10.10.2.13
-
-[all:vars]
-############## local repo 存放位置##############
-local_bin = "~/local_bin/"
 ```
 
 创建目标机器远程连接用户，需要远程节点超级用户权限。
@@ -91,9 +40,6 @@ local_bin = "~/local_bin/"
 ```
 # 默认在node节点上创建的用户名为 tea
 ./create_user.yml -i hosts.ini  -u root -k
-
-# 自定义用户名
-./create_user.yml -i hosts.ini  -u root -k -e "username=yourname" 
 ```
 
 该步骤将在部署目标机器上创建 `tea` 用户，并配置 sudo 规则，配置中控机与部署目标机器之间的 SSH 互信。
@@ -101,15 +47,13 @@ local_bin = "~/local_bin/"
 测试互通效果
 
 ```
-ansible -i hosts.ini nodes -m shell -a 'whoami' 
-
-ansible -i hosts.ini nodes -m shell -a 'whoami'  -b 
+ansible -i /etc/tea/tea.conf nodes -m shell -a 'whoami'  -b 
 ```
 
 后期安全建议，目标机禁用root登录
 
 ```
-playbooks/disable_rootlogin.yml -i hosts.ini  -u tea --private-key /home/tea/.key
+playbooks/disable_rootlogin.yml
 ```
 
 至此，中控机及目标机环境准备完成。
@@ -119,7 +63,7 @@ playbooks/disable_rootlogin.yml -i hosts.ini  -u tea --private-key /home/tea/.ke
  加入新节点 `10.10.2.14`
 
 ```
-$ vim hosts.ini
+$ vim tea.conf
 [nodes]
 10.10.2.11
 10.10.2.12
@@ -131,16 +75,13 @@ $ vim hosts.ini
 
 创建用户 
 ```
-./create_user.yml -i hosts.ini  -u root -k -l 10.10.2.14
+./create_user.yml  -u root -k -l 10.10.2.14
 ```
 
 测试可连接性
 ```
-ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -l 10.10.2.14
-
-ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -b -l 10.10.2.14
+ansible -i /etc/tea/tea.conf -m shell -a 'whoami' -u tea -b -l 10.10.2.14
 ```
-
 
 ## 调试指南
 
@@ -172,23 +113,10 @@ sudo ansible-playbook test.yml
 
 tealab 目前利用二进制文件或安装包方式安装应用服务。
 
-在安装安装应用前将准备好的软件包放在 hosts.ini 配置文件指定的 `local_bin = "~/local_bin/"`  文件目录下
-
-如果网络环境自信, tags 按需下载软件包
+在安装安装应用前将准备好的软件包放在 tea.conf 配置文件指定的 `local_bin = "~/local_bin/"`  文件目录下
 
 ```
-# 网络环境自信者一键搞定，下载解压
-prepare.yml -i download.ini 
-# 按需下载
-prepare.yml -i download.ini  --tags xxx
-```
-
-**推荐方式:** 为了解决网络问题也通过如下方式下载软件包  
-```
-#下载软件包
-git clone https://gitee.com/zhangeamon/tealab_packages.git
-#解压软件包
-# 注意将tea-package-download 与 local_bin = "~/tealab_packages" 保持一致
+./packages.yml
 ```
 
 可通过软件包来管理软件的版本。到此准备工作全部完成。
@@ -199,10 +127,3 @@ git clone https://gitee.com/zhangeamon/tealab_packages.git
 
 - docker 
 - go-ansible
-
-``` important:: 配置文件建议
-```
-
-hosts.ini 为全局配置，所有需要被管理的节点都配置在[nodes] 段中。
-
-TODO 思考如何支持管理多集群

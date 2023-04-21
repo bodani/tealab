@@ -42,6 +42,12 @@ patroni 管理
   ## replication 用户
   host    replication     all             0.0.0.0/0               scram-sha-256
 
+关闭数据库开机自启
+
+.. code-block:: ini
+
+  systemctl disable postgreql
+
 服务配置
 ~~~~~~~~~~
 

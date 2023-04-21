@@ -1,0 +1,59 @@
+#!/usr/bin/env ansible-playbook
+- hosts: pg_migrate
+  become: postgres
+  tasks:
+  - name: check connection source datadb
+    shell: | 
+      psql "{{PG_SOURCEC_CONNINFO}}" -Aqt -c "select pg_is_in_recovery()"
+    register: result_source_conn
+
+  - name: check connection dest datadb
+    shell: | 
+      psql "{{PG_DEST_CONNINFO}}" -Aqt -c "select pg_is_in_recovery()"
+    register: result_dest_conn
+
+  - name: show check result
+    debug:
+      msg: " {{result_source_conn}} {{result_dest_conn}}  "
+      verbosity: 2
+  
+  - name: check sourece db wal_level 
+    shell: |
+      psql "{{PG_SOURCEC_CONNINFO}}"  -Aqt -c " select current_setting('wal_level')";
+    register: result_wal_level
+
+  - name: assert source db wal_level is logical
+    assert:
+      that:
+      - "'logical' == '{{result_wal_level.stdout}}'"
+      fail_msg: "wal_level: {{ result_wal_level.stdout }}"
+      success_msg: "source db is conditions"
+
+  - name: check source db is conditions
+    shell: |
+      psql "{{PG_SOURCEC_CONNINFO}}" -Aqt -c "
+        SELECT quote_ident(nspname) || '.' || quote_ident(relname) AS name, con.ri AS keys,
+        CASE relreplident WHEN 'd' THEN 'default' WHEN 'n' THEN 'nothing' WHEN 'f' THEN 'full' WHEN 'i' THEN 'index' END AS identity
+        FROM pg_class c JOIN pg_namespace n ON c.relnamespace = n.oid, LATERAL (SELECT array_agg(contype) AS ri FROM pg_constraint WHERE conrelid = c.oid) con
+        WHERE relkind = 'r' AND nspname = 'public' AND relreplident = 'd' and con.ri is null
+        ORDER BY 2,3;
+      "
+    register: reslut_source_db
+
+  - name: show check result
+    debug:
+      msg: "{{ reslut_source_db.stdout }}"
+      verbosity: 2
+
+  - name: assert source db is conditions
+    assert:
+      that:
+      - "'public' not in '{{reslut_source_db.stdout}}'"
+      fail_msg: "不满足的表: {{ reslut_source_db.stdout }}"
+      success_msg: "source db is conditions"
+
+  - name: create table on dest db 
+    shell: |
+      pg_dump ${PG_SOURCEC_CONNINFO} --schema-only -n public | psql ${PG_DEST_CONNINFO}
+  
+  

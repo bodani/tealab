@@ -3,36 +3,23 @@ tealab 主要依赖配置描述对服务进行管理和排版。
 
 配置文件位置 
 ```
-/etc/tea/services.ini
+/etc/tea/tea.conf
 ```
 
 ## 配置文件示例
 ```
-##############################################################################################
-#                       nodes   definition                                                   #
-##############################################################################################
 [nodes]
 ; 10.10.2.10  hostname=controller idc=first
 10.10.2.11  hostname=node1 idc=first
 10.10.2.12  hostname=node2 idc=first
 10.10.2.13  hostname=node3 idc=first
-10.10.2.14  hostname=node4 idc=second
+; 10.10.2.14  hostname=node4 idc=second
 
 [all:vars]
-############## user ###########################
-# 使用create_user 时，在目标节点上创建的用户
-username = tea
 ############## local repo 存放位置##############
-local_bin = "~/local_bin/"
-##############################################################################################
-#                        private repo   definition                                           #
-##############################################################################################
-[repo]
-10.10.2.10
+local_bin = "~/local_bin/packages"
+CERT_LOCAL_BASE_DIR=/etc/ssl/certs/tealabs/
 
-##############################################################################################
-#                        monitor & logs service definition                                   #
-##############################################################################################
 #监控系统 prometheus grafana
 [monitor]
 10.10.2.14
@@ -56,7 +43,7 @@ loki_data_path=/data/loki/
 # 日志数据保留时效
 retention_period=2520h
 ##############################################################################################
-#                       other services definition                                            #
+#                       tealabs service definition                                           #
 ##############################################################################################
 # Other Servers
 #------------------------------------------------------------------ NGINX -----------------------------------------------------------------------------
@@ -72,7 +59,7 @@ retention_period=2520h
 log_driver = json-file
 
 #------------------------------------------------------------------ ETCD -----------------------------------------------------------------------------
-# etcd version 3.3
+# etcd version 3.5
 [etcd]
 10.10.2.11
 10.10.2.12
@@ -83,7 +70,7 @@ log_driver = json-file
 [etcd:vars]
 ETCD_NAME=etcd001
 # 在ectd服务器中 证书存放位置
-ECTD_CERT_DIR=/etc/ssl/certs
+ECTD_CERT_DIR=/etc/etcd/certs
 # etcd 数据存放位置
 ETCD_DATA_DIR=/var/lib/etcd
 # etcd wal日志存放位置
@@ -95,19 +82,79 @@ ETCD_CLIENT_PORT = 2379
 ########### 数据备份#####################
 # 在中控机上数据存储位置,该目录具有执行用户写权限
 ETCD_LOCAL_BACKUP_DIR = /tmp/etcd/
+
+######################################################################################################################
+#                                                                                                                    #
+#                PATRONI FOR POSTGRESQL HA  ,                                                                        #
+#                                                                                                                    #
+#######################################################################################################################
+
+#  playbooks/create_pgha_patroni.yml -i conf/pgha_patroni.conf -e 'server_name=patroni_cluster_a1'
+[patroni_cluster_a1]
+## 定义一组postgres集群
+10.10.2.11 application_name=node31 node_id=1 
+10.10.2.12 application_name=node32 node_id=2 
+10.10.2.13 application_name=node33 node_id=3 is_leader=true
+10.10.2.14 application_name=node34 node_id=4
+[patroni_cluster_a1:vars]
+PG_CLUSTER_NAME = pg_cluster001
+
+ETCD_HOSTS = '10.10.2.11:2379,10.10.2.12:2379,10.10.2.13:2379'
+ETCD_NAME ="etcd001"
+#ETCD_USERNAME='etcd_user'
+#ETCD_PASSWORD='etcd_password'
+#post requst safe
+REST_API_USERNAME='Myuser'
+REST_API_PASSWORD='Mypassword'
+# failover 
+ttl= 30
+loop_wait=10
+retry_timeout=10
+maximum_lag_on_failover=10485760
+
+PG_VERSION=10
+PG_BIN=/usr/pgsql-10/bin/
+PG_DATA=/var/lib/pgsql/10/data
+PG_CONFIG=/var/lib/pgsql/10/data
+
+
+#超级用户 default postgres
+# SUP_USER=postgres 
+SUP_PASSWORD='superpassword'
+#监控用户 pg_monitor
+MON_USER='tea_mon'
+#流复制用户
+REP_USER='rep_user'
+REP_PASSWORD='rep_password'
+
+#PG_VERSION 11 及之后有效
+#REWIND_USER=
+#REWIND_PASSWORD=
+
+#PG params must be same for all 
+wal_level=logical
+max_connections=1000
+max_worker_processes=16
+max_prepared_transactions=0
+max_locks_per_transaction=64
+max_wal_senders=10
+max_replication_slots=5
+wal_keep_segments=10240
+wal_keep_size=128GB
+
 ```
 
-## 配置文件加密
+## 配置文件安全
 
 #### 加密
 ```
-ansible-vault encrypt /etc/tea/services.ini
+ansible-vault encrypt /etc/tea/tea.conf
 ```
 #### 编辑
 ```
-ansible-vault edit /etc/tea/services.ini
+ansible-vault edit /etc/tea/tea.conf
 ```
 #### 解密
 ```
-ansible-vault decrypt /etc/tea/services.ini
+ansible-vault decrypt /etc/tea/tea.conf
 ```

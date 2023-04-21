@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'tealabs使用手册'
+project = 'tealab使用手册'
 copyright = '@2022-2023, zhangeamon'
 author = 'zhangeamon'
 
