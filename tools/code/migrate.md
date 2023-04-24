@@ -2,7 +2,7 @@
 
 ## 前期准备
 
-- 运行机上具有pg运行环境，可以执行pg_dump 及 pgsql
+- 运行机上具有pg运行环境，可以执行pg_dump 及 pgsql(可在目标机上运行)
 - 连接源端和目标端数据库的超级用户
 - 在目标端创建好数据库database及对应的owner。owner与源数据对应的database相同。
 - 在目标端创建extentions需要的依赖
@@ -10,13 +10,13 @@
 ## 迁移步骤
 
  1. check 检查运行环境
- 2. start-mgirate 数据迁移
- 3. show-progress 显示迁移进度 watch migrete show-progress
+ 2. start_mgirate 数据迁移
+ 3. show_progress 显示迁移进度 watch migrete show-progress
  4. verify        数据校验 (结合实际场景)
  5. 原库停止写入    
- 6. sync-sequence 同步最新序列
+ 6. sync_sequence 同步最新序列
  7. 业务切换至新库 
- 8. finish-migrate 清理订阅和发布
+ 8. finish_migrate 清理订阅和发布
 
 ## 迁移命令
 
@@ -28,3 +28,11 @@ python pg_migrate.py --s_host=10.10.2.11 --s_user=supper_test --s_database=dbnam
 --s 源端数据库连接
 
 --d 目标端数据库连接
+
+## 注意事项
+
+数据库中是否存在锁等待, 会造成下游数据库（目标库，从库）hang住。
+
+```
+select * from pg_stat_activity where state = 'idle in transaction';
+```

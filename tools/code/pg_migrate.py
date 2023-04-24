@@ -1,5 +1,5 @@
 #!/bin/python3
-#TODO 确认迁移后的表对象owener
+# -*- coding: utf-8 -*-
 
 import click
 import psycopg2
@@ -132,8 +132,15 @@ def check():
     if os.system("whereis sql") !=0 :
         error("导入表结构使用psql,请保证本地环境可以运行psql")
 
+    sql = "select count(1) from pg_sequences where schemaname = 'public'" 
+    result = run_sql_one(SRC_CONN,sql)
+    if result is not None and result[0] > 0:
+       log("是否存在序列： 是")
+    else:
+       log("是否存在序列： 否")
+
     log("所有检测完毕！结果通过!")
-    log("接下来请使用: migrate.py migrate 进行数据迁移!")
+    log("接下来请使用: migrate.py start_migrate 进行数据迁移!")
 
 @click.command(help="进行数据迁移")
 def start_migrate():
@@ -141,7 +148,8 @@ def start_migrate():
     sql = "select extname from pg_extension";
     extensions = run_sql_batch(SRC_CONN,sql)
     for extension in  extensions:
-        sql = "create extension IF NOT EXISTS %s " % extension[0]
+        # extionsion 中存在特殊符号
+        sql = """create extension IF NOT EXISTS "%s" """ % extension[0]
         run_sql_excute(DEST_CONN,sql)
         log(extension[0]+ "  OK！")
 
@@ -153,6 +161,8 @@ def start_migrate():
     supscribtion_tables()
 
     show_migrete_stat()
+
+    log("开始数据迁移 watch migrate.py show_progress 查看迁移进度!")
 
 def show_migrete_stat():
     sql= "select client_addr,to_char(backend_start,'YYYY-MM-DD HH24:MI:SS'),state,sent_lsn,write_lsn,flush_lsn,replay_lsn,sync_state from pg_stat_replication where application_name = 'pg_tea_subscription'"
@@ -186,18 +196,21 @@ def supscribtion_tables():
 
 @click.command(help='同步序列')
 def sync_sequence():
+    run_sql_excute(SRC_CONN,"CHECKPOINT;CHECKPOINT;")
+    run_sql_excute(DEST_CONN,"ANALYZE;")
     sql = "select sequencename,last_value,increment_by from pg_sequences where schemaname = 'public'"
     sequences = run_sql_batch(SRC_CONN,sql)
     if sequences is not None:
         for sequence in sequences:
-            update_seq_sql = "SELECT setval('public.%s', %s);" % (sequence[0], sequence[1])
-            run_sql_excute(DEST_CONN,update_seq_sql)
+            if sequence[1] is not None:
+                update_seq_sql = "SELECT setval('public.%s', %s);" % (sequence[0], sequence[1])
+                run_sql_excute(DEST_CONN,update_seq_sql)
     log("序列同步完成")
 
 @click.command(help='查看数据迁移进度')
 def show_progress():
     sql = """
-        select pg_current_wal_lsn() curren_lsn , replay_lsn,sync_state ,to_char(pg_wal_lsn_diff(pg_current_wal_lsn(),replay_lsn),'0.00') diff_lsn
+        select pg_current_wal_lsn() curren_lsn , replay_lsn,sync_state ,pg_wal_lsn_diff(pg_current_wal_lsn(),replay_lsn) diff_lsn
         from pg_stat_replication where application_name = 'pg_tea_subscription'
         """
     log("同步数据进度,延迟")
@@ -213,7 +226,14 @@ def show_progress():
 
     sql = "select sum(case when srsubstate='r' then 1 else 0  end) as done, sum(case when srsubstate = 'r' then 0 else 1 end) as  migrating from pg_subscription_rel join pg_subscription on  pg_subscription.oid = srsubid where subname='pg_tea_subscription'"
     result = run_sql_one(DEST_CONN,sql)
-    log("已完成迁移表: %s, 正则迁移中表: %s" % (result[0],result[1]))
+    log("已完成迁移表: %s, 正在迁移中表: %s" % (result[0],result[1]))
+    if result[1] > 0:
+        sql = "select  srrelid::regclass t_name,srsubstate  from pg_subscription_rel join pg_subscription on  pg_subscription.oid = srsubid where subname='pg_tea_subscription' and  srsubstate<>'r' order by srsubstate limit 5"
+        result = run_sql_batch(DEST_CONN,sql)
+        if result is not None:
+            log("正在迁移表状态: i = 初始化， d = 正在复制数据， s = 已同步， r = 准备好")
+            for t in result:
+                log(t)
 
 def migrate_schema():
     log(SRC_CONN_INFO)
@@ -231,12 +251,18 @@ def verify():
 
 @click.command(help='数据迁移完成，清理订阅发布及复制槽')
 def finish_migrate():
+    run_sql_excute(SRC_CONN,"CHECKPOINT;CHECKPOINT;")
+    log("源端checkpoint ok!")
+    run_sql_excute(DEST_CONN,"ANALYZE;")
+    log("目标端 analyze ok!")
+
     run_sql_excute(DEST_CONN,"ALTER SUBSCRIPTION pg_tea_subscription DISABLE;")
     run_sql_excute(DEST_CONN," DROP SUBSCRIPTION pg_tea_subscription;")
     log("清理订阅及逻辑复制槽完毕!")
     
     run_sql_excute(SRC_CONN," DROP PUBLICATION pg_tea_public; ")
     log("清理发布完毕!")
+    log("finish_migrate done!")
 
 cli.add_command(check)
 cli.add_command(start_migrate)
@@ -255,4 +281,11 @@ if __name__ == '__main__':
      SRC_CONN.close()
 """
 python pg_migrate.py --s_host=10.10.2.11 --s_user=supper_test --s_database=pgbench --s_password=123456 --s_port=5432 --d_host=10.10.2.12 --d_user=supper_dest --d_database=pgbench --d_password=123456 --d_port=15432 check
+"""
+
+"""
+
+sudo pip install pyinstaller
+
+pyinstaller --clean -F pg_migrate.py
 """
