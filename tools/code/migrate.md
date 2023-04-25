@@ -31,8 +31,9 @@ python pg_migrate.py --s_host=10.10.2.11 --s_user=supper_test --s_database=dbnam
 
 ## 注意事项
 
-数据库中是否存在锁等待, 会造成下游数据库（目标库，从库）hang住。
+数据库中存在锁等待, 会造成下游数据库（目标库，从库）hang住。
 
 ```
+# 简单查看
 select * from pg_stat_activity where state = 'idle in transaction';
 ```

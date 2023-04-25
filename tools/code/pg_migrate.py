@@ -87,6 +87,14 @@ def check():
         return
     log("数据库表满足发布条件， OK！")
 
+### 是否存在锁等待 
+
+    sql = "select count(pid) from pg_stat_activity where state = 'idle in transaction'";
+    result = run_sql_one(SRC_CONN,sql)
+    if result > 0:
+        error("源数据库中存在锁等待事件")
+        return
+
 ### 数据库基本信息统计
     sql = """
         select pg_size_pretty(pg_database_size(current_database()));
