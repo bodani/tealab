@@ -135,8 +135,8 @@ postgresql:
   data_dir: {{PG_DATA}}
   config_dir: {{PG_CONFIG}}
   pgpass: /var/lib/pgsql/.pgpass
-  listen: 127.0.0.1,{{inventory_hostname}}:5432
-  connect_address: {{inventory_hostname}}:5432
+  listen: 127.0.0.1,{{inventory_hostname}}:{{PG_PORT}}
+  connect_address: {{inventory_hostname}}:{{PG_PORT}}
   use_unix_socket: true # default: /var/run/postgresql, /tmp
 
 #------------------------------------------------------------#

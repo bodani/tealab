@@ -77,7 +77,7 @@
 
   - name: install | wait for  postgres started leader
     wait_for:
-      port: 5432
+      port: {{PG_PORT}}
       state: started
       sleep: 1
       delay: 5
@@ -109,7 +109,7 @@
 
 - name: install | wait for postgres started
   wait_for:
-    port: 5432
+    port: {{PG_PORT}}
     state: started
 
 - name: install | wait for patroni started

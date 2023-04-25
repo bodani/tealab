@@ -106,7 +106,7 @@ PG_VERSION=10
 PG_BIN=/usr/pgsql-10/bin/
 PG_DATA=/var/lib/pgsql/10/data
 PG_CONFIG=/var/lib/pgsql/10/data
-
+PG_PORT=5432
 
 #超级用户 default postgres
 # SUP_USER=postgres 
