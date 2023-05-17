@@ -150,7 +150,7 @@ def check():
     log("所有检测完毕！结果通过!")
     log("接下来请使用: migrate.py start_migrate 进行数据迁移!")
 
-@click.command(help="进行数据迁移")
+@click.command('start-migate',help="进行数据迁移")
 def start_migrate():
     log("拓展迁移")
     sql = "select extname from pg_extension";
@@ -202,7 +202,7 @@ def supscribtion_tables():
     run_sql_excute(DEST_CONN,sql)
     log("目标端创建订阅完成")
 
-@click.command(help='同步序列')
+@click.command('sync-sequence',help='同步序列')
 def sync_sequence():
     run_sql_excute(SRC_CONN,"CHECKPOINT;CHECKPOINT;")
     run_sql_excute(DEST_CONN,"ANALYZE;")
@@ -215,7 +215,7 @@ def sync_sequence():
                 run_sql_excute(DEST_CONN,update_seq_sql)
     log("序列同步完成")
 
-@click.command(help='查看数据迁移进度')
+@click.command('show-progress',help='查看数据迁移进度')
 def show_progress():
     sql = """
         select pg_current_wal_lsn() curren_lsn , replay_lsn,sync_state ,pg_wal_lsn_diff(pg_current_wal_lsn(),replay_lsn) diff_lsn
@@ -253,11 +253,11 @@ def migrate_schema():
         return
     log("表结构迁移完成！")
 
-@click.command(help='数据迁移结果验证')
+@click.command('verify',help='数据迁移结果验证')
 def verify():
     pass
 
-@click.command(help='数据迁移完成，清理订阅发布及复制槽')
+@click.command('finish-migrate',help='数据迁移完成，清理订阅发布及复制槽')
 def finish_migrate():
     run_sql_excute(SRC_CONN,"CHECKPOINT;CHECKPOINT;")
     log("源端checkpoint ok!")
@@ -273,11 +273,11 @@ def finish_migrate():
     log("finish_migrate done!")
 
 cli.add_command(check)
-cli.add_command(start_migrate)
-cli.add_command(show_progress)
+cli.add_command(start-migrate)
+cli.add_command(show-progress)
 cli.add_command(verify)
-cli.add_command(finish_migrate)
-cli.add_command(sync_sequence)
+cli.add_command(finish-migrate)
+cli.add_command(sync-sequence)
 
 if __name__ == '__main__':
   try:  

@@ -1,0 +1,36 @@
+---
+# 集群变量
+MINIO_SER_BIN_LOCAL: /usr/local/bin/
+
+# NODE 节点存储数据路径  
+NODE_DIR: 
+  - /minio1
+  - /minio2
+  # - /data1
+  # - /data2
+  # - /data3
+  # - /data4
+# 账号信息
+MINIO_ROOT_USER: root
+MINIO_ROOT_PASSWORD: f447b20a7fcbf53a5d5be013ea0b15af 
+
+# minio 服务端口
+MINIO_SER_PORT: 9000 
+
+# UI 访问端口
+MINIO_CONL_PORT: 9001
+
+MINIO_MC_ALIAS: mylocal
+# 考虑集群扩容 ,生成hosts DNS
+NODE_HOSTS: 
+  - 10.10.2.11 minio1
+  - 10.10.2.12 minio2
+  - 10.10.2.13 minio3
+# Minio 存储池 ,通过添加pool 对集群进行扩容
+MINIO_VOLUMES: 
+- http://minio{1...3}:9000/minio{1...2}
+# - http://minio{1...3}:9000/data{1...4}
+# sidekick 负载均衡
+MINIO_LB_SER_PORT: 9009
+
+SIDEKICK_BACKEND: http://minio{1...3}:9000

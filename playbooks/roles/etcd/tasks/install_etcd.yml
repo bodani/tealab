@@ -59,8 +59,7 @@
     mode: 0644
     content: |
       #!/bin/bash
-      alias e="etcdctl"
-      alias em="etcdctl member"
+      alias es="etcdctl endpoint status --cluster -w table"
       export ETCDCTL_API=3
       export ETCDCTL_ENDPOINTS="https://{{ inventory_hostname }}:{{ ETCD_CLIENT_PORT }}"
       export ETCDCTL_CACERT={{ECTD_CERT_DIR}}/etcd-ca.pem

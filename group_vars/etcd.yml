@@ -1,0 +1,15 @@
+# 服务名 etcd
+ETCD_NAME: etcd001
+# 在ectd服务器中 证书存放位置
+ECTD_CERT_DIR: /etc/etcd/certs
+# etcd 数据存放位置
+ETCD_DATA_DIR: /var/lib/etcd
+# etcd wal日志存放位置
+ETCD_WAL_DIR: /var/lib/etcd/wal
+# 端口号, 设定完成后期不可修改， 请注意
+ETCD_PEER_PORT: 2380
+ETCD_CLIENT_PORT: 2379
+
+########### 数据备份#####################
+# 在中控机上数据存储位置,该目录具有执行用户写权限
+ETCD_LOCAL_BACKUP_DIR: /tmp/etcd/

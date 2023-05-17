@@ -1,3 +1,4 @@
+#!/usr/bin/env ansible-playbook
 - hosts: memcached
   roles:
     - { role: memcached }

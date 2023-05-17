@@ -2,8 +2,8 @@
 ---
   - hosts: etcd
     gather_facts: no
-    vars:
-      ETCD_NAME: "etcd"
+    # vars:
+      # ETCD_NAME: "{{ NAME | default('etcd')}}"
     pre_tasks:
      - name: validate
        block:
