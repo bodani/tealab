@@ -2,8 +2,8 @@
 ---
   - hosts: minio
     roles:
-      - { role: node, server: "minio" }
-      - { role: minio, playbook_action: "create"} 
+      - { role: node, server: "minio" ,tags: "node" }
+      - { role: minio, playbook_action: "create" , tags: "minio"} 
 
   - hosts: monitor
     gather_facts: false

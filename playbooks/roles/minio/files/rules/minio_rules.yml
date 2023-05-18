@@ -24,3 +24,21 @@
   annotations:
     summary: Minio disk space usage (instance {{ $labels.instance }})
     description: "Minio available free space is low (< 10%)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+- alert: NodesOffline
+  expr: avg_over_time(minio_cluster_nodes_offline_total{job="minio-job"}[5m]) > 0
+  for: 10m
+  labels:
+    severity: warn
+  annotations:
+    summary: "Node down in MinIO deployment"
+    description: "Node(s) in cluster {{ $labels.instance }} offline for more than 5 minutes"
+
+- alert: DisksOffline
+  expr: avg_over_time(minio_cluster_disk_offline_total{job="minio-job"}[5m]) > 0
+  for: 10m
+  labels:
+    severity: warn
+  annotations:
+    summary: "Disks down in MinIO deployment"
+    description: "Disks(s) in cluster {{ $labels.instance }} offline for more than 5 minutes"

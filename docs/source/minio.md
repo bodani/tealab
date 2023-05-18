@@ -7,9 +7,10 @@
 ## 软件下载
 
 ```
-ansible-playbook -i download.ini playbooks/prepare.yml --tags minio
+# 最新版
+wget https://dl.min.io/server/minio/release/linux-amd64/minio
 
-curl ....tar -o ~/local/bin/minio.tar && tar -zxf minio.tar
+wget https://dl.min.io/client/mc/release/linux-amd64/mc
 ```
 
 ## 编辑配置
@@ -109,13 +110,18 @@ $ mc admin decommission status  myminio/
 ## 更多 tags
 
 ```
-ansible-playbook -i hosts.ini -i conf/minio.yml  playbooks/create_minio.yml --tags install , monitor ,sidekick 
+ansible-playbook -i hosts.ini -i conf/minio.yml  playbooks/create_minio.yml --tags install , monitor ,upgrade,sidekick 
 ```
 
 ## 服务检测
 
 ```
+# 集群信息查看
  mc admin info myminio 
+# 数据检查修复 ，dashboard 查看
+ mc admin heal 
+# 日志查看
+ mc support logs show myminio
 ```
 
 ## 压力测试
@@ -166,6 +172,6 @@ $rclone sync minio-1:bucket-1 minio-2:bucket-2
 下载新版本的二进制文件后，执行
 
 ```
-tea_ctl minio upgrade -i conf/minio.yml
+playbooks/create_minio.yml -i hosts.ini --tags upgrade
 ```
 
