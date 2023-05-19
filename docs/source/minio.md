@@ -175,3 +175,7 @@ $rclone sync minio-1:bucket-1 minio-2:bucket-2
 playbooks/create_minio.yml -i hosts.ini --tags upgrade
 ```
 
+## 管理
+
+- 用户或 acess key 访问权限管理 （IAM Policies）
+- 资源配额 （Quota）

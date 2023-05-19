@@ -1,55 +1,55 @@
 #!/usr/bin/env ansible-playbook
 - hosts: memcached
   roles:
-    - { role: memcached }
+    - { role: memcached,tags: memcached }
 
-- hosts: monitor
-  gather_facts: false
-  tasks:
-    - name: discovery  memcached prometheus yml
-      shell: |
-        result=$(cat /etc/prometheus/prometheus.yml | grep memcached_targets)
-        if [[ "$result" == "" ]]
-        then
-          echo 1
-        else 
-         echo 0
-        fi
-      register: memcached_register
-      tags: monitor
+# - hosts: monitor
+#   gather_facts: false
+#   tasks:
+#     - name: discovery  memcached prometheus yml
+#       shell: |
+#         result=$(cat /etc/prometheus/prometheus.yml | grep memcached_targets)
+#         if [[ "$result" == "" ]]
+#         then
+#           echo 1
+#         else 
+#          echo 0
+#         fi
+#       register: memcached_register
+#       tags: monitor
 
-    - name: is memcached registered
-      debug: 
-        msg: "{{ memcached_register.stdout }}"
-      tags: monitor
+#     - name: is memcached registered
+#       debug: 
+#         msg: "{{ memcached_register.stdout }}"
+#       tags: monitor
   
 
-    - name: genrate discovery memcached tmp
-      copy:
-        dest: /etc/prometheus/redis/discovery-memcached.tmp
-        content: |
-          #################################### memcached #################################
-            - job_name: 'memcached_targets'
-              file_sd_configs:
-                - refresh_interval: 10s	
-                  files:
-                  - /etc/prometheus/memcached/*.yml
+#     - name: genrate discovery memcached tmp
+#       copy:
+#         dest: /etc/prometheus/redis/discovery-memcached.tmp
+#         content: |
+#           #################################### memcached #################################
+#             - job_name: 'memcached_targets'
+#               file_sd_configs:
+#                 - refresh_interval: 10s	
+#                   files:
+#                   - /etc/prometheus/memcached/*.yml
 
-      when: memcached_register.stdout == "1"
-      tags: monitor
+#       when: memcached_register.stdout == "1"
+#       tags: monitor
 
-    - name: genrate discovery memcached to prometheus.yml
-      shell: | 
-        cat /etc/prometheus/redis/discovery-memcached.tmp >> /etc/prometheus/prometheus.yml
-      when: memcached_register.stdout == "1"
-      tags: monitor
+#     - name: genrate discovery memcached to prometheus.yml
+#       shell: | 
+#         cat /etc/prometheus/redis/discovery-memcached.tmp >> /etc/prometheus/prometheus.yml
+#       when: memcached_register.stdout == "1"
+#       tags: monitor
 
-    - name: restart prometheus
-      systemd:
-        name: prometheus
-        state: restarted
-      when: memcached_register.stdout == "1"
-      tags: monitor
+#     - name: restart prometheus
+#       systemd:
+#         name: prometheus
+#         state: restarted
+#       when: memcached_register.stdout == "1"
+#       tags: monitor
 
-  roles:
-   - { role: monitor, only_load_dashboard: true ,tags: monitor}
+#   roles:
+#    - { role: monitor, only_load_dashboard: true ,tags: monitor}

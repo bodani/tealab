@@ -26,12 +26,31 @@
     state: started
   tags: monitor
 
+- name: create prometheus filediscover memcached yml
+  blockinfile:
+    path: /etc/prometheus/prometheus.yml
+    state: present
+    marker: "# {mark} MEMCACHED JOB  "
+    content: |
+      #  promethes auto discover memcached jobs  
+        - job_name: 'memcached'
+          file_sd_configs:
+            - refresh_interval: 10s	
+              files:
+              - /etc/prometheus/memcached/*.yml
+    # validate: promtool check config %s
+  notify: restart_prometheus  
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
 - name: create data path prometheus memcached 
   file:
     path: /etc/prometheus/memcached/
     state: directory
   delegate_to: "{{ item }}"
   with_items: "{{ groups['monitor'] }}"
+  run_once: true 
   tags: monitor
 
 - name: add memcached targets
@@ -40,7 +59,6 @@
     content: |
       - targets: ['{{ inventory_hostname }}:9150']
         labels:
-          idc: 'first'
           instance: '{{ inventory_hostname }}'
   delegate_to: "{{ item }}"
   with_items: "{{ groups['monitor'] }}"
@@ -56,3 +74,11 @@
   with_items: "{{ groups['monitor'] }}"
   run_once: true
   tags: monitor
+
+- name: load grafana dashboard
+  shell: | 
+    sh /var/lib/grafana/load_dashboard.sh
+    sh /var/lib/grafana/clean_dashboards_jsons.sh
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  

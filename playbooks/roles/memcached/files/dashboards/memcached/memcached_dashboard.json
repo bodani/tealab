@@ -1055,8 +1055,8 @@
       ]
     },
     "timezone": "browser",
-    "title": "Prometheus memcached",
-    "uid": "rAkhZQHVk",
+    "title": "memcached dashboard",
+    "uid": "000000001",
     "version": 3,
     "weekStart": ""
   }
