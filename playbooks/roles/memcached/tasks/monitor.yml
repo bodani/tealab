@@ -16,6 +16,7 @@
   systemd:
     name: memcached_exporter
     state: started
+    enabled: yes
     daemon_reload: yes
   notify: restart memcached_exporter
   tags: monitor
