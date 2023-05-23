@@ -1,6 +1,3 @@
-- name: install python-redis
-  yum: name=python-redis state=present
-
 # 认证连接主服务信息
 - name: replication masterauth
   redis:
@@ -9,25 +6,26 @@
    value: "{{ redis_password }}"
    login_port: "{{ redis_port }}"
    login_password: "{{ redis_password }}"
-  when: replicaof is defined
-  tags: master_replica
+
+- name: slave role
+  set_fact:
+    slave_mode: master
+  when: inventory_hostname == master_node
 
 # 执行replicaof
 - name: replicaof ip port
   redis:  
     command: slave
-    master_host: "{{ replicaof }}"
+    master_host: "{{ master_node }}"
     master_port: "{{ redis_port }}"
     login_password: "{{ redis_password }}"
     login_port: "{{ redis_port }}"
-  when: replicaof is defined
-  tags: master_replica
+    slave_mode: "{{ slave_mode }}"
 
-# 保存配置到文件中
+# # # 保存配置到文件中
 - name: replicaof rewrite'
   shell: | 
    redis-cli -a "{{ redis_password }}" -p "{{ redis_port }}" config rewrite
-  when: replicaof is defined
   tags: master_replica
 
 # - name: relicaof

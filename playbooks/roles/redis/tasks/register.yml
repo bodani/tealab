@@ -1,11 +1,17 @@
+####
+#  sentinel monitor redis主节点服务进行注册 
+#  sentinel set auth-pass 自动发现并连接所有redis服务
+#  自动切换参数
+#
+####
   - name: 将主从复制的主节点注册到sentinel 中
     shell: | 
-      redis-cli -h {{ item }} -p 26379 -a {{ sentinel_password }} SENTINEL monitor {{ master_groupname }} {{ inventory_hostname }} {{ redis_port}}  {{ quorum }} 
-      redis-cli -h {{ item }} -p 26379 -a {{ sentinel_password }} SENTINEL set {{ master_groupname }}  auth-pass  {{ redis_password }}
-      redis-cli -h {{ item }} -p 26379 -a {{ sentinel_password }} SENTINEL set {{ master_groupname }}  down-after-milliseconds  {{ down_after_milliseconds }}
-      redis-cli -h {{ item }} -p 26379 -a {{ sentinel_password }} SENTINEL set {{ master_groupname }}  failover-timeout  {{ failover_timeout }}
-      redis-cli -h {{ item }} -p 26379 -a {{ sentinel_password }} SENTINEL set {{ master_groupname }}  parallel-syncs  {{ parallel_syncs }}
-    when: redis_role is defined and redis_role == 'master'
-    delegate_to: "{{ item }}"
-    with_items: "{{ groups['redis_sentinel'] }}"
+      redis-cli -h {{ inventory_hostname }} -p 26379 -a {{ redis_password }} SENTINEL monitor {{ master_groupname }} {{ master_node }} {{ redis_port}}  {{ quorum }} 
+      redis-cli -h {{ inventory_hostname }} -p 26379 -a {{ redis_password }} SENTINEL set {{ master_groupname }}  auth-pass  {{ redis_password }}
+      redis-cli -h {{ inventory_hostname }} -p 26379 -a {{ redis_password }} SENTINEL set {{ master_groupname }}  down-after-milliseconds  {{ down_after_milliseconds }}
+      redis-cli -h {{ inventory_hostname }} -p 26379 -a {{ redis_password }} SENTINEL set {{ master_groupname }}  failover-timeout  {{ failover_timeout }}
+      redis-cli -h {{ inventory_hostname }} -p 26379 -a {{ redis_password }} SENTINEL set {{ master_groupname }}  parallel-syncs  {{ parallel_syncs }}
+    # when: redis_role is defined and redis_role == 'master'
+    # delegate_to: "{{ item }}"
+    # with_items: "{{ groups['redis_sentinel'] }}"
     tags: sentinel

@@ -1,0 +1,14 @@
+#!/usr/bin/env ansible-playbook
+## redis sentinel 服务
+- hosts: redis
+  gather_facts: true
+  roles: 
+    # - { role: node, monitor: false, harden: true ,server: redis_sentinel }
+    - { role: redis, action: sentinel }
+    - { role: redis ,action: redis} 
+
+## 监控redis 
+# - hosts: monitor
+#   roles:
+#    - { role: redis ,action: monitor,tags: 'monitor'} 
+#    - { role: monitor, only_load_dashboard: true,tags: 'monitor' }

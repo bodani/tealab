@@ -1,10 +1,8 @@
-- name: 软件准备
-  copy: 
-    src: "{{local_bin}}/redis.rpm"
-    dest: /tmp/
-
 - name: 安装redis
   yum: name=/tmp/redis.rpm state=latest
+
+- name: install python-redis
+  yum: name=python-redis state=present
 
 - name: 配置 redis
   template: 
@@ -17,6 +15,7 @@
   service: 
     name: redis
     state: restarted
+    enabled: true
     daemon_reload: yes
 
 - name: redis 等待服务启动

@@ -1,24 +1,21 @@
+###
+- include: prepare.yml
+  tags: always
 
 ## sentinel 相关
-- block:
-  - include: sentinel.yml
-  when: action == 'sentinel'
+- include: sentinel.yml
   tags: sentinel
 
-- block:
   # 安装 redis
-    - include: install.yml
-  # redis 主从
-    - include: slaveof.yml
-    - include: register.yml
-  when: action == 'redis'
+- include: install_redis.yml
+  tags: redis
+  # redis 主从 复制， 在从节点执行
+- include: slaveof.yml
+  tags: redis
+  
+- include: register.yml
   tags: redis
 
 ## 监控 相关
 - include: monitor.yml
-  when: action == 'monitor'
   tags: monitor
-
-- include: install.yml
-  when: action == 'install'
-  tags: install

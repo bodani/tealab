@@ -4,6 +4,8 @@ sysctl_config:
 replica_priority:  100
 
 # 默认值
-cluster_enabled: no
+cluster_enabled: "no"
+
+slave_mode: slave
 
 

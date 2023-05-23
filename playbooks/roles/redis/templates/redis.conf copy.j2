@@ -1574,7 +1574,7 @@ aof-timestamp-enabled {{ aof_timestamp_enabled }}
 # started as cluster nodes can. In order to start a Redis instance as a
 # cluster node enable the cluster support uncommenting the following:
 #
-cluster-enabled {{ cluster_enabled | default('no')}}
+cluster-enabled {{ cluster_enabled | default no}}
 
 # Every cluster node has a cluster configuration file. This file is not
 # intended to be edited by hand. It is created and updated by Redis nodes.

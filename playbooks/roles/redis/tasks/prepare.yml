@@ -1,0 +1,4 @@
+- name: 软件准备
+  copy: 
+    src: "{{local_bin}}/redis/redis.rpm"
+    dest: /tmp/

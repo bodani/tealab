@@ -1,102 +1,110 @@
-- name: redis moinitor
-  block:
-    - name: prepare redis exporter
-      copy:
-        src: "{{ local_bin }}/redis_exporter/redis_exporter"
-        dest: /usr/local/bin/redis_exporter
-        mode: 0755
+- name: prepare redis exporter
+  copy:
+    src: "{{ local_bin }}/redis/redis_exporter"
+    dest: /usr/local/bin/redis_exporter
+    mode: 0755
 
-    - name: config redis exporter 01
-      template: 
-        src: redis_exporter.service.j2
-        dest: /usr/lib/systemd/system/redis_exporter.service
+- name: config redis exporter 01
+  template: 
+    src: redis_exporter.service.j2
+    dest: /usr/lib/systemd/system/redis_exporter.service
 
-
-    - name: config redis exporter 02
-      template: 
-        src: redis_exporter.j2
-        dest: /etc/default/redis_exporter
+- name: config redis exporter 02
+  template: 
+    src: redis_exporter.j2
+    dest: /etc/default/redis_exporter
 
 
-    - name: start redis exporter
-      service: name=redis_exporter state=restarted daemon_reload=yes enabled=true
+- name: start redis exporter
+  service: name=redis_exporter state=restarted daemon_reload=yes enabled=true
 
-    - name: wait for redis exporter
-      wait_for:
-        port: 9121
-        state: started
+- name: wait for redis exporter
+  wait_for:
+    port: 9121
+    state: started
 
-    - name: mkdir prometheus redis
-      file: 
-        path: /etc/prometheus/redis
-        state: directory
+# - name: config redis monitor
 
-                 
-    - name: genrate discovery redis tmp
-      copy:
-        dest: /etc/prometheus/redis/discovery-redis.tmp
-        content: |
-          #########################################################################redis#######################################
-            - job_name: 'redis_exporter_targets'
-              file_sd_configs:
-                - files:
-                  - /etc/prometheus/redis/*.json
-              metrics_path: /scrape
-              relabel_configs:
-                - source_labels: [__address__]
-                  target_label: __param_target
-                - source_labels: [__param_target]
-                  target_label: instance
-                - target_label: __address__
-                  replacement: 127.0.0.1:9121
+#   block:
+- name: mkdir prometheus redis
+  file: 
+    path: /etc/prometheus/redis
+    state: directory
+  run_once: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
 
-            - job_name: 'redis_exporter'
-              static_configs:
-                - targets:
-                  - 127.0.0.1:9121
-          
-    - name: discovery redis
-      shell: |
-        result=$(cat /etc/prometheus/prometheus.yml | grep redis_exporter_targets)
-        if [[ "$result" == "" ]]
-        then
-          cat /etc/prometheus/redis/discovery-redis.tmp >> /etc/prometheus/prometheus.yml
-        fi
+- name: config redis prometheus yml
+  blockinfile:
+    path: /etc/prometheus/prometheus.yml
+    state: present
+    marker: "# {mark} REDIS JOB  "
+    content: |
+      #  promethes auto discover redis jobs  
+        - job_name: 'redis'
+          file_sd_configs:
+            - refresh_interval: 10s	
+              files:
+              - /etc/prometheus/redis/*.yml
+  # validate: promtool check config %s
+  notify: restart_prometheus  
+  run_once: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
 
-    - name: add redis targets
-      copy:
-        dest: /etc/prometheus/redis/{{ item }}.json
-        content: |
-          [
-            {
-              "targets": [ "redis://{{ item }}:6379"],
-              "labels": { "instance": "{{ item }}" }
-            }
-          ]
-      with_items: "{{ groups['redis'] }}"
+- name: add redis targets
+  copy:
+    dest: /etc/prometheus/redis/{{ inventory_hostname }}.yml
+    content: |
+      - targets: ['{{ inventory_hostname }}:9121']
+        labels:
+          instance: '{{ inventory_hostname }}'
+          group : '{{ master_groupname }}'
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
 
-    - name: restart prometheus
-      systemd: name=prometheus state=restarted enabled=yes daemon_reload=yes
-      tags: monitor
-      
-    - name: "Check if prometheus is accessible."
-      uri:
-        url: http://127.0.0.1:9090
-        method: GET
-        status_code: 200
-      tags: monitor
-
-    - name: load redis dashboard json
-      copy:
-        dest: /var/lib/grafana/dashboards/
-        src: dashboards/redis
-        owner: grafana
-        group: grafana
-
-    - name: load redis alert yml
-      copy:
-        dest: /etc/prometheus/rules/
-        src: rules/redis_alert.yml
-
+- name: restart prometheus
+  systemd: name=prometheus state=restarted enabled=yes daemon_reload=yes
   run_once: true
   tags: monitor
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  
+- name: "Check if prometheus is accessible."
+  uri:
+    url: http://127.0.0.1:9090
+    method: GET
+    status_code: 200
+  run_once: true
+  tags: monitor
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: redeay redis dashboard json file
+  copy:
+    dest: /var/lib/grafana/dashboards/
+    src: dashboards/redis
+    owner: grafana
+    group: grafana
+  run_once: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: redeay redis alert yml
+  copy:
+    dest: /etc/prometheus/rules/
+    src: rules/redis_alert.yml
+  run_once: true
+  notify: restart_prometheus 
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+
+- name: load grafana dashboard
+  shell: | 
+    sh /var/lib/grafana/load_dashboard.sh
+    sh /var/lib/grafana/clean_dashboards_jsons.sh
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"
+  run_once: true  
+
+
