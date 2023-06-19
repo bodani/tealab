@@ -2,10 +2,11 @@
 ## redis sentinel 服务
 - hosts: redis
   gather_facts: true
-  roles: 
-    # - { role: node, monitor: false, harden: true ,server: redis_sentinel }
-    - { role: redis, action: sentinel }
-    - { role: redis ,action: redis} 
+  vars:
+      CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/redis"
+  roles:
+    - { role: ca ,only_common_cert: true}
+    - { role: redis }
 
 ## 监控redis 
 # - hosts: monitor

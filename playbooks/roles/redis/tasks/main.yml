@@ -2,19 +2,17 @@
 - include: prepare.yml
   tags: always
 
-## sentinel 相关
-- include: sentinel.yml
-  tags: sentinel
-
-  # 安装 redis
+  # 安装 redis, 包括主从
 - include: install_redis.yml
   tags: redis
   # redis 主从 复制， 在从节点执行
-- include: slaveof.yml
-  tags: redis
-  
-- include: register.yml
-  tags: redis
+
+- include: user.yml
+  tags: user
+
+# sentinel 相关
+- include: sentinel.yml
+  tags: sentinel
 
 ## 监控 相关
 - include: monitor.yml

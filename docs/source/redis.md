@@ -178,3 +178,6 @@ ansible-playbook -i hosts.ini -i conf/redis.conf playbooks/create_redis.yml --ta
 
  https://redis.io/docs/manual/admin/#upgrading-or-restarting-a-redis-instance-without-downtime
 
+ ## 最佳实践参考
+ https://zhuanlan.zhihu.com/p/354486475
+

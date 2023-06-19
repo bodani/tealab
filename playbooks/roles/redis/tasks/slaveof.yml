@@ -1,39 +1,35 @@
 # 认证连接主服务信息
-- name: replication masterauth
-  redis:
-   command: config
-   name: masterauth
-   value: "{{ redis_password }}"
-   login_port: "{{ redis_port }}"
-   login_password: "{{ redis_password }}"
+# - name: replication masterauth
+#   redis:
+#    command: config
+#    name: masterauth
+#    value: "{{ redis_password }}"
+#    login_port: "{{ redis_port }}"
+#    login_password: "{{ redis_password }}"
 
-- name: slave role
-  set_fact:
-    slave_mode: master
-  when: inventory_hostname == master_node
+# - name: slave role
+#   set_fact:
+#     slave_mode: master
+#   when: inventory_hostname == master_node
 
 # 执行replicaof
-- name: replicaof ip port
-  redis:  
-    command: slave
-    master_host: "{{ master_node }}"
-    master_port: "{{ redis_port }}"
-    login_password: "{{ redis_password }}"
-    login_port: "{{ redis_port }}"
-    slave_mode: "{{ slave_mode }}"
+# - name: replicaof ip port
+#   redis:  
+#     command: slave
+#     master_host: "{{ master_node }}"
+#     master_port: "{{ redis_port }}"
+#     login_password: "{{ redis_password }}"
+#     login_port: "{{ redis_port }}"
+#     slave_mode: "{{ slave_mode }}"
 
-# # # 保存配置到文件中
-- name: replicaof rewrite'
+- name: replicaof test
+  shell: |
+    echo "1"
+
+- name: replicaof 主从复制
   shell: | 
-   redis-cli -a "{{ redis_password }}" -p "{{ redis_port }}" config rewrite
+   redis-cli --user replica-user --askpass "{{ redis_password }}" -p "{{ redis_port }}" --tls --cert /etc/redis/certs/redis.crt --key /etc/redis/certs/redis.key --cacert /etc/redis/certs/ca.crt replicaof {{ master_node}}
+   redis-cli --user replica-user --askpass "{{ redis_password }}" -p "{{ redis_port }}" --tls --cert /etc/redis/certs/redis.crt --key /etc/redis/certs/redis.key --cacert /etc/redis/certs/ca.crt config rewrite
   tags: master_replica
 
-# - name: relicaof
-#   shell: |
-#     redis-cli -h 127.0.01 -p 6379 -a f447b20a7fcbf53a5d5be013ea0b15af {{ item }}
-#   with_items: 
-#     - 'config set masterauth f447b20a7fcbf53a5d5be013ea0b15af'
-#     - 'replicaof {{ replicaof}} '
-#     - 'config rewrite'
-#   when: replicaof is defined
-#   tags: master_replica
+

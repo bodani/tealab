@@ -1,0 +1,7 @@
+#!/usr/bin/env ansible-playbook
+- hosts: etcd
+  gather_facts: no
+  vars:
+      CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/test"
+  roles:
+    - { role: ca ,only_common_cert: true}

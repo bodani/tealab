@@ -1,0 +1,34 @@
+# 创建服务证书
+- name: check cert key exists
+  stat: path="{{ CERT_LOCAL_DIR }}/common-key.pem"
+  register: cert_key_exists
+
+- name: gencert certificate
+  block:
+# 生成私钥
+    - name: 生成私钥
+      openssl_privatekey:
+        path: "{{ CERT_LOCAL_DIR }}/common-key.pem"
+        mode: 0644
+
+    - name: Certificate Signing Request - 证书请求文件
+      openssl_csr:
+        path: "{{ CERT_LOCAL_DIR }}/common.csr"
+        privatekey_path: "{{ CERT_LOCAL_DIR }}/common-key.pem"
+        common_name: "tealabs-common"
+        organization_name: tealabs
+        organizational_unit_name: tealabs
+        force: true
+        use_common_name_for_san: false
+
+    - name: 证书签名
+      openssl_certificate:
+        path: "{{ CERT_LOCAL_DIR }}/common-crt.pem"
+        csr_path: "{{ CERT_LOCAL_DIR }}/common.csr"
+        ownca_path: "{{ CERT_LOCAL_DIR }}/ca.pem"
+        ownca_privatekey_path: "{{ CERT_LOCAL_DIR }}/ca-key.pem"
+        provider: ownca
+        selfsigned_not_after: "+{{ CERT_EXPIRY }}"
+        mode: 0644
+  when: not cert_key_exists.stat.exists|bool 
+...

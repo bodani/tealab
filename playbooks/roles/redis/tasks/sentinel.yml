@@ -1,10 +1,14 @@
-- name: 安装 redis-sentinel
-  package: name=/tmp/redis.rpm state=latest  
-
 - name: 配置 sentinel
   template: 
     src: sentinel.conf.j2
     dest: /etc/redis/sentinel.conf
+    owner: redis
+    group: redis
+
+- name: 配置 users.acl
+  file:
+    path: /etc/redis/sentinel-users.acl
+    state: touch
     owner: redis
     group: redis
 

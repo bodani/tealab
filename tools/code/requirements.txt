@@ -1,2 +1,3 @@
 Click==7.0
 psycopg2
+redis==4.5.5

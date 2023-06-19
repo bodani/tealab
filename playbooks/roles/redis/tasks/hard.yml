@@ -1,0 +1,22 @@
+# 安全加固
+# chown redis:redis /usr/bin/redis-server
+# chmod 700  /usr/bin/redis-server
+# chown redis:redis /etc/redis/
+# chmod 600 /etc/redis/redis.conf
+
+
+
+# acl setuser zs9 +@all -@dangerous  ~key1:*  on >123456 #ac
+#  ACL SETUSER antirez on +@all -@dangerous >42a979... ~*
+# ACL SETUSER myuser -select +select|0
+#ACL SAVE
+
+
+# sentinel 权限集
+# ACL SETUSER sentinel-user on >somepassword allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill
+
+# replica 权限集合
+# ACL setuser replica-user on >somepassword +psync +replconf +ping
+
+
+

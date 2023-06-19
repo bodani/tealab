@@ -1,0 +1,9 @@
+
+- name: redis 用户管理
+  shell: |
+    alias redis-cli="redis-cli --tls --cert /etc/redis/certs/redis.crt --key /etc/redis/certs/redis.key --cacert /etc/redis/certs/ca.crt "
+
+    echo "ACL SETUSER default on >{{redis_password}}" | redis-cli 
+    echo "ACL SETUSER replica-user on >{{redis_password}} +psync +replconf +ping" | redis-cli -a {{redis_password}} 
+    echo "ACL SETUSER sentinel-user on >{{redis_password}} allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill" | redis-cli -a {{redis_password}} 
+    echo "ACL SAVE" | redis-cli -a {{redis_password}} 

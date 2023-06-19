@@ -14,3 +14,5 @@ ELSE
 END IF;
 END
 $do$;
+
+select client_addr as addr, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(),replay_lsn)) as replay_lag, pg_size_pretty(pg_wal_lsn_diff(pg_current_wal_lsn(),flush_lsn))s flush_lag from pg_stat_replication;

@@ -1,0 +1,13 @@
+#  关闭操作系统内存大页机制
+- name: 关闭透明大页
+  shell: |
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled
+
+- name: vm.overcommit_memory
+  sysctl:
+    name: vm.overcommit_memory
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+  

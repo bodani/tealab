@@ -8,4 +8,23 @@ cluster_enabled: "no"
 
 slave_mode: slave
 
+# 异步删除
+lazyfree_lazy_eviction: "yes"
+lazyfree_lazy_expire: "yes" 
+lazyfree_lazy_server_del: "yes" 
+replica_lazy_flush: "yes"
+# 主从复制相关
+repl_backlog_size: 1Gb
+# 秒
+repl_backlog_ttl: 3000
+
+# 安全相关
+#rename command
+RC_KEYS: ""
+RC_FLUSHALL: ""
+RC_DEBUG: ""
+# 慢日志阈值
+slowlog_log_slower_than: 6000
+# 延迟监控阈值
+latency_monitor_threshold: 1000
 

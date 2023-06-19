@@ -1,3 +1,5 @@
 # 自签名证书过期时间
 CERT_EXPIRY: 3650d
 CERT_LOCAL_BASE_DIR: /etc/ssl/certs/tealabs
+
+only_common_cert: false

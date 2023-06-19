@@ -2,10 +2,24 @@
 - import_tasks: ca.yml 
   delegate_to: localhost
   run_once: true
-## 服务证书  
-- import_tasks: cert.yml
+  tags: always
+
+## 服务证书，与服务器IP,DNS 绑定  
+- import_tasks: san_cert.yml
   delegate_to: localhost
-## 服务客户端证书
+  tags: san_cert
+  when: only_common_cert == false
+
+## 通用证书
+- import_tasks: common_cert.yml
+  delegate_to: localhost
+  run_once: true
+  tags: common_cert
+  when: only_common_cert == true
+
+## 客户端证书
 - import_tasks: client_cert.yml
   delegate_to: localhost
   run_once: true
+  tags: client_cert
+  when: only_common_cert == false

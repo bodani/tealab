@@ -1,15 +1,17 @@
-- name: 安装redis
-  yum: name=/tmp/redis.rpm state=latest
-
-- name: install python-redis
-  yum: name=python-redis state=present
-
 - name: 配置 redis
   template: 
     src: redis.conf.j2
     dest: /etc/redis/redis.conf
     owner: redis
     group: redis
+
+- name: redis users.acl
+  file:
+    path: /etc/redis/users.acl
+    state: touch
+    owner: redis
+    group: redis
+
 
 - name: redis 启动服务
   service: 
@@ -23,4 +25,11 @@
     port: 6379
     state: started
 
-  
+- name: write redis-cli alias
+  tags: redis_env
+  copy:
+    dest: /etc/profile.d/redis.sh
+    mode: 0644
+    content: |
+      #!/bin/bash
+      alias redis-cli="redis-cli --tls --cert /etc/redis/certs/redis.crt --key /etc/redis/certs/redis.key --cacert /etc/redis/certs/ca.crt"

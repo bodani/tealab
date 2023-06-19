@@ -2,3 +2,25 @@
   copy: 
     src: "{{local_bin}}/redis/redis.rpm"
     dest: /tmp/
+
+- name: 安装redis
+  yum: name=/tmp/redis.rpm state=latest
+
+- name: install python-redis
+  yum: name=python-redis state=present
+
+- name: 证书
+  file:
+    path: /etc/redis/certs
+    state: directory
+    owner: redis
+    group: redis
+
+- name: 颁发证书
+  copy:
+    dest: /etc/redis/certs/{{ item.to }}
+    src: "{{ CERT_LOCAL_DIR }}/{{ item.from }}"
+  with_items: 
+    - { from: ca.pem, to: ca.crt }
+    - { from: common-key.pem , to: redis.key }
+    - { from: common-crt.pem , to: redis.crt }

@@ -5,10 +5,6 @@
 # protected from the outside world via firewalling or other means.
 protected-mode no
 
-# port <sentinel-port>
-# The port that this sentinel instance will run on
-port {{ sentinel_port }}
-
 # By default Redis Sentinel does not run as a daemon. Use 'yes' if you need it.
 # Note that Redis will write a pid file in /var/run/redis-sentinel.pid when
 # daemonized.
@@ -148,7 +144,8 @@ acllog-max-len 128
 # The format of the external ACL user file is exactly the same as the
 # format that is used inside redis.conf to describe users.
 #
-# aclfile /etc/redis/sentinel-users.acl
+
+aclfile /etc/redis/sentinel-users.acl
 
 requirepass {{ redis_password }}
 #
@@ -341,3 +338,25 @@ SENTINEL announce-hostnames no
 # over.
 
 #SENTINEL master-reboot-down-after-period master_groupname  0
+
+# port <sentinel-port>
+# The port that this sentinel instance will run on
+tls-port {{ sentinel_port }}
+port 0
+tls-auth-clients yes
+tls-ca-cert-file /etc/redis/certs/ca.crt
+tls-key-file /etc/redis/certs/redis.key
+tls-cert-file /etc/redis/certs/redis.crt
+tls-replication yes
+
+sentinel monitor {{master_groupname}} {{master_node}} {{redis_port}} 2
+
+#若主服务设置了密码需要加上注意顺序必须在sentinel monitor下面
+sentinel auth-pass {{master_groupname}} "{{ redis_password }}"
+sentinel auth-user {{master_groupname}} sentinel-user
+# 如果mymaster 30秒内没有响应，则认为其主观失效
+sentinel down-after-milliseconds {{master_groupname}} 30000
+# 在故障转移时，最多有多少从节点对新的主节点进行同步
+sentinel parallel-syncs {{master_groupname}} 1
+# 该参数指定一个时间段，在该时间段内没有实现故障转移成功，则会再一次发起故障转移的操作，单位毫秒
+sentinel failover-timeout {{master_groupname}} 180000

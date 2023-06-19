@@ -9,9 +9,10 @@ bind: 0.0.0.0
 # min-replicas-to-write: 3
 # min-replicas-max-lag: 10
 
-#限制redis服务使用的最大内存，超过阈值redis继续提供服务但是会报错。
+#限制redis服务使用的最大内存，超过阈值redis继续提供服务但是会报错。建议单个实例小于10G
 maxmemory: 10GB
-eviction: allkeys-lfu 
+# 淘汰策略
+maxmemory_policy: 'allkeys-lfu' 
 
 
 # 数据保存策略 生产系统 RDB AOF 混合模式。 默认 开启 aof-use-rdb-preamble yes
