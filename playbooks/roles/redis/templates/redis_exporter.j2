@@ -4,7 +4,14 @@ REDIS_EXPORTER_WEB_LISTEN_ADDRESS="0.0.0.0:9121"
 REDIS_EXPORTER_WEB_TELEMETRY_PATH="/metrics"
 REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
 REDIS_PASSWORD={{ redis_password }}
-REDIS_ADDR=redis://{{ inventory_hostname }}:6379
+REDIS_ADDR=rediss://{{ inventory_hostname }}:6379
+REDIS_EXPORTER_INCL_SYSTEM_METRICS=true
+REDIS_EXPORTER_TLS_CA_CERT="/etc/redis/certs/ca.crt"
+REDIS_EXPORTER_TLS_CLIENT_KEY_FILE="/etc/redis/certs/redis.key"
+REDIS_EXPORTER_TLS_CLIENT_CERT_FILE="/etc/redis/certs/redis.crt"
+REDIS_EXPORTER_SKIP_TLS_VERIFICATION=true
+#REDIS_EXPORTER_TLS_SERVER_KEY_FILE=/etc/redis/certs/redis.key
+#REDIS_EXPORTER_TLS_SERVER_CERT_FILE=/etc/redis/certs/redis.crt
 
 # REDIS_ADDR                            # Address of the Redis instance, defaults to redis://localhost:6379.
 # REDIS_USER                            # User name to use for authentication (Redis ACL for Redis 6.0 and newer).
