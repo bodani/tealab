@@ -24,3 +24,9 @@
    state: started
    port: "{{sentinel_port}}"
 
+- name: sentinel 用户管理
+  shell: |
+    alias redis-cli="redis-cli --tls --cert /etc/redis/certs/redis.crt --key /etc/redis/certs/redis.key --cacert /etc/redis/certs/ca.crt "
+
+    echo "ACL SETUSER default on >{{redis_password}}" | redis-cli -p {{sentinel_port}}
+    echo "ACL SAVE" | redis-cli -p {{sentinel_port}} -a {{redis_password}} 

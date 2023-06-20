@@ -7,8 +7,9 @@
   tags: redis
   # redis 主从 复制， 在从节点执行
 
-- include: user.yml
-  tags: user
+#Acess Control List
+- include: acl.yml
+  tags: acl
 
 # sentinel 相关
 - include: sentinel.yml

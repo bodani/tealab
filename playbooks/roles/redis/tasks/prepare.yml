@@ -6,8 +6,8 @@
 - name: 安装redis
   yum: name=/tmp/redis.rpm state=latest
 
-- name: install python-redis
-  yum: name=python-redis state=present
+# - name: install python-redis
+#   yum: name=python-redis state=present
 
 - name: 证书
   file:

@@ -2,8 +2,6 @@
 redis_port: 6379
 dir: /var/lib/redis
 redis_password: f447b20a7fcbf53a5d5be013ea0b15af
-bind: 0.0.0.0
-
 
 # 主从复制配置相关
 # min-replicas-to-write: 3

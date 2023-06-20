@@ -5,13 +5,14 @@ conf = {
     'master_group_name': 'mymaster001',  # master name
     'min_other_sentinels': 0,
     'sentinel_kwargs': {
+        'password': 'f447b20a7fcbf53a5d5be013ea0b15af',  # sentinel auth
         'ssl': True,
         'ssl_ca_certs': "./redis_ssl/ca.crt",
         'ssl_keyfile': "./redis_ssl/redis.key",
         'ssl_certfile': "./redis_ssl/redis.crt",
         'ssl_cert_reqs': "required",
     },
-    'connection_conf': {
+    'redis_conf': {
         'password': 'f447b20a7fcbf53a5d5be013ea0b15af',   # redis auth
         'socket_timeout': 0.5,
         'retry_on_timeout': True,
@@ -28,7 +29,7 @@ conf = {
     }
 }
 
-sentinel = Sentinel(sentinels=conf['sentinel'],min_other_sentinels=conf['min_other_sentinels'],sentinel_kwargs=conf['sentinel_kwargs'], **conf['connection_conf'])
+sentinel = Sentinel(sentinels=conf['sentinel'],min_other_sentinels=conf['min_other_sentinels'],sentinel_kwargs=conf['sentinel_kwargs'], **conf['redis_conf'])
 redis_cli_master = sentinel.master_for(conf['master_group_name'], db=0)
 
 redis_cli_master.set("k1","v1")
