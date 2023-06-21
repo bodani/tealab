@@ -22,20 +22,24 @@
 
 ## 监控管理
 
-配置文件管理, 在hosts.ini 中
+` vim hosts.ini ` 
 
 ```
 [monitor]
 10.10.2.14
-
-[monitor:vars]
+```
+` vim group_vars/monitor.yml `
+```
 # prometheus data path
-prometheus_data_path = /data/monitor/prometheus
-grafana_admin_username = admin
-grafana_admin_password = admin
+prometheus_data_path: /data/monitor/prometheus
+grafana_admin_username: admin
+grafana_admin_password: admin
 
-# 监控域名及证书到期时间
-domain_https=['https://www.baidu.com','https://doc.zhangeamon.top','https://tea.zhangeamon.top']
+# 监控域名及证书到期时间 
+domain_https: 
+ - https://www.baidu.com
+ - https://doc.zhangeamon.top
+ - https://test.zhangeamon.top
 
 ```
 

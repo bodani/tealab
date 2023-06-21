@@ -4,77 +4,68 @@
 
 将集群服务器加入tea中管理制定服务 
 
-## 软件下载
-
-```
-# 最新版
-wget https://dl.min.io/server/minio/release/linux-amd64/minio
-
-wget https://dl.min.io/client/mc/release/linux-amd64/mc
-```
 
 ## 编辑配置
 
+`vim hosts.ini`
+
 ```
-# 编辑配置文件，制定服务 minio.yml
-minio:
-  children:
-  # 一个池
-    pool1:
-      hosts:
-        10.10.2.11:
-        10.10.2.12:
-        10.10.2.13: 
-        10.10.2.14:
-
-      vars:
-        # 服务二进制文件存放位置
-        MINIO_SER_BIN_LOCAL: /usr/local/bin/
-
-        # NODE 节点存储数据路径  
-        NODE_DIR: 
-          - /mnt/minio1
-          - /mnt/minio2
-        
-  # 集群变量
-  vars:
-      # 账号信息
-      MINIO_ROOT_USER: root
-      MINIO_ROOT_PASSWORD: f447b20a7fcbf53a5d5be013ea0b15af 
-
-       # minio 服务端口
-      MINIO_SER_PORT: 9000 
-
-      # UI 访问端口
-      MINIO_CONL_PORT: 9001
-
-      MINIO_MC_ALIAS: myminio
-# 考虑集群扩容
-      NODE_HOSTS: 
-          - 10.10.2.11 minio1
-          - 10.10.2.12 minio2
-          - 10.10.2.13 minio3
-          - 10.10.2.14 minio4
-# Minio 存储池 ,通过添加pool 对集群进行扩容        
-      MINIO_VOLUMES: 
-       - http://minio{1...4}:9000/mnt/minio{1...2}
-
-# sidekick gateway 负载均衡 
-      MINIO_LB_SER_PORT: 9009
-      SIDEKICK_BACKEND: http://minio{1...4}:9000
+[minio]
+10.10.2.11
+10.10.2.12
+10.10.2.13
+10.10.2.14
 ```
 
+`vim group_vars/minio.yml`
+
+```
+---
+# 集群变量
+MINIO_SER_BIN_LOCAL: /usr/local/bin/
+
+# NODE 节点存储数据路径  
+NODE_DIR: 
+  - /data1
+  - /data2
+  - /data3
+  - /data4
+# 账号信息
+MINIO_ROOT_USER: root
+MINIO_ROOT_PASSWORD: f447b20a7fcbf53a5d5be013ea0b15af 
+
+# minio 服务端口
+MINIO_SER_PORT: 9000 
+
+# UI 访问端口
+MINIO_CONL_PORT: 9001
+
+MINIO_MC_ALIAS: mylocal
+# 考虑集群扩容 ,生成hosts DNS
+NODE_HOSTS: 
+  - 10.10.2.11 minio1
+  - 10.10.2.12 minio2
+  - 10.10.2.13 minio3
+  - 10.10.2.14 minio4
+# Minio 存储池 ,通过添加pool 对集群进行扩容
+MINIO_VOLUMES: 
+- http://minio{1...4}:9000/data{1...2}
+- http://minio{1...4}:9000/data{3...4}
+# sidekick 负载均衡
+MINIO_LB_SER_PORT: 9009
+
+SIDEKICK_BACKEND: http://minio{1...4}:9000
+```
 ## 安装服务
 
 ```
-# 开始安装服务
-$ tea_ctl minio create -i conf/minio.yml
+playbooks/create_minio.yml -i hosts.ini
 ```
 
 ## 销毁服务
 
 ```
-$ tea_ctl minio destory -i conf/minio.yml
+playbooks/destory_minio.yml -i hosts.ini
 ```
 
 ## 集群扩容
@@ -106,12 +97,6 @@ $ mc admin decommission status  myminio/
 ```
 
 垂直扩容不需要对系统进行调优，负载均衡，监控等环节。
-
-## 更多 tags
-
-```
-ansible-playbook -i hosts.ini -i conf/minio.yml  playbooks/create_minio.yml --tags install , monitor ,upgrade,sidekick 
-```
 
 ## 服务检测
 

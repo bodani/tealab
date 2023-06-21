@@ -47,7 +47,7 @@ $ vi tea.conf
 测试互通效果
 
 ```
-ansible -i /etc/tea/tea.conf nodes -m shell -a 'whoami'  -b 
+ansible -i hosts.ini nodes -m shell -a 'whoami'  -b 
 ```
 
 后期安全建议，目标机禁用root登录
@@ -80,7 +80,7 @@ $ vim tea.conf
 
 测试可连接性
 ```
-ansible -i /etc/tea/tea.conf -m shell -a 'whoami' -u tea -b -l 10.10.2.14
+ansible -i hosts.ini nodes -m shell -a 'whoami' -u tea -b -l 10.10.2.14
 ```
 
 ## 调试指南

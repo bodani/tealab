@@ -9,31 +9,34 @@ https://etcd.io/docs/v3.5/op-guide/hardware/
 将集群服务器加入tea中管理
 
 ## 编辑配置
+` vim hosts.ini `
 
 ```
-$ vim hosts.ini
 # etcd version 3.3 -3.5
 [etcd]
 10.10.2.11 
 10.10.2.12
 10.10.2.13
 # 10.10.2.14
+```
 
-[etcd:vars]
-ETCD_NAME=etcd001
+` vim  group_vars/etcd.yml `
+```
+# 服务名 etcd
+ETCD_NAME: etcd001
 # 在ectd服务器中 证书存放位置
-ECTD_CERT_DIR=/etc/etcd/certs
+ECTD_CERT_DIR: /etc/etcd/certs
 # etcd 数据存放位置
-ETCD_DATA_DIR=/var/lib/etcd
+ETCD_DATA_DIR: /var/lib/etcd
 # etcd wal日志存放位置
-ETCD_WAL_DIR=/var/lib/etcd/wal
+ETCD_WAL_DIR: /var/lib/etcd/wal
 # 端口号, 设定完成后期不可修改， 请注意
-ETCD_PEER_PORT = 2380
-ETCD_CLIENT_PORT = 2379
+ETCD_PEER_PORT: 2380
+ETCD_CLIENT_PORT: 2379
 
-########### 数恢复#####################
-# 备份数据位置,该目录具有执行用户读写权限
-LOCAL_ETCD_BACKUP_DATA = /tmp/etcd/a.db
+########### 数据备份#####################
+# 在中控机上数据存储位置,该目录具有执行用户写权限
+ETCD_LOCAL_BACKUP_DIR: /tmp/etcd/
 ```
 
 ## 创建集群
@@ -64,8 +67,9 @@ etcdctl endpoint status --cluster -w table
 
 修改etcd集群配置文件
 
- ```
- $ vim hosts.ini
+`  vim hosts.ini `
+
+```
  # etcd version 3.3-3.5
  [etcd]
  10.10.2.11
@@ -110,8 +114,9 @@ $ etcdctl member remove 7cebb079e53fc9e7
 
 修改配置etcd集群配置文件
 
+`vim host.ini`
+
 ```
-$ vim host.ini
 # etcd version 3.3-3.5
 [etcd]
 10.10.2.11
