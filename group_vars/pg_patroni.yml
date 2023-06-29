@@ -1,0 +1,46 @@
+PG_CLUSTER_NAME: pg_cluster001
+
+# 用于确定etcd证书在本地位置
+ETCD_NAME: etcd001
+ETCD_HOSTS: '10.10.2.11:2379,10.10.2.12:2379,10.10.2.13:2379'
+
+#ETCD_USERNAME='etcd_user'
+#ETCD_PASSWORD='etcd_password'
+#post requst safe
+REST_API_USERNAME: 'Myuser'
+REST_API_PASSWORD: 'Mypassword'
+# failover 
+ttl: 30
+loop_wait: 10
+retry_timeout: 10
+maximum_lag_on_failover: 10485760
+
+PG_VERSION: 14
+PG_BIN: /usr/pgsql-14/bin/
+PG_DATA: /var/lib/pgsql/14/data
+PG_CONFIG: /var/lib/pgsql/14/data
+PG_PORT: 5432
+
+#超级用户 default postgres
+# SUP_USER=postgres 
+SUP_PASSWORD: 'superpassword'
+#监控用户 pg_monitor
+MON_USER: 'tea_mon'
+#流复制用户
+REP_USER: 'rep_user'
+REP_PASSWORD: 'rep_password'
+
+#PG_VERSION 11 及之后有效
+REWIND_USER: 'rewind_user'
+REWIND_PASSWORD: 'rewind_password'
+
+#PG params must be same for all 
+wal_level: logical
+max_connections: 1000
+max_worker_processes: 16
+max_prepared_transactions: 0
+max_locks_per_transaction: 64
+max_wal_senders: 10
+max_replication_slots: 5
+wal_keep_segments: 10240
+wal_keep_size: 128GB

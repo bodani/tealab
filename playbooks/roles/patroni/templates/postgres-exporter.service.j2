@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus Postgres Exporter Server
+
+[Service]
+User=postgres
+
+EnvironmentFile=-/etc/postgres_exporter/pg_exporter.env
+ExecStart=/usr/local/bin/postgres_exporter 
+
+[Install]
+WantedBy=multi-user.target

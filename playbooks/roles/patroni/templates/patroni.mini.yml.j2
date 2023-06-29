@@ -95,8 +95,14 @@ bootstrap:
       
         max_wal_senders: {{ max_wal_senders }}
         max_replication_slots: {{ max_replication_slots }}
+{% if PG_VERSION > 12 %}
         wal_keep_segments: {{ wal_keep_segments }}
+{%endif%}
         wal_keep_size: {{ wal_keep_size }}
+        ssl: on
+        ssl_ca_file: '/etc/postgres/certs/ca.crt'
+        ssl_cert_file: '/etc/postgres/certs/server.crt'
+        ssl_key_file: '/etc/postgres/certs/server.key'
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
     # monitor user 

@@ -31,7 +31,7 @@
       {
         "datasource": {
           "type": "prometheus",
-          "uid": "PgXNOPf4k"
+          "uid": "000000001"
         },
         "fieldConfig": {
           "defaults": {
@@ -309,7 +309,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "exemplar": false,
@@ -323,7 +323,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_master{scluster_name='$clustername'}",
@@ -336,7 +336,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_sync_standby{cluster_name='$clustername'}",
@@ -349,7 +349,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_postgres_server_version{cluster_name='$clustername'}",
@@ -362,7 +362,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "exemplar": false,
@@ -377,7 +377,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_pending_restart{cluster_name='$clustername'}",
@@ -390,7 +390,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_is_paused{cluster_name='$clustername'}",
@@ -403,7 +403,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "exemplar": false,
@@ -418,7 +418,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "PgXNOPf4k"
+              "uid": "000000001"
             },
             "editorMode": "code",
             "expr": "patroni_master{cluster_name='pg_cluster_test'}",
@@ -455,7 +455,7 @@
           },
           "datasource": {
             "type": "prometheus",
-            "uid": "PgXNOPf4k"
+            "uid": "000000001"
           },
           "definition": "label_values(patroni_version,cluster_name)",
           "hide": 0,
@@ -483,7 +483,7 @@
           },
           "datasource": {
             "type": "prometheus",
-            "uid": "PgXNOPf4k"
+            "uid": "000000001"
           },
           "definition": "query_result(count(patroni_postgres_running{scope=\"$scope\"}))",
           "hide": 2,

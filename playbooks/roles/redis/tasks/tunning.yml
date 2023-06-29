@@ -8,7 +8,15 @@
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
 
-- name: hugepage enabled
+- name: hugepage disable
   shell: |
     echo never > /sys/kernel/mm/transparent_hugepage/enabled
   ignoreerrors: yes
+
+- name: trun off hugepage
+  content:
+  lineinfile:
+    path: /etc/rc.local
+    line: "{{ item }}"
+    regexp: "^{{ item }}"
+    state: present  

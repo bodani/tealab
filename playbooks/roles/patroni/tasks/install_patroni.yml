@@ -36,8 +36,8 @@
 
 - name: install | copy patroni calls
   copy: 
-    src: callbacks.sh
-    dest: /etc/patroni/callbacks/callbacks.sh
+    src: callbacks
+    dest: /etc/patroni/
     mode: 0777
   notify: reload patroni
 
@@ -62,11 +62,16 @@
     copy:
       src: setup_cluster.sh
       dest: /etc/patroni/setup_cluster.sh
-  
+      owner: postgres 
+      group: postgres
+      mode: 0700
+
   - name: prepare db sql 
     template:
       src: setup_cluster.sql.j2
       dest: /etc/patroni/setup_cluster.sql
+      owner: postgres 
+      group: postgres
 
   - name: install | start patroni service leader
     service: 
@@ -77,7 +82,7 @@
 
   - name: install | wait for  postgres started leader
     wait_for:
-      port: {{PG_PORT}}
+      port: "{{ PG_PORT }}"
       state: started
       sleep: 1
       delay: 5
@@ -94,8 +99,11 @@
 
   - name: remove temp setup_cluster sql
     file:  
-      path: /etc/patroni/setup_cluster.sql
+      path: /etc/patroni/{{ item }}
       state: absent
+    with_items:
+      - setup_cluster.sql
+      - setup_cluster.sh
 
   when: is_leader|bool
 
@@ -109,7 +117,7 @@
 
 - name: install | wait for postgres started
   wait_for:
-    port: {{PG_PORT}}
+    port: "{{ PG_PORT }}"
     state: started
 
 - name: install | wait for patroni started

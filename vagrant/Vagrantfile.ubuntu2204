@@ -1,0 +1,45 @@
+Vagrant.configure("2") do |config|
+
+  config.ssh.username = "vagrant"
+  config.ssh.password = "vagrant"
+######################### ansible-controller node
+
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "generic/ubuntu2204"
+    controller.vm.hostname = "controller"
+    controller.vm.network :private_network, ip: "10.10.2.10"
+
+  end
+
+######################### Cluster Nodes
+  cluster_nodes=4
+
+  (1..cluster_nodes).each do |i|
+    config.vm.define "node#{i}" do |node|
+      node.vm.box = "generic/ubuntu2204"
+      node.vm.hostname  = "node#{i}"
+      node.vm.network :private_network, ip: "10.10.2.1#{i}"
+
+  end
+  end
+
+##################### Setting CPU Memory AND DISK for All machines
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = false
+    vb.memory = "8196"
+    vb.cpus =  2
+   # vb.disk :disk, name: "backup", size: "10GB"
+  end
+
+####################### Sharing Folder with machines , allow ssh login 
+  config.vm.provision "shell", inline: <<-SHELL
+     # set ssh root login with password vagrant
+     sudo sed -i 's/#PermitRootLogin yes/PermitRootLogin yes/g' /etc/ssh/sshd_config
+     sudo sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+     systemctl restart sshd
+     # /data dir use separate disk block
+  SHELL
+
+####################### Setting Disk size ,default 40GB
+# config.disksize.size = '100GB'
+end

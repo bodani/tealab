@@ -300,5 +300,11 @@ TTL > = loop_wait + retry_timeout * 2
 在网络重新恢复后，原主有更新leader风险。请根据具体情况修改配置策略。
 
 
+.. code-block:: ini
+  
+psql "postgresql://10.10.2.13:5432/postgres?sslmode=require"
+
+
+
 
 

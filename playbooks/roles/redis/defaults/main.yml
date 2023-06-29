@@ -23,8 +23,9 @@ repl_backlog_ttl: 3000
 RC_KEYS: ""
 RC_FLUSHALL: ""
 RC_DEBUG: ""
-# 慢日志阈值
+# 慢日志阈值 微秒
 slowlog_log_slower_than: 6000
+slowlog_max_len: 128
 # 延迟监控阈值
 latency_monitor_threshold: 1000
 

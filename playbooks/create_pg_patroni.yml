@@ -1,11 +1,13 @@
 #!/usr/bin/env ansible-playbook
 - hosts: "{{ server_name | default('pg_patroni')}}"
   # any_errors_fatal: true
-  roles: 
-    - { role: postgresql, tags: install }
+  gather_facts: true
+  vars:
+      CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/{{ server_name | default('pg_patroni')}}"
+  roles:
+    - { role: ca ,only_common_cert: true}
     - { role: patroni ,tags: patroni }
-    - { role: postgresql, tags: monitor,logs }
-
+    
   post_tasks:
     - name: patroni 集群状态收集
       get_url:

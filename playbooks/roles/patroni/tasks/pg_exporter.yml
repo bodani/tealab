@@ -1,0 +1,48 @@
+- name: pg_exporter | install postgresql_exporter 
+  copy: 
+    src: "{{local_bin}}/postgresql/postgres_exporter"
+    dest: /usr/local/bin/postgres_exporter
+    mode: 0755
+    owner: postgres
+    group: postgres 
+
+- name: pg_exporter |  create directory postgresql_exporter
+  file:
+    path: /etc/postgres_exporter
+    state: directory
+    owner: postgres
+    group: postgres
+  
+- name: pg_exporter | postgres query 
+  copy: 
+    src: queries.yml
+    dest: /etc/postgres_exporter/postgres-queries.yml
+    owner: postgres
+    group: postgres
+  notify: restart pg_exporter
+
+- name: pg_exporter | env 
+  copy: 
+    src: pg_exporter.env
+    dest: /etc/postgres_exporter/pg_exporter.env
+    owner: postgres
+    group: postgres
+  notify: restart pg_exporter
+
+- name: pg_exporter | postgres_exporter service
+  template:
+    src: postgres-exporter.service.j2
+    dest: /usr/lib/systemd/system/postgres-exporter.service
+  notify: restart pg_exporter
+
+- name: pg_exporter | start postgresql exporter
+  service:
+    name: postgres-exporter
+    state: started
+    daemon-reload: true
+    enabled: true
+
+- name: pg_exporter | wait for postgres exporter started
+  wait_for:
+    port: 9187
+    state: started

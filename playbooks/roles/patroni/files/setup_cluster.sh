@@ -1,1 +1,1 @@
-psql "$1" -f /etc/patroni/setup.sql
+psql "$1" -f /etc/patroni/setup_cluster.sql

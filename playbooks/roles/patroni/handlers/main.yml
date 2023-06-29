@@ -9,3 +9,19 @@
   service:  
     name: patroni
     state: reloaded
+
+- name: restart pg_exporter
+  service:  
+    name: postgres-exporter
+    state: restarted
+    daemon_reload: true
+    enabled: true
+
+- name: restart_prometheus
+  service:  
+    name: prometheus
+    state: restarted
+    daemon_reload: true
+    enabled: true
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['monitor'] }}"

@@ -2,6 +2,7 @@ pg_base_packages:
   - postgresql{{PG_VERSION}}-server
   - postgresql{{PG_VERSION}}
   - postgresql{{PG_VERSION}}-contrib
+  - postgresql{{PG_VERSION}}-libs
 
 pg_extends_packages:
   - pg_repack_{{PG_VERSION}}
