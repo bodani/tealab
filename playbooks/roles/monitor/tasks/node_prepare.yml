@@ -1,0 +1,8 @@
+- name: install python3-pip
+  apt:
+    name: python3-pip
+    state: present
+
+- name: pip install 
+  shell:
+    pip3 install requests

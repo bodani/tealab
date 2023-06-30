@@ -23,14 +23,14 @@
   wait_for: host=127.0.0.1 port=9100 state=started   
 
 #---------------------------------------------
-# 加载 node_exporter dashboard
+# 拷贝 node_exporter 服务发现，配置文件
 #---------------------------------------------
 ###    1 prometheus 
 - name: create prometheus filediscover node yml
   template: src=node.yml.j2 dest=/etc/prometheus/nodes/{{inventory_hostname}}.yml mode=0644
   delegate_to: "{{ item }}"
   with_items: "{{ groups['monitor'] }}"
-
+  when: inventory_hostname not in groups['monitor']
 #---------------------------------------------
 # 安装blackbox_exporter
 #---------------------------------------------
@@ -66,12 +66,12 @@
 #---------------------------------------------
 ###    2 grafana
 
-- name: copy linux dashboard json
-  copy:
-    dest: /var/lib/grafana/dashboards/
-    src: dashboards/linux
-    owner: grafana
-    group: grafana
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['monitor'] }}"  
-  run_once: true
+# - name: copy linux dashboard json
+#   copy:
+#     dest: /var/lib/grafana/dashboards/
+#     src: dashboards/linux
+#     owner: grafana
+#     group: grafana
+#   delegate_to: "{{ item }}"
+#   with_items: "{{ groups['monitor'] }}"  
+#   run_once: true

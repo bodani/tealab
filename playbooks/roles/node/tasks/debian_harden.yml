@@ -1,0 +1,78 @@
+# 更新
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
+# 关闭 apparmor
+- name: hard | disable apparmor 
+  service:
+    name: apparmor
+    state: stopped
+    enabled: false
+
+# 关闭防火墙
+- name: hard | disable ufw
+  service: 
+    name: ufw 
+    state: stopped 
+    enabled: false
+
+# ulimit -n 限制设置
+
+- name: update /etc/security/limits.conf 永久有效
+  tags: ulimit
+  blockinfile:
+    dest: /etc/security/limits.conf
+    insertbefore: '# End of file'
+    block: |
+      * - nofile 655360
+      * soft nproc 655360
+      * hard nproc 655360
+      * soft nofile 655360
+      * hard nofile 655360
+
+# 设置 hostname
+- name: set hostname and /etc/hosts
+  block: 
+    - name: fetch old hostname
+      shell: 
+        hostname
+      register: oldhostname
+    # - debug:
+    #     msg: "{{ oldhostname.stdout }}"
+    # - name: set /etc/hosts1
+    #   lineinfile:
+    #     path: /etc/hosts
+    #     regexp: '^127.0.0.1 {{ oldhostname.stdout }}'
+    #     state: absent
+
+    - name: set /etc/hosts
+      lineinfile: 
+        path: /etc/hosts
+        line: "127.0.0.1 {{ hostname }}"
+        regexp: "^127.0.0.1	{{ oldhostname.stdout }}"
+        # firstmatch: yes
+        state: present
+    - name: set hostname 
+      hostname: 
+        name: "{{ hostname }}"
+  when: hostname is defined and hostname != 'localhost'
+  tags: hostname
+
+# 网络同步时间
+- name: chrony 同步网络时间
+  block:
+  - name: chrony install
+    package: name=chrony state=latest 
+
+  - name: start chrony server
+    systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
+
+- name: sysctl 配置
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict: '{{ sysctl_config }}'

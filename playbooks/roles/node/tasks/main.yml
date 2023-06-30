@@ -1,13 +1,10 @@
-- include_tasks: 
-    file: "harden.yml"
-    apply:
-      tags: [harden]
-  tags: always
-  when: harden is defined and harden == true
+- name: echo os 
+  debug: msg={{ansible_os_family}}
+
+- import_tasks: redhat_harden.yml
+  when: ansible_os_family == 'RedHat'
+
+- import_tasks: debian_harden.yml
+  when: ansible_os_family == 'Debian'
   
-- include_tasks: 
-    file: "monitor.yml"
-    apply:
-      tags: monitor
-  tags: always
-  when: monitor is defined and monitor == true
+- import_tasks: monitor.yml

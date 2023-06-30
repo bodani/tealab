@@ -44,8 +44,10 @@ scrape_configs:
     metrics_path: /probe
     params:
       module: [http_2xx]  # Look for a HTTP 200 response.
-    static_configs:
-      - targets: {{ domain_https }}
+    file_sd_configs:
+      - refresh_interval: 10s	
+        files:
+        - /etc/prometheus/domain_https.yml
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

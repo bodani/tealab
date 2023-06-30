@@ -1,0 +1,11 @@
+- name: prepare linux dashboard json 
+  copy:
+    dest: /var/lib/grafana/dashboards/
+    src: dashboards/linux
+    owner: grafana
+    group: grafana
+
+- name: load grafana dashboard
+  shell: | 
+    sh /var/lib/grafana/load_dashboard.sh
+    sh /var/lib/grafana/clean_dashboards_jsons.sh 

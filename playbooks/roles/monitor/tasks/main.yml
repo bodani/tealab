@@ -1,16 +1,18 @@
-- block: 
+# - block: 
+  - include_tasks: node_prepare.yml
   - include_tasks: install_prometheus.yml
-  - include_tasks:  install_grafana.yml
-  - include_tasks:  provision_grafana.yml
+  - include_tasks: install_grafana.yml
+  - include_tasks: provision_grafana.yml
+  - include_tasks: dashboards.yml
 # 加载基础监控 dashboard
-# - include_tasks: load_dashboards.yml
+
   - include_tasks:  install_alertmanager.yml
-  when: only_load_dashboard is undefined or only_load_dashboard == false
+  # when: only_load_dashboard is undefined or only_load_dashboard == false
 # - tasks:
 #####################################################
 ## load grafana dashboard
 #####################################################
-- block:
+# - block:
   # - name: Provisioning grafana with grafana.py
   #   tags: [ monitor]
   #   ignore_errors: true
@@ -41,8 +43,8 @@
   #     state: directory
   #     owner: grafana
   #     group: grafana
-  - name: load grafana dashboard
-    shell: | 
-      sh /var/lib/grafana/load_dashboard.sh
-      sh /var/lib/grafana/clean_dashboards_jsons.sh 
-  when: only_load_dashboard is defined and only_load_dashboard == true
+  # - name: load grafana dashboard
+  #   shell: | 
+  #     sh /var/lib/grafana/load_dashboard.sh
+  #     sh /var/lib/grafana/clean_dashboards_jsons.sh 
+  # when: only_load_dashboard is defined and only_load_dashboard == true

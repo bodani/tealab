@@ -40,13 +40,35 @@
     owner: prometheus
     group: prometheus
 
-
 - name: 配置 prometheus
   template: src={{ item.src }} dest={{ item.dest }} mode=0644 owner=prometheus group=prometheus
   with_items: 
     - { src: prometheus.env.j2 , dest: /etc/default/prometheus}
     - { src: prometheus.yml.j2 , dest: /etc/prometheus/prometheus.yml}
   notify: restart prometheus
+
+- name: 配置 node discover yaml file
+  copy:
+    dest: /etc/prometheus/nodes/{{ inventory_hostname }}.yml
+    content: |
+      - targets: ['{{inventory_hostname}}:9100']
+        labels:
+          idc: '{{ idc }}'
+      {% if hostname is defined and hostname != 'localhost' %}
+          instance: '{{ hostname }}'
+      {% else %}
+          instance: '{{ inventory_hostname }}'
+      {% endif %}
+    owner: prometheus
+    group: prometheus
+
+- name: domain_https file 
+  copy:
+    dest: /etc/prometheus/domain_https.yml
+    content: |
+      - targets: {{ domain_https }}
+    owner: prometheus
+    group: prometheus
 
 - name: copy node rules
   copy:

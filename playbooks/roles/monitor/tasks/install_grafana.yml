@@ -1,3 +1,4 @@
+# 软件包准备
 - name: copy grafana servce bin 
   copy:
     src: "{{local_bin}}/grafana/{{ item }}"
@@ -5,12 +6,31 @@
     mode: '0755'
   with_items: 
     - grafana.rpm
+  when: ansible_os_family == 'RedHat'
+
+- name: copy grafana servce bin 
+  copy:
+    src: "{{local_bin}}/grafana/{{ item }}"
+    dest: /tmp/
+    mode: '0755'
+  with_items: 
+    - grafana.deb
+  when: ansible_os_family == 'Debian'
+
+# 软件包安装 
+- name: install grafana servce debian
+  apt:
+    deb:  /tmp/grafana.deb
+    state: present
+  when: ansible_os_family == 'Debian'
 
 - name: install grafana service
   package:
     name: /tmp/grafana.rpm
     state: present
+  when: ansible_os_family == 'RedHat'
 
+# 配置
 - name: create grafana dashboard dir 
   file: 
     path: "/var/lib/grafana/dashboards"
@@ -24,14 +44,24 @@
     dest: /etc/grafana/grafana.ini
   notify: event_restart_grafana
 
+# 启动
 - name: "Grafana server started"
   service:
     name: grafana-server
     enabled: true
     state: started
 
+- name: wait for grafana started
+  wait_for:
+    host: 127.0.0.1
+    port: 3000
+    state: started
+    timeout: 300
+    delay: 5
+
+# 验证
 - name: "Check if Grafana is accessible."
   uri:
-    url: http://127.0.0.1:3000
+    url: http://127.0.0.1:3000/login
     method: GET
     status_code: 200
