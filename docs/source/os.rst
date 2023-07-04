@@ -8,7 +8,7 @@
 Ubuntu 2022.04(Minimize)  
 ------------------------
 
-更新系统
+更新系统(建议)
 ~~~~~~~~
 
 .. code-block:: ini
@@ -17,16 +17,7 @@ Ubuntu 2022.04(Minimize)
 
    sudo apt-get dist-upgrade -y 
 
-
-软件安装
-~~~~~~~~
-
-.. code-block:: ini
-
-   sudo apt-get install vim -y
-   sudo apt-get install ufw -y 
-
-用户
+用户(必须)
 ~~~~~~
 需要一个拥有sudo 权限用户，且切换root时无需密码
 
@@ -35,7 +26,15 @@ Ubuntu 2022.04(Minimize)
   cat /etc/sudoers.d/yourname
   yourname ALL=(ALL) NOPASSWD:ALL
 
-防火墙基本管理
+软件安装(无需,由tealab 管理)
+~~~~~~~~
+
+.. code-block:: ini
+
+   sudo apt-get install vim -y
+   sudo apt-get install ufw -y 
+
+防火墙基本管理(无需，由tealab 管理)
 ~~~~~~~~~~~~
 
 防火墙采用默认拒绝所有访问，逐步开放策略
