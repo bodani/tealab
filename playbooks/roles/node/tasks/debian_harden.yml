@@ -1,20 +1,11 @@
 # 更新
 - name: Update all packages to the latest version
   apt:
-    upgrade: dist
-# 关闭 apparmor
-- name: hard | disable apparmor 
-  service:
-    name: apparmor
-    state: stopped
-    enabled: false
+    update_cache: yes
 
-# 关闭防火墙
-- name: hard | disable ufw
-  service: 
-    name: ufw 
-    state: stopped 
-    enabled: false
+- name: Update all packages to the latest version
+  apt:
+    upgrade: dist
 
 # ulimit -n 限制设置
 
@@ -76,3 +67,45 @@
     reload: yes
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
+
+
+- name: 安装常用工具
+  package:
+    name:
+      - vim
+      - ufw 
+      - net-tools
+    state: present
+
+# 防火墙管理
+- name: 开启服务，开机自启
+  ufw: 
+    state: enabled
+    logging: 'on'
+    default: deny
+
+- name: ssh 开放
+  ufw:
+    rule: allow
+    name: OpenSSH
+
+- name: ssh limit
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: Allow all access from RFC1918 networks to this host
+  ufw:
+    rule: allow
+    src: '{{ item }}'
+  loop:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+
+- name: 防火墙设置
+  ufw: 
+    logging: on
+    default: deny
+

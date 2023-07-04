@@ -13,6 +13,7 @@ tea is an easy automation tool
    :caption: 目录
  
    preface.md
+   os.rst
    install-tea.md 
    config.md
    monitor.md

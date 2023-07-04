@@ -1,0 +1,6 @@
+# 关闭防火墙
+- name: hard | disable ufw
+  service: 
+    name: ufw 
+    state: stopped 
+    enabled: false

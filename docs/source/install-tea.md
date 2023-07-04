@@ -75,7 +75,7 @@ $ vim tea.conf
 
 创建用户 
 ```
-./create_user.yml  -u root -k -l 10.10.2.14
+./create_user.yml -i hosts.ini -u root -k -l 10.10.2.14
 ```
 
 测试可连接性
