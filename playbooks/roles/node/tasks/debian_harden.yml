@@ -68,21 +68,20 @@
     ignoreerrors: yes
   with_dict: '{{ sysctl_config }}'
 
-
 - name: 安装常用工具
   package:
     name:
       - vim
       - ufw 
       - net-tools
+      - telnet
+      - iputils-ping
     state: present
 
 # 防火墙管理
 - name: 开启服务，开机自启
   ufw: 
     state: enabled
-    logging: 'on'
-    default: deny
 
 - name: ssh 开放
   ufw:
@@ -106,6 +105,6 @@
 
 - name: 防火墙设置
   ufw: 
-    logging: on
+    logging: 'on'
     default: deny
 

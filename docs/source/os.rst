@@ -5,7 +5,7 @@
 
 系统初始设置要求
 
-Ubuntu 2022.04(Minimize)  
+Ubuntu 2022.04(Minimized)  
 ------------------------
 
 更新系统(建议)
@@ -23,8 +23,7 @@ Ubuntu 2022.04(Minimize)
 
 .. code-block:: ini 
 
-  cat /etc/sudoers.d/yourname
-  yourname ALL=(ALL) NOPASSWD:ALL
+  echo "yourname ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/yourname
 
 软件安装(无需,由tealab 管理)
 ~~~~~~~~

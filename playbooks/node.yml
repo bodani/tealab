@@ -3,12 +3,9 @@
 - hosts: nodes
   # gather_facts: false
   roles: # node init config
-  - {role: node, harden: true ,monitor: true }
-
-- hosts: monitor
-  roles: # add xxx_exporter , prometheus and dashboard .
-  - {role: monitor, only_load_dashboard: true}
+  - role: node 
+    when: inventory_hostname not in groups['monitor']
 
 - hosts: logs
   roles: # promtail collect sys log
-  - {role: promtail}
+  - role: promtail

@@ -30,7 +30,7 @@
   template: src=node.yml.j2 dest=/etc/prometheus/nodes/{{inventory_hostname}}.yml mode=0644
   delegate_to: "{{ item }}"
   with_items: "{{ groups['monitor'] }}"
-  when: inventory_hostname not in groups['monitor']
+  #when: inventory_hostname not in groups['monitor']
 #---------------------------------------------
 # 安装blackbox_exporter
 #---------------------------------------------
