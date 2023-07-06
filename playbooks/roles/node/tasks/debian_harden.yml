@@ -79,9 +79,21 @@
     state: present
 
 # 防火墙管理
-- name: 开启服务，开机自启
+- name: 开启服务，开机自启 命令
   ufw: 
     state: enabled
+
+- name:  开启服务，开机自启 配置
+  lineinfile:
+    dest: /etc/ufw/ufw.conf
+    regexp: "^enabled="
+    line: "enabled=yes"
+
+- name:  关闭 IPV6
+  lineinfile:
+    dest: /etc/default/ufw
+    regexp: "^IPV6="
+    line: "IPV6=no"
 
 - name: ssh 开放
   ufw:
@@ -108,3 +120,16 @@
     logging: 'on'
     default: deny
 
+#
+#   sudo ufw default allow outgoing
+#   sudo ufw default deny incoming
+# 
+
+
+####################### apparmor #####################
+- name: 开启 apparmor
+  service:
+    name: apparmor
+    state: started
+    enabled: true
+    

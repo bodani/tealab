@@ -1,0 +1,8 @@
+- name: Allow all access to tcp port 2379 2380
+  ufw:
+    rule: allow
+    port: '{{ item }}'
+    proto: tcp
+  with_items: 
+    - '2379'
+    - '2380'

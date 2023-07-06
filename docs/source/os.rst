@@ -44,7 +44,10 @@ Ubuntu 2022.04(Minimized)
    sudo ufw status  # 查看
 
    sudo ufw allow ssh  # 允许ssh 访问
+   sudo ufw allow 53   # 允许 53 dns 
    sudo ufw default deny # 默认拒绝所有
+   sudo ufw default allow outgoing
+   sudo ufw default deny incoming
    
    # ufw 配置 
    # 开机自启
@@ -52,8 +55,7 @@ Ubuntu 2022.04(Minimized)
     enabled=yes 
    # 关闭ipv6
    vim /etc/default/ufw
-     ipv6=disable 
-
+     IPV6=disable 
 
    # 规则语法 示例
    sudo ufw allow <port>/<protocol>

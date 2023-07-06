@@ -1,5 +1,10 @@
 --- 
-- import_tasks: node_prepare.yml
+- import_tasks: node_prepare_debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: always
+
+- import_tasks: node_prepare_redhat.yml
+  when: ansible_os_family == 'RedHat'
   tags: always
 
 - import_tasks: install_etcd.yml
