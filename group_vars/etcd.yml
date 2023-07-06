@@ -10,6 +10,8 @@ ETCD_WAL_DIR: /var/lib/etcd/wal
 ETCD_PEER_PORT: 2380
 ETCD_CLIENT_PORT: 2379
 
+CERT_DNS: etcd01.zhangeamon.top
+
 ########### 数据备份#####################
 # 在中控机上数据存储位置,该目录具有执行用户写权限
 ETCD_LOCAL_BACKUP_DIR: /tmp/etcd/

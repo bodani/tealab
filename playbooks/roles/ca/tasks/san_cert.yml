@@ -24,6 +24,7 @@
           - DNS:localhost
           - "IP:{{ inventory_hostname }}"
           - "DNS:tealabs-{{ inventory_hostname }}"
+          - "DNS: {{ CERT_DNS }}"
 
     - name: 证书签名
       openssl_certificate:
