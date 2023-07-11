@@ -1,4 +1,4 @@
-PG_CLUSTER_NAME: pg_cluster001
+PG_CLUSTER_NAME: pg_cl1
 
 # 用于确定etcd证书在本地位置
 ETCD_NAME: etcd001
@@ -16,9 +16,8 @@ retry_timeout: 10
 maximum_lag_on_failover: 10485760
 
 PG_VERSION: 14
-PG_BIN: /usr/pgsql-14/bin/
-PG_DATA: /var/lib/pgsql/14/data
-PG_CONFIG: /var/lib/pgsql/14/data
+PG_DATA: /var/lib/postgresql/14/main
+PG_CONFIG: /etc/postgresql/14/main/
 PG_PORT: 5432
 
 #超级用户 default postgres

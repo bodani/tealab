@@ -1,13 +1,13 @@
-- name: install | Install PostgreSQL Service
+- name: install | Install PostgreSQL Service On Debian
   package: name={{ item }} state=present
   with_items:
-    - '{{ pg_base_packages }}'
+    - '{{ pg_base_packages_debian }}'
   register: install_postgresql
 
 - name: install | Install PostgreSQL Base Extensions Packages
   package: name={{ item }} state=present
   with_items:
-    - '{{ pg_extends_packages }}'
+    - '{{ pg_extends_packages_debian }}'
   
 - name: install | make postgres data dir
   file:

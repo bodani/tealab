@@ -1,0 +1,20 @@
+PG_BIN: /usr/lib/postgresql/{{PG_VERSION}}/bin
+PG_HOME: /var/lib/postgresql
+# 安装配置
+###################### debain
+pg_base_packages: 
+  - postgresql-client-{{PG_VERSION}}
+  - postgresql-{{PG_VERSION}}
+  - libpq-dev
+  - postgresql-server-dev-{{PG_VERSION}}
+
+pg_extends_packages:
+  - postgresql-{{PG_VERSION}}-repack
+  - python3-psycopg2
+
+pg_shared_preload_libs: 
+  - pg_repack
+  - pg_stat_statements
+  - auto_explain
+
+

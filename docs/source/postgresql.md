@@ -1,4 +1,4 @@
-# Postgresql集群管理
+# Postgresql 主从
 
 ## 配置信息
 

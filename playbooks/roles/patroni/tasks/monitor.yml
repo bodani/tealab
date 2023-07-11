@@ -59,7 +59,7 @@
 
 ## 监控 patroni /metrics
 
-- name: monitor | add postgres discover server
+- name: monitor | add patroni discover server
   file:  
     path: /etc/prometheus/patroni
     state: directory

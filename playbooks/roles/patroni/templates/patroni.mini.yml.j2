@@ -45,6 +45,9 @@ etcd3:
   key: /etc/patroni/certs/etcd-client-key.pem
 
 bootstrap:
+#  method: pg_createcluster
+#  pg_createcluster:
+#    command: /usr/share/patroni/pg_createcluster_patroni
   # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
   # and all other cluster members will use it as a `global configuration`
   dcs:
@@ -124,14 +127,14 @@ bootstrap:
     - host replication {{ REP_USER}} 192.168.0.0/16 scram-sha-256
 
   # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
-  post_init: /etc/patroni/setup_cluster.sh
+  #post_init: /etc/patroni/setup_cluster.sh
   
   # Some additional users users which needs to be created after initializing new cluster
-  users:
-    {{ REP_USER }}:
-      password: '{{ REP_PASSWORD }}'
-      options:
-        - REPLICATION
+#  users:
+#    {{ REP_USER }}:
+#      password: '{{ REP_PASSWORD }}'
+#      options:
+#        - REPLICATION
 
 postgresql:
 #------------------------------------------------------------#
@@ -140,7 +143,7 @@ postgresql:
   bin_dir: {{PG_BIN}}
   data_dir: {{PG_DATA}}
   config_dir: {{PG_CONFIG}}
-  pgpass: /var/lib/pgsql/.pgpass
+  pgpass: {{PG_HOME}}/.pgpass
   listen: 127.0.0.1,{{inventory_hostname}}:{{PG_PORT}}
   connect_address: {{inventory_hostname}}:{{PG_PORT}}
   use_unix_socket: true # default: /var/run/postgresql, /tmp

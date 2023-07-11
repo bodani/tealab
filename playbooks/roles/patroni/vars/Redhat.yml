@@ -1,0 +1,16 @@
+PG_BIN: /usr/lib/postgresql/{{PG_VERSION}}/bin
+ 
+pg_base_packages:
+  - libpq-dev
+  - postgresql-client-{{PG_VERSION}}
+  - postgresql-{{PG_VERSION}}
+
+pg_extends_packages:
+  - postgresql-{{PG_VERSION}}-postgis-3
+  - postgresql-{{PG_VERSION}}-repack
+
+pg_shared_preload_libs: 
+  - pg_repack
+  - pg_stat_statements
+  - auto_explain
+

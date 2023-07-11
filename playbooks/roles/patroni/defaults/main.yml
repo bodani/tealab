@@ -20,21 +20,34 @@ track_commit_timestamp: "off"
 wal_level: logical
 hot_standby: "on"
 
-# 安装配置
-pg_base_packages: 
-  - postgresql{{PG_VERSION}}-server
-  - postgresql{{PG_VERSION}}
-  - postgresql{{PG_VERSION}}-contrib
-  - postgresql{{PG_VERSION}}-libs
+# PG_BIN: /usr/pgsql-14/bin/
+#       /usr/lib/postgresql/@VERSION@/bin
+# # 安装配置
+# ###################### redhat
+# pg_base_packages: 
+#   - postgresql{{PG_VERSION}}-server
+#   - postgresql{{PG_VERSION}}
+#   - postgresql{{PG_VERSION}}-contrib
+#   - postgresql{{PG_VERSION}}-libs
 
-pg_extends_packages:
-  - pg_repack_{{PG_VERSION}}
-  - python2-psycopg2
+# pg_extends_packages:
+#   - pg_repack_{{PG_VERSION}}
+#   - python2-psycopg2
 
-pg_shared_preload_libs: 
-  - pg_repack
-  - pg_stat_statements
-  - auto_explain
+# ###################### debian
+# pg_base_packages_debian:
+#   - libpq-dev
+#   - postgresql-client-{{PG_VERSION}}
+#   - postgresql-{{PG_VERSION}}
+
+# pg_extends_packages_debian:
+#   - postgresql-{{PG_VERSION}}-postgis-3
+#   - postgresql-{{PG_VERSION}}-repack
+
+# pg_shared_preload_libs: 
+#   - pg_repack
+#   - pg_stat_statements
+#   - auto_explain
 
 sysctl:
   vm.swappiness = 1

@@ -8,6 +8,14 @@
   when: ansible_distribution == "CentOS"
   notify: restart patroni
 
+- name: install | Install Patrini Package [ETCD]
+  package:
+    name: "patroni"
+    state: present
+
+  when: ansible_os_family == 'Debian'
+  notify: restart patroni
+
 - name: install | copy patroni.service
   template: 
     src: patroni.service.j2
@@ -118,6 +126,7 @@
 - name: install | wait for postgres started
   wait_for:
     port: "{{ PG_PORT }}"
+    host: "{{ inventory_hostname }}"
     state: started
 
 - name: install | wait for patroni started
