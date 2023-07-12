@@ -23,4 +23,13 @@
   - name: install |  update 
     apt:
       update_cache: yes
+      ## 配置初始化数据库
+
+  - name: install | postgresql-common 
+    package: name=postgresql-common state=present
+
+  - name: manu createcluster config 
+    copy:  
+      src: createcluster.conf
+      dest: /etc/postgresql-common/createcluster.conf
     when: ansible_os_family == 'Debian'

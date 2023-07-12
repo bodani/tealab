@@ -82,6 +82,10 @@
       systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
   when: net_time_sync == 'chrony'
 
+- name: Set timezone to Asia/Shanghai
+  timezone:
+    name: Asia/Shanghai
+
 - name: set hostname and /etc/hosts
   block: 
     - name: fetch old hostname

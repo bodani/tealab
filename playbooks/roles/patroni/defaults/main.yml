@@ -81,4 +81,3 @@ sysctl:
   net.ipv4.tcp_window_scaling = 1
   net.netfilter.nf_conntrack_max = 250000
   net.ipv4.tcp_max_syn_backlog=4096
-

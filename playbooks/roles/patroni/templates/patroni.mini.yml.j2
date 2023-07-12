@@ -45,9 +45,9 @@ etcd3:
   key: /etc/patroni/certs/etcd-client-key.pem
 
 bootstrap:
-#  method: pg_createcluster
-#  pg_createcluster:
-#    command: /usr/share/patroni/pg_createcluster_patroni
+  #method: pg_createcluster
+  #pg_createcluster:
+  #  command: /usr/share/patroni/pg_createcluster_patroni
   # this section will be written into Etcd:/<namespace>/<scope>/config after initializing new cluster
   # and all other cluster members will use it as a `global configuration`
   dcs:
@@ -95,6 +95,8 @@ bootstrap:
         max_locks_per_transaction: {{ max_locks_per_transaction }}
         wal_log_hints: {{ wal_log_hints }}
         track_commit_timestamp: {{ track_commit_timestamp }}
+
+        shared_buffers: {{ shared_buffers }}
       
         max_wal_senders: {{ max_wal_senders }}
         max_replication_slots: {{ max_replication_slots }}
@@ -103,9 +105,44 @@ bootstrap:
 {%endif%}
         wal_keep_size: {{ wal_keep_size }}
         ssl: on
-        ssl_ca_file: '/etc/postgres/certs/ca.crt'
-        ssl_cert_file: '/etc/postgres/certs/server.crt'
-        ssl_key_file: '/etc/postgres/certs/server.key'
+        ssl_ca_file: '/etc/ssl/certs/ca.crt'
+        ssl_cert_file: '/etc/ssl/certs/server.crt'
+        ssl_key_file: '/etc/ssl/certs/server.key'
+
+        archive_mode: always
+        archive_command: '/bin/true'
+        archive_timeout: 300
+
+        checkpoint_timeout: 30min              # range 30s-1d
+        checkpoint_completion_target: 0.9     # checkpoint target duration, 0.0 - 1.0
+        checkpoint_flush_after: 256kB         # measured in pages, 0 disables
+        checkpoint_warning: 30s               # 0 disables
+        max_wal_size: 10GB
+        min_wal_size: 2GB
+
+        wal_keep_size: 64GB
+
+        random_page_cost: 1.1
+
+        log_destination: 'csvlog'
+        logging_collector: on
+        log_directory: 'log'
+        log_filename: 'postgresql-%d.log'
+        log_truncate_on_rotation: on
+
+        log_min_duration_statement: 5000
+        log_min_duration_sample: 1000
+        log_statement_sample_rate: 0.8
+        #log_transaction_sample_rate
+        log_lock_waits: on
+        log_statement: 'ddl'
+        log_timezone: 'Asia/Shanghai'
+        track_activity_query_size: 10240
+        timezone: 'Asia/Shanghai'
+
+        hot_standby_feedback: on
+        maintenance_work_mem: 10GB 
+        
 
   pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
     # monitor user 
@@ -127,7 +164,7 @@ bootstrap:
     - host replication {{ REP_USER}} 192.168.0.0/16 scram-sha-256
 
   # Additional script to be launched after initial cluster creation (will be passed the connection URL as parameter)
-  #post_init: /etc/patroni/setup_cluster.sh
+  post_init: /etc/patroni/setup_cluster.sh
   
   # Some additional users users which needs to be created after initializing new cluster
 #  users:

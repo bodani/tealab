@@ -17,7 +17,7 @@ maximum_lag_on_failover: 10485760
 
 PG_VERSION: 14
 PG_DATA: /var/lib/postgresql/14/main
-PG_CONFIG: /etc/postgresql/14/main/
+PG_CONFIG: /var/lib/postgresql/14/main
 PG_PORT: 5432
 
 #超级用户 default postgres
@@ -43,3 +43,5 @@ max_wal_senders: 10
 max_replication_slots: 5
 wal_keep_segments: 10240
 wal_keep_size: 128GB
+# 1/4 
+shared_buffers: 4GB

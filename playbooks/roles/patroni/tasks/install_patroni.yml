@@ -8,7 +8,7 @@
   when: ansible_distribution == "CentOS"
   notify: restart patroni
 
-- name: install | Install Patrini Package [ETCD]
+- name: install | Install Patrini Package
   package:
     name: "patroni"
     state: present

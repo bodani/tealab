@@ -2705,7 +2705,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Etcd监控",
+  "title": "集群监控",
   "uid": "mTemEyyizz",
   "version": 2,
   "weekStart": ""
