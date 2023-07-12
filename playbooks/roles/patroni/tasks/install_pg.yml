@@ -17,6 +17,14 @@
     group: postgres
     mode: 0700
 
+- name: install | make postgres log dir
+  file:
+    path: "/var/log/postgresql/"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: 0700
+
 - name: install | Prepare Config PostgreSQL Serivice 
   file:
     path: /etc/systemd/system/postgresql-{{PG_VERSION}}.service.d
