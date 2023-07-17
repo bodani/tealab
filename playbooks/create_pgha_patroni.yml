@@ -13,6 +13,7 @@
       get_url:
         url: http://{{inventory_hostname}}:8008/health
         dest: /tmp/
+        timeout: 30
       register: patroni_health_result
 
     - name: patroni 集群状态查看  

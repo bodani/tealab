@@ -107,19 +107,11 @@ function install_base_dependency() {
   c="centos"
   d="ubuntu"
 
-  if [[ $a =~ $b ]];then
-      echo "mac"
-  elif [[ $a =~ $c ]];then
-    yum -y install epel-release git curl sshpass wget
-    yum -y install ansible
-    which ansible > /dev/null 2>&1 || { logger error "need 'ansible', try: 'yum -y install ansible'"; usage; exit 1; }
-  elif [[ $a =~ $d ]];then
-    apt-get -y install epel-release git curl sshpass wget
-    apt-get -y install ansible
-    which ansible > /dev/null 2>&1 || { logger error "need 'ansible', try: 'apt-get -y install ansible'"; usage; exit 1; }
-  else
-      echo $a
-  fi
+
+apt-get -y install epel-release git curl sshpass wget
+apt-get -y install ansible
+which ansible > /dev/null 2>&1 || { logger error "need 'ansible', try: 'apt-get -y install ansible'"; usage; exit 1; }
+
   
   logger info "install (epel-release git curl sshpass wget) complate!"
 # check 'ansible' executable

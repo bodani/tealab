@@ -84,6 +84,8 @@
       - net-tools
       - telnet
       - iputils-ping
+      - lsof
+      - less
     state: present
 
 # 防火墙管理
