@@ -1,5 +1,7 @@
-- include_tasks: 
-    file: install.yml
-    apply:
-      tags: install
-  tags: always
+- import_tasks: install_redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- import_tasks: install_debian.yml
+  when: ansible_os_family == 'Debian'
+
+- import_tasks: config.yml 

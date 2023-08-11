@@ -2,6 +2,13 @@
   apt:
     name: python3-pip
     state: present
+  when: ansible_os_family == 'Debian'
+
+- name: install python3-pip
+  yum:
+    name: python3-pip
+    state: present
+  when: ansible_os_family == 'RedHat'
 
 - name: pip install 
   shell:

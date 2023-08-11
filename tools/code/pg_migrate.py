@@ -273,11 +273,11 @@ def finish_migrate():
     log("finish_migrate done!")
 
 cli.add_command(check)
-cli.add_command(start-migrate)
-cli.add_command(show-progress)
+cli.add_command(start_migrate)
+cli.add_command(show_progress)
 cli.add_command(verify)
-cli.add_command(finish-migrate)
-cli.add_command(sync-sequence)
+cli.add_command(finish_migrate)
+cli.add_command(sync_sequence)
 
 if __name__ == '__main__':
   try:  

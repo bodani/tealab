@@ -1,2 +1,5 @@
 - name: event_restart_loki
   service: name=loki state=restarted enabled=yes daemon_reload=yes
+
+- name: event_stop_loki
+  service: name=loki state=stopped enabled=yes daemon_reload=yes

@@ -68,7 +68,7 @@
     state: present
     marker: "# {mark} Postgresql JOB  "
     content: |
-      #  promethes auto discover etcd jobs  
+      #  promethes auto discover postgres jobs  
         - job_name: 'postgresql'
           scrape_interval: 5s
           file_sd_configs:

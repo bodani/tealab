@@ -1,0 +1,11 @@
+[Unit]
+Description=pgweb 
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/sysconfig/pgweb
+ExecStart=/usr/local/bin/pgweb  $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

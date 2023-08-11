@@ -1,22 +1,9 @@
-- name: install loki
-  copy:
-    src: "{{local_bin}}/loki/{{ item }}"
-    dest: /tmp/
-    mode: '0755'
-  with_items: 
-    - loki.rpm
-
-- name: install loki service
-  package:
-    name: /tmp/loki.rpm
-    state: present
-
 - name: create loki data path
   file:
     path: "{{ loki_data_path }}"
     state: directory
     owner: loki
-    group: loki
+    # group: loki
     mode: '0755'
 
 - name: config loki servce

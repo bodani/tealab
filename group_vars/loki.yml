@@ -1,0 +1,4 @@
+# 日志数据存储位置
+loki_data_path: /data/loki/
+# 日志数据保留时效
+retention_period: 2520h
