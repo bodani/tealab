@@ -1,6 +1,6 @@
 ## 初始安装
 
-pip3 install ./requirements.txt
+pip3 install -r ./requirements.txt
 
 ## 目录结构
 ```

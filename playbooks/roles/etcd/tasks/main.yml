@@ -24,3 +24,4 @@
 - import_tasks: monitor.yml
   # delegate_to: 
   tags: monitor
+  when: NEED_MONITOR=="yes"

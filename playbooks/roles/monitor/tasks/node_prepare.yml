@@ -1,15 +1,17 @@
-- name: install python3-pip
+- name: Install required system packages
   apt:
-    name: python3-pip
+    name: 
+      - python3-pip
+      - python3-virtualenv  # Explicitly install virtualenv
     state: present
-  when: ansible_os_family == 'Debian'
+  become: yes
 
-- name: install python3-pip
-  yum:
-    name: python3-pip
-    state: present
-  when: ansible_os_family == 'RedHat'
+- name: Create a virtual environment
+  command: python3 -m venv /usr/local/venv
+  args:
+    creates: /usr/local/venv  # Ensures the command runs only if the venv doesn't exist
 
-- name: pip install 
-  shell:
-    pip3 install requests
+- name: Install requests package into the virtual environment
+  pip:
+    name: requests
+    virtualenv: /usr/local/venv

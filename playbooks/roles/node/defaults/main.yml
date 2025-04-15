@@ -101,7 +101,6 @@ sysctl_config:
   kernel.msgmnb: 65536
   kernel.msgmax: 65536
   kernel.numa_balancing: 0
-  kernel.sem: 2048 134217728 2048 65536
   vm.dirty_ratio: 80
   vm.dirty_background_bytes: 268435456
   vm.dirty_expire_centisecs: 6000

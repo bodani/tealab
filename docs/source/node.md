@@ -1,23 +1,14 @@
-# 服务器管理
+# 节点管理
 
-## 服务器管理介绍
+## 节点管理介绍
 
-服务器管理主要包括两部分
-
-- 对初始安装的服务器进行初始配置优化，常用软件安装
-- 对节点服务器监控
-
-服务资源列表
-
-| 软件              | 端口 |
-| ----------------- | ---- |
-| node_exporter     | 9100 |
-| blackbox_exporter | 9115 |
-
-## 依赖环境
-
-- 参考安装tea ，将服务器加入tea进行管理
-- 参考monitor服务，安装monitor
+- Update all packages to the latest version
+- nlimit 限制调整
+- 设置hostname
+- ntp 网络时钟
+- sysctl 内核参数
+- 安装常用工具
+- ufw apparmor 防火墙管理
 
 ## 服务器管理
 

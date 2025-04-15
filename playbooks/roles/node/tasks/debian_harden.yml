@@ -2,10 +2,8 @@
 - name: Update all packages to the latest version
   apt:
     update_cache: yes
-
-- name: Update all packages to the latest version
-  apt:
-    upgrade: dist
+    cache_valid_time: 3600
+  become: yes
 
 # ulimit -n 限制设置
 
@@ -64,8 +62,6 @@
   timezone:
     name: Asia/Shanghai
 
-# localectl 
-
 - name: sysctl 配置
   sysctl:
     name: '{{ item.key }}'
@@ -86,6 +82,7 @@
       - iputils-ping
       - lsof
       - less
+      - curl
     state: present
 
 # 防火墙管理
@@ -129,7 +126,6 @@
   ufw: 
     logging: 'on'
     default: deny
-
 #
 #   sudo ufw default allow outgoing
 #   sudo ufw default deny incoming

@@ -8,6 +8,40 @@ https://etcd.io/docs/v3.5/op-guide/hardware/
 
 将集群服务器加入tea中管理
 
+## 流程介绍
+
+- 配置验证
+- 生成证书
+- 防火墙端口配置
+- 创建用户
+- 集群安装包预备
+- 配置集群
+- 启动集群
+- 验证集群
+
+## 软件包准备
+
+下载软件包到 , `group_vars/all.yml` 中设置 
+```
+local_bin: "~/local_bin/packages"
+```
+例如
+```
+sudo mkdir -p ~/local_bin/packages/etcd/
+sudo wget https://github.com/etcd-io/etcd/releases/download/v3.5.21/etcd-v3.5.21-linux-amd64.tar.gz
+sudo tar -zxf etcd-v3.5.21-linux-amd64.tar.gz -C ~/local_bin/packages/etcd/
+sudo mv ~/local_bin/packages/etcd/etcd-v3.5.21-linux-amd64/etcd* ~/local_bin/packages/etcd/
+sudo rm -rf ~/local_bin/packages/etcd/etcd-v3.5.21-linux-amd64/
+```
+最终结果
+```
+~/local_bin/packages$ tree etcd/
+etcd/
+├── etcd
+├── etcdctl
+├── etcdutl
+```
+
 ## 编辑配置
 ` vim hosts.ini `
 
@@ -18,6 +52,10 @@ https://etcd.io/docs/v3.5/op-guide/hardware/
 10.10.2.12
 10.10.2.13
 # 10.10.2.14
+
+#监控系统 prometheus grafana 如需要监控配置
+[monitor]
+10.10.2.14
 ```
 
 ` vim  group_vars/etcd.yml `
@@ -33,7 +71,10 @@ ETCD_WAL_DIR: /var/lib/etcd/wal
 # 端口号, 设定完成后期不可修改， 请注意
 ETCD_PEER_PORT: 2380
 ETCD_CLIENT_PORT: 2379
-
+# 通用域名
+CERT_DNS: etcd01.zhangeamon.top
+#是否同时安装监控
+NEED_MONITOR: no
 ########### 数据备份#####################
 # 在中控机上数据存储位置,该目录具有执行用户写权限
 ETCD_LOCAL_BACKUP_DIR: /tmp/etcd/

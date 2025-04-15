@@ -18,6 +18,7 @@ tea is an easy automation tool
    config.md
    monitor.md
    node.md
+   ca.md 
    etcd.md
    minio.md
    postgresql.md
@@ -26,3 +27,4 @@ tea is an easy automation tool
    redis.md
    redis_cluster.md
    memcached.md
+   k3s.md

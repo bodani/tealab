@@ -23,10 +23,16 @@ curl -fsSL https://gitee.com/zhangeamon/tealab/raw/main/bin/install.sh | sh -
 
 ```
 
+## 配置文件
+
+ansible 配置文件 ansible.cfg
+
+被控节点 hosts.ini 
+
 ## 管理节点
 与其他主机节点建立ssh 免密互通
 ```
-$ vi tea.conf
+$ vi hosts.ini
 [nodes]
 10.10.2.11
 10.10.2.12
@@ -63,7 +69,7 @@ playbooks/disable_rootlogin.yml
  加入新节点 `10.10.2.14`
 
 ```
-$ vim tea.conf
+$ vim host.ini
 [nodes]
 10.10.2.11
 10.10.2.12

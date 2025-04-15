@@ -8,6 +8,4 @@ sphinx-markdown-tables
 #crate-docs-theme
 
 sphinx-rtd-theme
-
-
 sphinx-autobuild

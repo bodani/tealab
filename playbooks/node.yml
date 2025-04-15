@@ -1,11 +1,10 @@
 #!/usr/bin/env ansible-playbook
 ---
 - hosts: nodes
-  # gather_facts: false
+  gather_facts: true
   roles: # node init config
   - role: node 
-    when: inventory_hostname not in groups['monitor']
 
-- hosts: logs
-  roles: # promtail collect sys log
-  - role: promtail
+# - hosts: logs
+#   roles: # promtail collect sys log
+#   - role: promtail

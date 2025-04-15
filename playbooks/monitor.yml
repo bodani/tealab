@@ -7,5 +7,4 @@
 # 三， 安装 node_exporter blackbox_exporter
 # 四， 载入dashboard 到grafana 
 ##-----------------------------------------------
-    - { role: node }
     - { role: monitor }
