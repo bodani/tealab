@@ -2,6 +2,7 @@
 ---
 - hosts: nodes
   gather_facts: true
+  become: true
   roles: # node init config
   - role: node 
 
