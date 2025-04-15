@@ -5,6 +5,12 @@
     # vars:
       # ETCD_NAME: "{{ NAME | default('etcd')}}"
     pre_tasks:
+     # 在 Semaphore 的任务日志中验证路径
+      - name: 检查 group_vars 文件是否存在
+        debug:
+          msg: "{{ lookup('file', 'group_vars/etcd.yml') }}"
+        run_once: true
+
      - name: validate
        block:
         - name: validate etcd cluster name 
