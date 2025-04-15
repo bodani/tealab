@@ -1,9 +1,0 @@
-base_exentens_libs:
- - postgresql14-server 
- - postgresql14
- - postgresql14-contrib
-#  - postgis30_14
- - pg_repack_14
-
-max_connections: 1000
-# data_path: /data/pgsql/14

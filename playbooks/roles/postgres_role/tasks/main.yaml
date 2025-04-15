@@ -1,5 +1,0 @@
-# become_user: postgres
----
-- import_tasks: install.yaml
-- import_tasks: install_citus.yaml
-- import_tasks: createdb.yaml
