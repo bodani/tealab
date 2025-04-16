@@ -5,13 +5,8 @@
     # vars:
       # ETCD_NAME: "{{ NAME | default('etcd')}}"
     pre_tasks:
-      - name: validate
-        block:
-             # 在 Semaphore 的任务日志中验证路径
-        # - name: 检查 group_vars 文件是否存在
-        #   debug:
-        #     msg: "{{ lookup('file', playbook_dir + '/group_vars/etcd.yml') }}"
-          # run_once: true
+     - name: validate
+       block:
         - name: validate etcd cluster name 
           assert:
             that:
@@ -21,7 +16,7 @@
           connection: local
           debug:
             msg: "etcd cluster name : {{ ETCD_NAME }}"
-        run_once: true 
+       run_once: true 
     vars:
       CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/{{ ETCD_NAME }}"
 

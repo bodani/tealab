@@ -1,4 +1,4 @@
 # local repo 存放位置
-local_bin: "~/local_bin/packages"
+local_bin: /tmp/semaphore/local_bin/packages
 # 自定义证书在中控机存放位置
-CERT_LOCAL_BASE_DIR: /etc/ssl/certs/tealabs/
+CERT_LOCAL_BASE_DIR: /tmp/semaphore/ssl/certs/
