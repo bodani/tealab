@@ -2,3 +2,5 @@
 prometheus_data_path: /data/monitor/prometheus
 grafana_admin_username: admin
 grafana_admin_password: admin
+prometheus_retention_time: 20d
+prometheus_retention_size: 100GB

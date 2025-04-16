@@ -7,4 +7,6 @@
 - import_tasks: debian_harden.yml
   when: ansible_os_family == 'Debian'
 
-# - import_tasks: monitor.yml
+- import_tasks: monitor.yml
+  when: node_monitor | default(false)
+

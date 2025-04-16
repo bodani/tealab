@@ -3,5 +3,3 @@
 promethues_data_path: /data/prometheus/
 prometheus_retention_time: 15d
 prometheus_retention_size: 100GB 
-hello: 123
-# store_data_path
