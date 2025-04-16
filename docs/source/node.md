@@ -22,6 +22,21 @@
  10.10.2.14  hostname=node4 idc=second
 ```
 
+是否加入 node_exporter, 
+```
+node_monitor: true
+```
+
+```
+[nodes]
+10.10.2.11  hostname=node1 idc=first
+10.10.2.12  hostname=node2 idc=first
+10.10.2.13  hostname=node3 idc=first
+10.10.2.14  hostname=node4 idc=second
+[monitor]
+10.1.50.211 ansible_ssh_host=10.1.50.211  hostname=t03 idc=idc03 ansible_ssh_port=22
+```
+
 创建节点管理,包括初始配置优化，常用软件安装，节点进行监控。
 
 ```

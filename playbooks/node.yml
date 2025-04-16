@@ -7,6 +7,15 @@
   roles: # node init config
   - role: node 
 
+#!/usr/bin/env ansible-playbook
+- hosts: monitor 
+  become: yes
+  become_method: sudo
+  roles: 
+    - { role: monitor }
+  when: node_monitor | default(false)
+  
+
 # - hosts: logs
 #   roles: # promtail collect sys log
 #   - role: promtail
