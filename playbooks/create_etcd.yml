@@ -19,7 +19,6 @@
        run_once: true 
     vars:
       CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/{{ ETCD_NAME }}"
-
     roles:
       - { role: ca ,tags: ca}
 ##------------------------------------集群安装基本流程-------------------------
@@ -46,6 +45,9 @@
   - hosts: etcd
     become: yes
     become_method: sudo
+    pre_tasks:
+    vars:
+      CERT_LOCAL_DIR: "{{ CERT_LOCAL_BASE_DIR }}/{{ ETCD_NAME }}"
     roles:
       - { role: etcd, tags: etcd }
     post_tasks:
