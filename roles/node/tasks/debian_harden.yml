@@ -54,7 +54,7 @@
     package: name=chrony state=latest 
 
   - name: start chrony server
-    systemd: name=chronyd state=restarted enabled=yes daemon_reload=yes
+    systemd: name=chronyd state=restarted enabled=yes
 
 # timedatectl
 
