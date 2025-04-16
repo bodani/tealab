@@ -65,13 +65,6 @@ sudo tar zxf ~/local_bin/packages/node_exporter-1.9.1.linux-amd64.tar.gz -C ~/lo
 prometheus_data_path: /data/monitor/prometheus
 grafana_admin_username: admin
 grafana_admin_password: admin
-
-# 监控域名及证书到期时间 
-domain_https: 
- - https://www.baidu.com
- - https://doc.zhangeamon.top
- - https://test.zhangeamon.top
-
 ```
 
 创建监控服务
