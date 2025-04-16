@@ -2,7 +2,8 @@
 ---
 - hosts: nodes
   gather_facts: true
-  become: true
+  become: yes
+  become_method: sudo
   roles: # node init config
   - role: node 
 
